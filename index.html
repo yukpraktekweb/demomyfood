@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyFood | Fresh Meals & Drinks</title>
+    <title>MyFood | Delivery & Menu</title>
     
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -48,12 +48,13 @@
     <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
-                <!-- Logo -->
+                <!-- Dynamic Logo & Brand -->
                 <div class="flex items-center">
-                    <div class="bg-primary text-white p-2 rounded-xl mr-3 shadow-sm cursor-pointer" onclick="handleSecretClick()" title="MyFood">
+                    <img id="nav-brand-logo" src="" alt="Logo" class="h-10 w-10 object-cover rounded-xl mr-3 shadow-sm cursor-pointer hidden" onclick="handleSecretClick()">
+                    <div id="nav-brand-icon" class="bg-primary text-white p-2 rounded-xl mr-3 shadow-sm cursor-pointer" onclick="handleSecretClick()" title="Klik 7x untuk Admin">
                         <i data-lucide="utensils" class="w-6 h-6"></i>
                     </div>
-                    <span class="text-2xl font-bold tracking-tight cursor-pointer" onclick="goHome()">
+                    <span class="text-2xl font-bold tracking-tight cursor-pointer" onclick="goHome()" id="nav-brand-name">
                         <span class="text-charcoal">My</span><span class="text-primary">Food</span>
                     </span>
                 </div>
@@ -75,7 +76,7 @@
                     </button>
                 </div>
                 
-                <!-- Admin Logout (Hidden by default) -->
+                <!-- Admin Logout -->
                 <div class="hidden items-center space-x-4" id="nav-admin-logout">
                      <span class="text-sm font-bold text-primary">Admin Mode</span>
                      <button onclick="logoutAdmin()" class="text-white bg-charcoal hover:bg-gray-800 px-4 py-2 rounded-lg text-sm font-medium transition-all-ease">
@@ -91,14 +92,13 @@
         <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
             <!-- Hero Banner -->
             <div class="relative bg-charcoal rounded-3xl overflow-hidden shadow-xl mb-12 h-80 flex items-center">
-                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80" 
-                     class="absolute inset-0 w-full h-full object-cover opacity-40" alt="Delicious Food">
+                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40">
                 <div class="relative z-10 p-8 md:p-16 flex flex-col items-center md:items-start text-center md:text-left w-full">
-                    <span class="bg-accent text-charcoal text-sm font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wide shadow-sm">Limited Time</span>
-                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Special Food Deals!</h1>
-                    <p class="text-lg text-gray-200 mb-8 max-w-lg font-light">Enjoy fresh meals, tasty drinks, dan exclusive offers dari MyFood.</p>
-                    <button onclick="document.getElementById('menu-section').scrollIntoView({behavior: 'smooth'})" class="bg-primary hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-full transition-all-ease shadow-lg transform hover:-translate-y-1">
-                        Explore Menu
+                    <span class="bg-accent text-charcoal text-sm font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wide shadow-sm">Pesan Sekarang</span>
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" id="hero-title">Welcome to MyFood!</h1>
+                    <p class="text-lg text-gray-200 mb-8 max-w-lg font-light">Nikmati hidangan lezat dan minuman segar langsung diantar ke tempat Anda.</p>
+                    <button onclick="document.getElementById('menu-section').scrollIntoView({behavior: 'smooth'})" class="bg-primary hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-full transition-all-ease shadow-lg">
+                        Lihat Menu
                     </button>
                 </div>
             </div>
@@ -108,9 +108,9 @@
                 <!-- Sidebar -->
                 <aside class="md:w-1/4">
                     <div class="sticky top-28">
-                        <h3 class="text-xl font-bold mb-4 hidden md:block">Categories</h3>
+                        <h3 class="text-xl font-bold mb-4 hidden md:block">Kategori</h3>
                         <div class="flex overflow-x-auto hide-scrollbar space-x-3 md:space-x-0 md:flex-col md:space-y-2" id="category-container">
-                            <!-- Categories will be injected here -->
+                            <!-- Categories inject -->
                         </div>
                     </div>
                 </aside>
@@ -125,26 +125,15 @@
                         </div>
                     </div>
 
-                    <!-- Enhanced Error/Loading States -->
                     <div id="loading-state" class="flex flex-col items-center justify-center py-20 text-muted">
                         <i data-lucide="loader-2" class="w-10 h-10 animate-spin mb-4 text-primary"></i>
-                        <p>Memuat menu dari database...</p>
+                        <p>Memuat data...</p>
                     </div>
 
                     <div id="error-state" class="hidden flex flex-col items-center justify-center py-10 px-4 text-center bg-red-50 rounded-2xl border border-red-100">
                         <i data-lucide="alert-triangle" class="w-16 h-16 mb-4 text-primary"></i>
                         <h3 class="text-xl font-bold text-charcoal mb-2">Gagal Memuat Data</h3>
-                        <p id="error-message" class="text-muted max-w-lg mb-4">Error details.</p>
-                        <div class="bg-white p-4 rounded-lg text-left text-sm border border-gray-200 shadow-sm w-full max-w-lg">
-                            <p class="font-bold mb-2">Solusi perbaikan (Penting):</p>
-                            <ol class="list-decimal pl-5 space-y-1 text-gray-600">
-                                <li>Buka Google Apps Script editor.</li>
-                                <li>Klik <b>Deploy</b> > <b>Manage Deployments</b>.</li>
-                                <li>Klik Ikon Pensil (Edit).</li>
-                                <li>Bagian Version WAJIB pilih <b>"New version"</b>.</li>
-                                <li>Klik Deploy lagi.</li>
-                            </ol>
-                        </div>
+                        <p id="error-message" class="text-muted mb-4">Pastikan Apps Script URL sudah benar.</p>
                     </div>
 
                     <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-muted">
@@ -153,18 +142,20 @@
                     </div>
 
                     <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
-                        <!-- Cards -->
+                        <!-- Cards inject -->
                     </div>
                 </div>
             </div>
         </main>
 
-        <!-- Footer -->
+        <!-- Dynamic Footer -->
         <footer class="bg-espresso text-gray-300 mt-12 py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <p class="text-sm text-gray-400 mb-4">Serving fresh, delicious, and affordable meals made with love.</p>
-                <div class="text-xs text-gray-500">
-                    &copy; <span id="year"></span> MyFood. All rights reserved. 
+                <h3 class="text-xl font-bold text-white mb-2" id="footer-brand">MyFood</h3>
+                <p class="text-sm text-gray-400 mb-2" id="footer-address">Alamat belum diatur</p>
+                <p class="text-sm text-gray-400 mb-6"><i data-lucide="phone" class="inline w-4 h-4 mr-1"></i> <span id="footer-phone">-</span></p>
+                <div class="text-xs text-gray-500 border-t border-gray-800 pt-6 mt-4">
+                    &copy; <span id="year"></span> Hak Cipta Dilindungi. 
                 </div>
             </div>
         </footer>
@@ -173,69 +164,148 @@
     <!-- ADMIN DASHBOARD VIEW -->
     <div id="admin-view" class="hidden flex-grow bg-gray-50 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center mb-8">
-                <h1 class="text-3xl font-bold text-charcoal">Admin Dashboard</h1>
-                <div class="flex space-x-2">
-                    <button onclick="switchAdminTab('orders')" id="tab-orders" class="px-5 py-2.5 rounded-lg bg-primary text-white font-medium shadow-sm transition-all-ease">Kelola Pesanan</button>
-                    <button onclick="switchAdminTab('menu')" id="tab-menu" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium transition-all-ease">Kelola Menu</button>
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-charcoal">Admin Panel</h1>
+            </div>
+            
+            <!-- Admin Tabs -->
+            <div class="flex overflow-x-auto space-x-2 hide-scrollbar mb-8 pb-2 border-b border-gray-200">
+                <button onclick="switchAdminTab('dashboard')" id="tab-dashboard" class="px-5 py-2.5 rounded-lg bg-primary text-white font-medium shadow-sm whitespace-nowrap">Dashboard</button>
+                <button onclick="switchAdminTab('orders')" id="tab-orders" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Pesanan</button>
+                <button onclick="switchAdminTab('menu')" id="tab-menu" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Menu</button>
+                <button onclick="switchAdminTab('coupons')" id="tab-coupons" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Kupon Diskon</button>
+                <button onclick="switchAdminTab('settings')" id="tab-settings" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Pengaturan</button>
+            </div>
+
+            <!-- TAB 1: DASHBOARD -->
+            <div id="admin-dashboard-section" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-muted text-sm font-semibold mb-1">Total Omset</span>
+                        <span class="text-2xl font-bold text-primary" id="dash-omset">Rp 0</span>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-muted text-sm font-semibold mb-1">Total Pesanan Selesai</span>
+                        <span class="text-2xl font-bold text-charcoal" id="dash-orders-done">0</span>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-muted text-sm font-semibold mb-1">Pesanan Menunggu</span>
+                        <span class="text-2xl font-bold text-secondary" id="dash-orders-pending">0</span>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-muted text-sm font-semibold mb-1">Menu Aktif</span>
+                        <span class="text-2xl font-bold text-charcoal" id="dash-menu-active">0</span>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center"><i data-lucide="trending-up" class="w-5 h-5 mr-2 text-success"></i> Menu Terlaris</h2>
+                    <ul id="dash-top-sales" class="divide-y divide-gray-100">
+                        <li class="py-3 text-muted text-sm">Memuat data penjualan...</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- Orders Management -->
-            <div id="admin-orders-section" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <!-- TAB 2: ORDERS -->
+            <div id="admin-orders-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold flex items-center"><i data-lucide="clipboard-list" class="w-5 h-5 mr-2 text-primary"></i> Daftar Pesanan (Live)</h2>
+                    <h2 class="text-xl font-bold">Daftar Pesanan (Live)</h2>
                     <button onclick="fetchAdminOrders()" class="text-muted hover:text-primary"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-gray-50 text-gray-500 text-sm border-b border-gray-100">
-                                <th class="p-4 font-semibold rounded-tl-lg">Waktu</th>
+                            <tr class="bg-gray-50 text-gray-500 text-sm border-b">
+                                <th class="p-4 font-semibold">Waktu</th>
                                 <th class="p-4 font-semibold">Pelanggan</th>
-                                <th class="p-4 font-semibold">Detail Pesanan</th>
+                                <th class="p-4 font-semibold">Detail</th>
                                 <th class="p-4 font-semibold">Total</th>
                                 <th class="p-4 font-semibold text-center">Status</th>
-                                <th class="p-4 font-semibold text-right rounded-tr-lg">Aksi</th>
+                                <th class="p-4 font-semibold text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="admin-orders-table" class="divide-y divide-gray-100">
-                            <tr><td colspan="6" class="p-8 text-center text-muted">Memuat pesanan...</td></tr>
-                        </tbody>
+                        <tbody id="admin-orders-table" class="divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Menu Management -->
+            <!-- TAB 3: MENU -->
             <div id="admin-menu-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold flex items-center"><i data-lucide="layout-grid" class="w-5 h-5 mr-2 text-primary"></i> Daftar Menu Makanan</h2>
-                    <button onclick="openMenuForm()" class="bg-success hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-all-ease">
+                    <h2 class="text-xl font-bold">Kelola Menu</h2>
+                    <button onclick="openMenuForm()" class="bg-success hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center">
                         <i data-lucide="plus" class="w-4 h-4 mr-1"></i> Tambah Menu
                     </button>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-gray-50 text-gray-500 text-sm border-b border-gray-100">
-                                <th class="p-4 font-semibold rounded-tl-lg">Gambar</th>
-                                <th class="p-4 font-semibold">Nama Item</th>
+                            <tr class="bg-gray-50 text-gray-500 text-sm border-b">
+                                <th class="p-4 font-semibold">Item</th>
                                 <th class="p-4 font-semibold">Kategori</th>
                                 <th class="p-4 font-semibold">Harga</th>
                                 <th class="p-4 font-semibold text-center">Status</th>
-                                <th class="p-4 font-semibold text-right rounded-tr-lg">Aksi</th>
+                                <th class="p-4 font-semibold text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="admin-menu-table" class="divide-y divide-gray-100">
-                            <!-- Populated via JS -->
-                        </tbody>
+                        <tbody id="admin-menu-table" class="divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
+            </div>
+
+            <!-- TAB 4: COUPONS -->
+            <div id="admin-coupons-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">Kelola Kupon Diskon</h2>
+                    <button onclick="openCouponForm()" class="bg-success hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center">
+                        <i data-lucide="plus" class="w-4 h-4 mr-1"></i> Buat Kupon
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-500 text-sm border-b">
+                                <th class="p-4 font-semibold">Kode Kupon</th>
+                                <th class="p-4 font-semibold">Tipe Diskon</th>
+                                <th class="p-4 font-semibold">Nilai</th>
+                                <th class="p-4 font-semibold text-center">Status</th>
+                                <th class="p-4 font-semibold text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-coupons-table" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 5: SETTINGS -->
+            <div id="admin-settings-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-xl font-bold mb-6">Pengaturan Toko & Integrasi</h2>
+                <form id="admin-settings-form" onsubmit="saveSettings(event)" class="space-y-6 max-w-2xl">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-medium mb-1">Nama Brand Toko</label><input type="text" id="set-brand" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
+                        <div><label class="block text-sm font-medium mb-1">Nomor WhatsApp Toko</label><input type="text" id="set-phone" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
+                        <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">URL Logo Toko (Opsional)</label><input type="url" id="set-logo" placeholder="https://..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary text-sm"></div>
+                        <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">Alamat Lengkap</label><textarea id="set-address" rows="2" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></textarea></div>
+                        
+                        <!-- Pilihan Kategori -->
+                        <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">Kategori Menu Tersedia (Pisahkan dengan koma)</label>
+                            <input type="text" id="set-categories" placeholder="Main Course, Drinks, Snacks" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
+                            <p class="text-xs text-muted mt-1">Ini akan muncul di pilihan dropdown saat tambah menu.</p>
+                        </div>
+
+                        <div class="md:col-span-2 border-t pt-4 mt-2">
+                            <label class="block text-sm font-bold mb-1 text-charcoal">Fonnte API Token (WA Gateway)</label>
+                            <input type="text" id="set-fonnte" placeholder="Kosongkan jika tidak pakai notifikasi WA" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-gray-50">
+                            <p class="text-xs text-muted mt-1">Dapatkan token di <a href="https://fonnte.com" target="_blank" class="text-primary underline">Fonnte.com</a>. Notifikasi struk tagihan akan otomatis dikirim ke WA pelanggan.</p>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-save-settings" class="bg-charcoal hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all">Simpan Pengaturan</button>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- MODALS & OVERLAYS -->
+    <!-- MODALS & CART -->
     <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-[60] hidden transition-opacity opacity-0" onclick="toggleCart()"></div>
     <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white z-[70] transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col">
         <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-cream">
@@ -243,12 +313,25 @@
             <button onclick="toggleCart()" class="text-muted hover:text-charcoal bg-white p-2 rounded-full shadow-sm"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
         <div id="cart-items" class="flex-grow overflow-y-auto p-5 space-y-4"></div>
+        
+        <!-- Kupon Area di Keranjang -->
+        <div class="px-5 py-3 border-t border-gray-100 bg-white">
+            <div class="flex gap-2">
+                <input type="text" id="coupon-input" placeholder="Kode Kupon" class="flex-grow px-3 py-2 border rounded-lg text-sm uppercase outline-none focus:border-primary">
+                <button onclick="applyCoupon()" class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-black">Pakai</button>
+            </div>
+            <p id="coupon-msg" class="text-xs font-bold mt-2 hidden"></p>
+        </div>
+
         <div class="p-5 border-t border-gray-100 bg-gray-50">
-            <div class="flex justify-between text-lg font-bold mb-5"><span>Total</span><span id="cart-total" class="text-primary">Rp 0</span></div>
-            <button id="checkout-btn" onclick="openCheckout()" class="w-full bg-primary hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all-ease shadow-md disabled:opacity-50 disabled:cursor-not-allowed">Checkout</button>
+            <div class="flex justify-between text-sm mb-1 text-muted"><span>Subtotal</span><span id="cart-subtotal">Rp 0</span></div>
+            <div class="flex justify-between text-sm mb-3 text-success hidden" id="cart-discount-row"><span>Diskon</span><span id="cart-discount">-Rp 0</span></div>
+            <div class="flex justify-between text-lg font-bold mb-5"><span>Total Akhir</span><span id="cart-total" class="text-primary">Rp 0</span></div>
+            <button id="checkout-btn" onclick="openCheckout()" class="w-full bg-primary hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed">Checkout</button>
         </div>
     </div>
 
+    <!-- Checkout Form -->
     <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[80] hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="checkout-content">
             <div class="p-5 bg-primary text-white flex justify-between items-center">
@@ -257,61 +340,68 @@
             </div>
             <form id="checkout-form" class="p-6 space-y-4" onsubmit="submitOrder(event)">
                 <div><label class="block text-sm font-medium mb-1">Nama Lengkap</label><input type="text" id="cust-name" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none"></div>
-                <div><label class="block text-sm font-medium mb-1">Nomor WhatsApp</label><input type="tel" id="cust-wa" required placeholder="08..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none"></div>
+                <div><label class="block text-sm font-medium mb-1">Nomor WhatsApp (Aktif)</label><input type="tel" id="cust-wa" required placeholder="08..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none"></div>
                 <div><label class="block text-sm font-medium mb-1">Alamat / Catatan</label><textarea id="cust-address" required rows="2" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none resize-none"></textarea></div>
                 <div><label class="block text-sm font-medium mb-1">Metode Pembayaran</label>
                     <select id="cust-payment" class="w-full px-4 py-2 border rounded-lg outline-none bg-white focus:ring-2 focus:ring-primary">
                         <option>GoPay</option><option>OVO</option><option>Bank Transfer</option><option>Cash</option>
                     </select>
                 </div>
-                <div class="pt-4"><button type="submit" id="submit-order-btn" class="w-full bg-success text-white font-bold py-3 rounded-xl shadow-md transition-all hover:bg-green-700">Pesan Sekarang</button></div>
+                <div class="pt-4 text-xs text-gray-500 mb-2">*Struk pesanan akan dikirim ke WhatsApp Anda.</div>
+                <button type="submit" id="submit-order-btn" class="w-full bg-success text-white font-bold py-3 rounded-xl shadow-md transition-all hover:bg-green-700">Pesan Sekarang</button>
             </form>
         </div>
     </div>
 
+    <!-- Modals (Login, Menu, Coupon) -->
     <div id="admin-login-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[90] hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 transform scale-95 opacity-0 transition-all duration-300" id="admin-login-content">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-charcoal">Login Admin</h2>
-                <button onclick="closeAdminLogin()" class="text-muted"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 transform scale-95 opacity-0 transition-all">
+            <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">Login Admin</h2><button onclick="closeModal('admin-login-modal')" class="text-muted"><i data-lucide="x" class="w-5 h-5"></i></button></div>
             <form onsubmit="processAdminLogin(event)" class="space-y-4">
-                <p class="text-sm text-muted">Masukkan PIN untuk mengakses panel admin (Default: 1234)</p>
-                <input type="password" id="admin-pin" placeholder="••••" required class="w-full px-4 py-3 text-center tracking-widest text-xl border rounded-lg focus:ring-2 focus:ring-primary outline-none">
-                <button type="submit" class="w-full bg-charcoal hover:bg-gray-800 transition-all text-white font-bold py-3 rounded-xl shadow-md">Login</button>
+                <input type="password" id="admin-pin" placeholder="••••" required class="w-full px-4 py-3 text-center tracking-widest text-xl border rounded-lg outline-none">
+                <button type="submit" class="w-full bg-charcoal text-white font-bold py-3 rounded-xl">Login</button>
             </form>
         </div>
     </div>
 
     <div id="menu-form-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[90] hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="p-5 bg-charcoal text-white flex justify-between items-center">
-                <h2 class="text-xl font-bold" id="menu-form-title">Tambah Menu Baru</h2>
-                <button onclick="closeMenuForm()" class="text-white hover:text-gray-300"><i data-lucide="x" class="w-6 h-6"></i></button>
-            </div>
+            <div class="p-5 bg-charcoal text-white flex justify-between items-center"><h2 class="text-xl font-bold" id="menu-form-title">Tambah Menu</h2><button onclick="closeModal('menu-form-modal')" class="text-white"><i data-lucide="x" class="w-6 h-6"></i></button></div>
             <div class="p-6 overflow-y-auto">
                 <form id="admin-menu-form" onsubmit="saveAdminMenu(event)" class="space-y-4">
                     <input type="hidden" id="form-menu-id">
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="col-span-2"><label class="block text-sm font-medium mb-1">Nama Menu *</label><input type="text" id="form-menu-name" required class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
-                        <div><label class="block text-sm font-medium mb-1">Kategori *</label><input type="text" id="form-menu-category" placeholder="Contoh: Main Course" required list="cat-suggestions" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
-                             <datalist id="cat-suggestions"><option value="Main Course"><option value="Drinks"><option value="Snacks"><option value="Deals"></datalist>
+                        <div class="col-span-2"><label class="block text-sm font-medium mb-1">Nama Menu *</label><input type="text" id="form-menu-name" required class="w-full px-3 py-2 border rounded-lg outline-none"></div>
+                        <div><label class="block text-sm font-medium mb-1">Kategori *</label>
+                             <select id="form-menu-category" class="w-full px-3 py-2 border rounded-lg outline-none bg-white">
+                                <!-- Injected from settings -->
+                             </select>
                         </div>
-                        <div><label class="block text-sm font-medium mb-1">Harga (Rp) *</label><input type="number" id="form-menu-price" required class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
-                        <div class="col-span-2"><label class="block text-sm font-medium mb-1">Link Gambar URL *</label><input type="url" id="form-menu-img" required placeholder="https://..." class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary text-sm"></div>
-                        <div class="col-span-2"><label class="block text-sm font-medium mb-1">Deskripsi Singkat</label><textarea id="form-menu-desc" rows="2" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary resize-none"></textarea></div>
-                        <div><label class="block text-sm font-medium mb-1">Badge Promo (Opsional)</label><input type="text" id="form-menu-badge" placeholder="New / Promo / Diskon" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
-                        <div><label class="block text-sm font-medium mb-1">Status Penjualan</label>
-                            <select id="form-menu-active" class="w-full px-3 py-2 border rounded-lg outline-none bg-white focus:ring-2 focus:ring-primary">
-                                <option value="true">Tersedia (Aktif)</option>
-                                <option value="false">Sold Out (Nonaktif)</option>
-                            </select>
-                        </div>
+                        <div><label class="block text-sm font-medium mb-1">Harga (Rp) *</label><input type="number" id="form-menu-price" required class="w-full px-3 py-2 border rounded-lg outline-none"></div>
+                        <div class="col-span-2"><label class="block text-sm font-medium mb-1">Link Gambar URL *</label><input type="url" id="form-menu-img" required class="w-full px-3 py-2 border rounded-lg outline-none text-sm"></div>
+                        <div class="col-span-2"><label class="block text-sm font-medium mb-1">Deskripsi Singkat</label><textarea id="form-menu-desc" rows="2" class="w-full px-3 py-2 border rounded-lg outline-none resize-none"></textarea></div>
+                        <div><label class="block text-sm font-medium mb-1">Badge Promo</label><input type="text" id="form-menu-badge" placeholder="New / Promo" class="w-full px-3 py-2 border rounded-lg outline-none"></div>
+                        <div><label class="block text-sm font-medium mb-1">Status</label><select id="form-menu-active" class="w-full px-3 py-2 border rounded-lg outline-none bg-white"><option value="true">Aktif</option><option value="false">Sold Out</option></select></div>
                     </div>
-                    <div class="pt-4 border-t border-gray-100 mt-4 flex justify-end space-x-3">
-                        <button type="button" onclick="closeMenuForm()" class="px-4 py-2 text-charcoal hover:bg-gray-100 rounded-lg transition-all">Batal</button>
-                        <button type="submit" id="btn-save-menu" class="px-4 py-2 bg-primary hover:bg-red-700 text-white font-bold rounded-lg flex items-center transition-all">Simpan Data</button>
+                    <div class="pt-4 border-t mt-4 flex justify-end space-x-3"><button type="button" onclick="closeModal('menu-form-modal')" class="px-4 py-2 text-charcoal hover:bg-gray-100 rounded-lg">Batal</button><button type="submit" id="btn-save-menu" class="px-4 py-2 bg-primary text-white font-bold rounded-lg">Simpan</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coupon Form Modal -->
+    <div id="coupon-form-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[90] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col">
+            <div class="p-5 bg-charcoal text-white flex justify-between items-center"><h2 class="text-xl font-bold" id="coupon-form-title">Buat Kupon</h2><button onclick="closeModal('coupon-form-modal')" class="text-white"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+            <div class="p-6">
+                <form id="admin-coupon-form" onsubmit="saveAdminCoupon(event)" class="space-y-4">
+                    <input type="hidden" id="form-coupon-id">
+                    <div><label class="block text-sm font-medium mb-1">Kode Kupon * (Tanpa spasi)</label><input type="text" id="form-coupon-code" required class="w-full px-3 py-2 border rounded-lg uppercase outline-none"></div>
+                    <div><label class="block text-sm font-medium mb-1">Nilai Potongan *</label><input type="number" id="form-coupon-val" required class="w-full px-3 py-2 border rounded-lg outline-none">
+                         <p class="text-xs text-muted mt-1">Isi <b>1-100</b> untuk Persen (%). Isi <b>>100</b> untuk nominal Rp.</p>
                     </div>
+                    <div><label class="block text-sm font-medium mb-1">Status Kupon</label><select id="form-coupon-active" class="w-full px-3 py-2 border rounded-lg bg-white outline-none"><option value="true">Aktif</option><option value="false">Nonaktif</option></select></div>
+                    <div class="pt-4 border-t flex justify-end space-x-3"><button type="button" onclick="closeModal('coupon-form-modal')" class="px-4 py-2 text-charcoal hover:bg-gray-100 rounded-lg">Batal</button><button type="submit" id="btn-save-coupon" class="px-4 py-2 bg-primary text-white font-bold rounded-lg">Simpan</button></div>
                 </form>
             </div>
         </div>
@@ -332,56 +422,47 @@
         
         // --- 2. STATE ---
         let allMenuItems = [];
-        let allOrders = []; // Admin only
+        let allOrders = []; 
+        let allCoupons = [];
+        let globalSettings = {};
+        
         let cart = [];
+        let appliedCoupon = null; // { code, val, discountAmt }
         let currentCategory = 'All';
         let searchQuery = '';
         let isAdminMode = false;
         
-        // Secret Admin trigger state
-        let secretClickCount = 0;
-        let secretClickTimer;
-        let requiredAdminClicks = 7; // Akan diupdate dari Google Sheets jika ada
+        let secretClickCount = 0; let secretClickTimer;
+        let requiredAdminClicks = 7;
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             document.getElementById('year').innerText = new Date().getFullYear();
-            
-            document.getElementById('search-input').addEventListener('input', (e) => {
-                searchQuery = e.target.value.toLowerCase();
-                renderMenuCards();
-            });
-
-            // Check if previously logged in as admin via sessionStorage
-            if(sessionStorage.getItem('myfood_admin') === 'true') {
-                isAdminMode = true;
-            }
-            fetchCustomerData();
+            document.getElementById('search-input').addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); renderMenuCards(); });
+            if(sessionStorage.getItem('myfood_admin') === 'true') isAdminMode = true;
+            fetchInitData(); // Fetch Menu, Config, Coupons
         });
 
-        // --- 3. CORE API CALLS ---
-        
-        function fetchCustomerData() {
+        // --- 3. API CALLS ---
+        function fetchInitData() {
             document.getElementById('loading-state').classList.remove('hidden');
             document.getElementById('menu-grid').classList.add('hidden');
             
-            // Ambil data Config (Berapa kali klik dari sheets)
-            fetch(`${APPS_SCRIPT_URL}?action=getConfig`)
+            fetch(`${APPS_SCRIPT_URL}?action=getInitData`)
                 .then(res => res.json())
                 .then(data => {
-                    if (data.adminClicks) requiredAdminClicks = data.adminClicks;
-                }).catch(e => console.log("Gagal memuat setting admin", e));
-
-            fetch(`${APPS_SCRIPT_URL}?action=getMenu`)
-                .then(res => res.json())
-                .then(data => {
-                    allMenuItems = data;
+                    allMenuItems = data.menu;
+                    globalSettings = data.settings;
+                    allCoupons = data.coupons;
+                    
+                    applyGlobalSettings();
+                    
                     document.getElementById('loading-state').classList.add('hidden');
                     document.getElementById('menu-grid').classList.remove('hidden');
                     extractAndRenderCategories();
                     renderMenuCards();
                     
-                    if(isAdminMode) activateAdminUI(); // Auto load admin if session exists
+                    if(isAdminMode) activateAdminUI();
                 })
                 .catch(err => {
                     document.getElementById('loading-state').classList.add('hidden');
@@ -390,10 +471,36 @@
                 });
         }
 
+        function applyGlobalSettings() {
+            const bName = globalSettings.BrandName || 'MyFood';
+            document.getElementById('nav-brand-name').innerHTML = `<span class="text-charcoal">${bName.split(' ')[0]||'My'}</span><span class="text-primary">${bName.split(' ').slice(1).join(' ')||'Food'}</span>`;
+            document.getElementById('hero-title').innerText = `Welcome to ${bName}!`;
+            document.getElementById('footer-brand').innerText = bName;
+            
+            if(globalSettings.LogoURL) {
+                document.getElementById('nav-brand-icon').classList.add('hidden');
+                document.getElementById('nav-brand-logo').classList.remove('hidden');
+                document.getElementById('nav-brand-logo').src = globalSettings.LogoURL;
+            }
+            
+            document.getElementById('footer-address').innerText = globalSettings.Address || 'Alamat belum diatur';
+            document.getElementById('footer-phone').innerText = globalSettings.Phone || '-';
+            if(globalSettings.AdminClicks) requiredAdminClicks = parseInt(globalSettings.AdminClicks);
+
+            // Set Admin Form Categories
+            const catStr = globalSettings.Categories || 'Main Course, Drinks, Snacks';
+            const catArr = catStr.split(',').map(s=>s.trim());
+            const catSelect = document.getElementById('form-menu-category');
+            catSelect.innerHTML = catArr.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+
         function submitOrder(e) {
             e.preventDefault();
             const btn = document.getElementById('submit-order-btn');
             btn.disabled = true; btn.innerHTML = 'Memproses...';
+
+            let rawTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            let finalTotal = rawTotal - (appliedCoupon ? appliedCoupon.discountAmt : 0);
 
             const orderData = {
                 action: 'submitOrder',
@@ -402,42 +509,31 @@
                 address: document.getElementById('cust-address').value,
                 paymentMethod: document.getElementById('cust-payment').value,
                 items: cart.map(i => ({id: i.id, name: i.name, qty: i.qty, price: i.price})),
-                total: cart.reduce((s, i) => s + (i.price * i.qty), 0)
+                total: finalTotal,
+                coupon: appliedCoupon ? appliedCoupon.code : ''
             };
 
             fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(orderData) })
                 .then(res => res.json())
                 .then(data => {
                     closeCheckout();
-                    showToast("Berhasil! Pesanan sedang diproses.");
-                    cart = []; updateCartCounter();
+                    showToast("Berhasil! Struk pesanan telah dikirim ke WA Anda.");
+                    cart = []; appliedCoupon = null; updateCartCounter();
                     document.getElementById('checkout-form').reset();
+                    document.getElementById('coupon-input').value = '';
+                    document.getElementById('coupon-msg').classList.add('hidden');
                     btn.disabled = false; btn.innerHTML = 'Pesan Sekarang';
                 }).catch(err => { showToast("Gagal memproses pesanan."); btn.disabled = false; btn.innerHTML = 'Coba Lagi'; });
         }
 
         // --- 4. CUSTOMER UI FUNCTIONS ---
-        
         const formatIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n);
 
-        function goHome() {
-            document.getElementById('admin-view').classList.add('hidden');
-            document.getElementById('customer-view').classList.remove('hidden');
-            resetFilters();
-        }
-
-        function resetFilters() {
-            currentCategory = 'All'; searchQuery = '';
-            document.getElementById('search-input').value = '';
-            document.getElementById('current-category-title').innerText = 'All Menu';
-            extractAndRenderCategories();
-            renderMenuCards();
-        }
-        
+        function goHome() { document.getElementById('admin-view').classList.add('hidden'); document.getElementById('customer-view').classList.remove('hidden'); resetFilters(); }
+        function resetFilters() { currentCategory = 'All'; searchQuery = ''; document.getElementById('search-input').value = ''; document.getElementById('current-category-title').innerText = 'All Menu'; extractAndRenderCategories(); renderMenuCards(); }
         function focusSearch() { goHome(); document.getElementById('search-input').focus(); document.getElementById('menu-section').scrollIntoView(); }
 
         function extractAndRenderCategories() {
-            // Only show ACTIVE items in customer view
             const activeItems = allMenuItems.filter(i => i.active === true || i.active === "TRUE");
             const categories = ['All', ...new Set(activeItems.map(item => item.category))];
             const container = document.getElementById('category-container');
@@ -452,16 +548,9 @@
         function setCategory(cat) { currentCategory = cat; document.getElementById('current-category-title').innerText = cat; extractAndRenderCategories(); renderMenuCards(); }
 
         function renderMenuCards() {
-            const grid = document.getElementById('menu-grid');
-            const empty = document.getElementById('empty-state');
-            
-            // Only show active to customers
+            const grid = document.getElementById('menu-grid'); const empty = document.getElementById('empty-state');
             let filtered = allMenuItems.filter(i => (i.active === true || i.active === "TRUE"));
-            filtered = filtered.filter(item => {
-                const mCat = currentCategory === 'All' || item.category === currentCategory;
-                const mSearch = item.name.toLowerCase().includes(searchQuery) || (item.description || "").toLowerCase().includes(searchQuery);
-                return mCat && mSearch;
-            });
+            filtered = filtered.filter(item => { return (currentCategory === 'All' || item.category === currentCategory) && (item.name.toLowerCase().includes(searchQuery) || (item.description || "").toLowerCase().includes(searchQuery)); });
 
             if (filtered.length === 0) { grid.classList.add('hidden'); empty.classList.remove('hidden'); empty.classList.add('flex'); } 
             else { empty.classList.add('hidden'); empty.classList.remove('flex'); grid.classList.remove('hidden'); }
@@ -484,7 +573,7 @@
             lucide.createIcons();
         }
 
-        // --- 5. CART ---
+        // --- 5. CART & COUPON ---
         function toggleCart() {
             const dr = document.getElementById('cart-drawer'); const ov = document.getElementById('cart-overlay');
             if (dr.classList.contains('translate-x-full')) { ov.classList.remove('hidden'); setTimeout(()=>ov.classList.remove('opacity-0'),10); dr.classList.remove('translate-x-full'); renderCart(); } 
@@ -492,8 +581,7 @@
         }
 
         function addToCart(id) {
-            const item = allMenuItems.find(i => i.id === id);
-            const ex = cart.find(i => i.id === id);
+            const item = allMenuItems.find(i => i.id === id); const ex = cart.find(i => i.id === id);
             if (ex) ex.qty += 1; else cart.push({ ...item, qty: 1 });
             updateCartCounter(); showToast(`Ditambahkan ke keranjang!`); renderCart();
         }
@@ -501,220 +589,198 @@
         function changeQty(id, d) {
             const idx = cart.findIndex(i => i.id === id);
             if (idx > -1) { cart[idx].qty += d; if (cart[idx].qty <= 0) cart.splice(idx, 1); }
+            calculateDiscount(); // recalculate if coupon applied
             updateCartCounter(); renderCart();
         }
 
         function updateCartCounter() {
-            const cnt = document.getElementById('cart-counter');
-            const tot = cart.reduce((s, i) => s + i.qty, 0);
+            const cnt = document.getElementById('cart-counter'); const tot = cart.reduce((s, i) => s + i.qty, 0);
             if (tot > 0) { cnt.innerText = tot; cnt.classList.remove('hidden'); } else cnt.classList.add('hidden');
             document.getElementById('checkout-btn').disabled = tot === 0;
+            if(tot === 0) { appliedCoupon = null; document.getElementById('coupon-input').value = ''; document.getElementById('coupon-msg').classList.add('hidden'); }
+        }
+
+        function applyCoupon() {
+            const code = document.getElementById('coupon-input').value.trim().toUpperCase();
+            const msg = document.getElementById('coupon-msg');
+            msg.classList.remove('hidden');
+            
+            if(cart.length === 0) { msg.innerText = "Keranjang kosong"; msg.className = "text-xs font-bold mt-2 text-red-500 block"; return; }
+            if(!code) { appliedCoupon = null; msg.classList.add('hidden'); calculateDiscount(); renderCart(); return; }
+
+            const validCoupon = allCoupons.find(c => c.code.toUpperCase() === code && (c.active===true||c.active==="TRUE"));
+            if(validCoupon) {
+                msg.innerText = `Kupon berhasil dipakai!`; msg.className = "text-xs font-bold mt-2 text-success block";
+                appliedCoupon = { code: validCoupon.code, val: parseFloat(validCoupon.discount) };
+            } else {
+                appliedCoupon = null;
+                msg.innerText = `Kupon tidak valid atau kadaluarsa.`; msg.className = "text-xs font-bold mt-2 text-red-500 block";
+            }
+            calculateDiscount(); renderCart();
+        }
+
+        function calculateDiscount() {
+            if(!appliedCoupon || cart.length === 0) { appliedCoupon = null; return; }
+            let rawTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            if(appliedCoupon.val <= 100) { // Percentage
+                appliedCoupon.discountAmt = rawTotal * (appliedCoupon.val / 100);
+            } else { // Nominal
+                appliedCoupon.discountAmt = appliedCoupon.val;
+            }
+            if(appliedCoupon.discountAmt > rawTotal) appliedCoupon.discountAmt = rawTotal;
         }
 
         function renderCart() {
             const cont = document.getElementById('cart-items');
-            if (cart.length === 0) { cont.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-muted"><p>Keranjang kosong.</p></div>`; document.getElementById('cart-total').innerText = 'Rp 0'; return; }
-            let t = 0;
+            if (cart.length === 0) { cont.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-muted"><p>Keranjang kosong.</p></div>`; document.getElementById('cart-total').innerText = 'Rp 0'; document.getElementById('cart-subtotal').innerText='Rp 0'; document.getElementById('cart-discount-row').classList.add('hidden'); return; }
+            
+            let rawTotal = 0;
             cont.innerHTML = cart.map(i => {
-                t += i.price * i.qty;
+                rawTotal += i.price * i.qty;
                 return `<div class="flex items-center gap-4 bg-white p-3 rounded-xl border"><img src="${i.image}" class="w-16 h-16 object-cover rounded-lg"><div class="flex-grow"><h4 class="font-bold text-sm leading-tight mb-1">${i.name}</h4><div class="text-primary font-semibold text-sm">${formatIDR(i.price)}</div></div>
                         <div class="flex items-center bg-gray-50 rounded-lg border overflow-hidden"><button onclick="changeQty('${i.id}', -1)" class="px-2 py-1 hover:bg-gray-200 transition-colors">-</button><span class="text-xs font-bold w-5 text-center">${i.qty}</span><button onclick="changeQty('${i.id}', 1)" class="px-2 py-1 hover:bg-gray-200 transition-colors">+</button></div></div>`;
             }).join('');
-            document.getElementById('cart-total').innerText = formatIDR(t);
+            
+            document.getElementById('cart-subtotal').innerText = formatIDR(rawTotal);
+            if(appliedCoupon) {
+                document.getElementById('cart-discount-row').classList.remove('hidden');
+                document.getElementById('cart-discount').innerText = `-${formatIDR(appliedCoupon.discountAmt)}`;
+                document.getElementById('cart-total').innerText = formatIDR(rawTotal - appliedCoupon.discountAmt);
+            } else {
+                document.getElementById('cart-discount-row').classList.add('hidden');
+                document.getElementById('cart-total').innerText = formatIDR(rawTotal);
+            }
         }
 
         function openCheckout() { if(cart.length>0) { toggleCart(); document.getElementById('checkout-modal').classList.remove('hidden'); document.getElementById('checkout-modal').classList.add('flex'); setTimeout(()=>{document.getElementById('checkout-content').classList.remove('scale-95','opacity-0');},10); } }
-        function closeCheckout() { document.getElementById('checkout-content').classList.add('scale-95','opacity-0'); setTimeout(()=>{document.getElementById('checkout-modal').classList.add('hidden'); document.getElementById('checkout-modal').classList.remove('flex');},300); }
+        function closeModal(id) { document.getElementById(id).children[0].classList.add('scale-95','opacity-0'); setTimeout(()=>{document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex');},300); }
+        function closeCheckout() { closeModal('checkout-modal'); }
         function showToast(m) { const t = document.getElementById('toast'); document.getElementById('toast-message').innerText = m; t.classList.remove('translate-y-20','opacity-0'); setTimeout(()=>t.classList.add('translate-y-20','opacity-0'),3000); }
 
         // --- 6. ADMIN DASHBOARD LOGIC ---
-        
         function handleSecretClick() {
-            secretClickCount++;
-            clearTimeout(secretClickTimer);
-            
-            if (secretClickCount >= requiredAdminClicks) {
-                secretClickCount = 0; // Reset counter
-                openAdminLogin();
-            } else {
-                secretClickTimer = setTimeout(() => {
-                    secretClickCount = 0;
-                }, 2000);
-            }
+            secretClickCount++; clearTimeout(secretClickTimer);
+            if (secretClickCount >= requiredAdminClicks) { secretClickCount = 0; openAdminLogin(); } 
+            else { secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 2000); }
         }
 
         function openAdminLogin() { 
             if(isAdminMode) { activateAdminUI(); return; }
-            const m = document.getElementById('admin-login-modal'); m.classList.remove('hidden'); m.classList.add('flex'); setTimeout(()=>{document.getElementById('admin-login-content').classList.remove('scale-95','opacity-0');},10); 
-            // Update UI teks hint
-            document.querySelector('#admin-login-content p').innerText = `Masukkan PIN untuk mengakses panel admin`;
+            document.getElementById('admin-login-modal').classList.remove('hidden'); document.getElementById('admin-login-modal').classList.add('flex'); setTimeout(()=>{document.getElementById('admin-login-modal').children[0].classList.remove('scale-95','opacity-0');},10); 
         }
-        function closeAdminLogin() { document.getElementById('admin-login-content').classList.add('scale-95','opacity-0'); setTimeout(()=>{document.getElementById('admin-login-modal').classList.add('hidden'); document.getElementById('admin-login-modal').classList.remove('flex');},300); }
         
         function processAdminLogin(e) {
-            e.preventDefault();
-            const pinInput = document.getElementById('admin-pin');
-            const pin = pinInput.value;
-            const btn = e.target.querySelector('button[type="submit"]');
+            e.preventDefault(); const pinInput = document.getElementById('admin-pin'); const pin = pinInput.value; const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i>`; btn.disabled = true; lucide.createIcons();
 
-            // UI Loading state
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i>`;
-            btn.disabled = true;
-            lucide.createIcons();
-
-            // Secure POST verification ke backend
-            const payload = { action: 'verifyPin', pin: pin };
-
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'verifyPin', pin: pin }) })
                 .then(res => res.json())
                 .then(data => {
-                    if(data.success) {
-                        sessionStorage.setItem('myfood_admin', 'true');
-                        isAdminMode = true;
-                        closeAdminLogin();
-                        showToast("Login Admin Berhasil");
-                        activateAdminUI();
-                    } else {
-                        showToast(data.error || "PIN Salah!");
-                        pinInput.value = '';
-                    }
+                    if(data.success) { sessionStorage.setItem('myfood_admin', 'true'); isAdminMode = true; closeModal('admin-login-modal'); showToast("Login Admin Berhasil"); activateAdminUI(); } 
+                    else { showToast(data.error || "PIN Salah!"); pinInput.value = ''; }
                     btn.innerHTML = 'Login'; btn.disabled = false;
-                }).catch(err => {
-                    showToast("Terjadi kesalahan jaringan.");
-                    btn.innerHTML = 'Login'; btn.disabled = false;
-                });
+                }).catch(err => { showToast("Terjadi kesalahan jaringan."); btn.innerHTML = 'Login'; btn.disabled = false; });
         }
 
-        function logoutAdmin() {
-            sessionStorage.removeItem('myfood_admin');
-            isAdminMode = false;
-            document.getElementById('nav-links').classList.remove('hidden');
-            document.getElementById('nav-icons').classList.remove('hidden');
-            document.getElementById('nav-admin-logout').classList.add('hidden');
-            document.getElementById('nav-admin-logout').classList.remove('flex');
-            goHome();
-            showToast("Logout berhasil.");
-        }
+        function logoutAdmin() { sessionStorage.removeItem('myfood_admin'); isAdminMode = false; document.getElementById('nav-links').classList.remove('hidden'); document.getElementById('nav-icons').classList.remove('hidden'); document.getElementById('nav-admin-logout').classList.add('hidden'); document.getElementById('nav-admin-logout').classList.remove('flex'); goHome(); showToast("Logout berhasil."); }
 
         function activateAdminUI() {
-            // Hide customer view, show admin view
-            document.getElementById('customer-view').classList.add('hidden');
-            document.getElementById('admin-view').classList.remove('hidden');
-            document.getElementById('admin-view').classList.add('flex');
-            
-            // Swap Nav logic
-            document.getElementById('nav-links').classList.add('hidden');
-            document.getElementById('nav-icons').classList.add('hidden');
-            document.getElementById('nav-admin-logout').classList.remove('hidden');
-            document.getElementById('nav-admin-logout').classList.add('flex');
-
-            switchAdminTab('orders'); // Load orders by default
-            
-            // To be safe, fetch latest menu without filtering 'active' only
-            fetchAdminMenu();
+            document.getElementById('customer-view').classList.add('hidden'); document.getElementById('admin-view').classList.remove('hidden'); document.getElementById('admin-view').classList.add('flex');
+            document.getElementById('nav-links').classList.add('hidden'); document.getElementById('nav-icons').classList.add('hidden'); document.getElementById('nav-admin-logout').classList.remove('hidden'); document.getElementById('nav-admin-logout').classList.add('flex');
+            switchAdminTab('dashboard'); 
+            fetchAdminMenu(); // Ensure full menu loaded
+            fetchAdminOrders(); // Load orders & calculate dashboard
         }
 
         function switchAdminTab(tab) {
-            document.getElementById('admin-orders-section').classList.add('hidden');
-            document.getElementById('admin-menu-section').classList.add('hidden');
-            document.getElementById('tab-orders').className = "px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium transition-all-ease";
-            document.getElementById('tab-menu').className = "px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium transition-all-ease";
+            ['dashboard','orders','menu','coupons','settings'].forEach(t => {
+                document.getElementById(`admin-${t}-section`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = "px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap transition-all-ease";
+            });
+            document.getElementById(`admin-${tab}-section`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).className = "px-5 py-2.5 rounded-lg bg-primary text-white font-medium shadow-sm whitespace-nowrap transition-all-ease";
             
-            if(tab === 'orders') {
-                document.getElementById('admin-orders-section').classList.remove('hidden');
-                document.getElementById('tab-orders').className = "px-5 py-2.5 rounded-lg bg-primary text-white font-medium shadow-sm transition-all-ease";
-                fetchAdminOrders();
-            } else {
-                document.getElementById('admin-menu-section').classList.remove('hidden');
-                document.getElementById('tab-menu').className = "px-5 py-2.5 rounded-lg bg-primary text-white font-medium shadow-sm transition-all-ease";
-                renderAdminMenuTable();
-            }
+            if(tab === 'orders' || tab === 'dashboard') fetchAdminOrders();
+            if(tab === 'menu') renderAdminMenuTable();
+            if(tab === 'coupons') renderAdminCouponsTable();
+            if(tab === 'settings') populateSettingsForm();
         }
 
-        // ADMIN: ORDERS
-        function fetchAdminOrders() {
-            document.getElementById('admin-orders-table').innerHTML = `<tr><td colspan="6" class="p-8 text-center"><i data-lucide="loader" class="w-6 h-6 animate-spin mx-auto text-primary"></i></td></tr>`;
-            lucide.createIcons();
+        // --- DASHBOARD CALCULATION ---
+        function calculateDashboard() {
+            let omset = 0; let doneCount = 0; let pendingCount = 0;
+            let itemCounts = {};
+
+            allOrders.forEach(o => {
+                if(o.status === 'Selesai') { omset += parseFloat(o.total); doneCount++; }
+                else { pendingCount++; }
+                
+                // Top sales (from completed orders only for accuracy)
+                if(o.status === 'Selesai') {
+                    try {
+                        let items = JSON.parse(o.items);
+                        items.forEach(i => { itemCounts[i.name] = (itemCounts[i.name] || 0) + i.qty; });
+                    } catch(e){}
+                }
+            });
+
+            document.getElementById('dash-omset').innerText = formatIDR(omset);
+            document.getElementById('dash-orders-done').innerText = doneCount;
+            document.getElementById('dash-orders-pending').innerText = pendingCount;
             
+            const activeMenuCount = allMenuItems.filter(i=> i.active===true || i.active==="TRUE").length;
+            document.getElementById('dash-menu-active').innerText = activeMenuCount;
+
+            // Sort Top Sales
+            let sortedItems = Object.keys(itemCounts).map(k => ({name: k, qty: itemCounts[k]})).sort((a,b)=> b.qty - a.qty).slice(0,5);
+            let topHtml = sortedItems.length ? sortedItems.map(i => `<li class="py-3 flex justify-between items-center text-sm"><span class="font-medium text-charcoal">${i.name}</span><span class="bg-gray-100 text-charcoal px-2 py-1 rounded font-bold">${i.qty} Terjual</span></li>`).join('') : '<li class="py-3 text-muted text-sm">Belum ada penjualan.</li>';
+            document.getElementById('dash-top-sales').innerHTML = topHtml;
+        }
+
+        // --- ADMIN ORDERS ---
+        function fetchAdminOrders() {
             fetch(`${APPS_SCRIPT_URL}?action=getOrders`)
                 .then(res => res.json())
-                .then(data => {
-                    allOrders = data;
-                    renderAdminOrdersTable();
-                })
-                .catch(err => {
-                    document.getElementById('admin-orders-table').innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-500">Gagal mengambil data pesanan.</td></tr>`;
-                });
+                .then(data => { allOrders = data; renderAdminOrdersTable(); calculateDashboard(); })
+                .catch(err => { console.error(err); });
         }
 
         function renderAdminOrdersTable() {
             const tbody = document.getElementById('admin-orders-table');
-            if(allOrders.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-muted">Belum ada pesanan masuk.</td></tr>`;
-                return;
-            }
-
-            // Sort newest first
+            if(allOrders.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-muted">Belum ada pesanan masuk.</td></tr>`; return; }
             const sorted = [...allOrders].reverse();
-
             tbody.innerHTML = sorted.map(order => {
                 const isPending = order.status === 'Pending';
-                const statusBadge = isPending ? `<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-bold uppercase">Pending</span>` : 
-                                              `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold uppercase">Selesai</span>`;
-                
-                // Format Items
-                let itemsList = "N/A";
-                try {
-                    const parsed = JSON.parse(order.items);
-                    itemsList = parsed.map(i => `${i.qty}x ${i.name}`).join('<br>');
-                } catch(e) {}
-
-                const rowId = order.rowNumber; // From backend
-
+                const statusBadge = isPending ? `<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-bold uppercase">Pending</span>` : `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold uppercase">Selesai</span>`;
+                let itemsList = "N/A"; try { itemsList = JSON.parse(order.items).map(i => `${i.qty}x ${i.name}`).join('<br>'); } catch(e) {}
+                let cp = order.coupon ? `<br><span class="text-xs text-primary font-bold">Kupon: ${order.coupon}</span>` : '';
                 return `
                     <tr class="hover:bg-gray-50 transition">
                         <td class="p-4 text-sm text-gray-500">${new Date(order.timestamp).toLocaleString('id-ID', {hour:'2-digit', minute:'2-digit', day:'numeric', month:'short'})}</td>
                         <td class="p-4 text-sm font-medium text-charcoal">${order.customerName}<br><span class="text-xs text-muted font-normal">${order.whatsapp}</span></td>
-                        <td class="p-4 text-xs text-gray-600">${itemsList}</td>
+                        <td class="p-4 text-xs text-gray-600">${itemsList}${cp}</td>
                         <td class="p-4 text-sm font-bold text-charcoal">${formatIDR(order.total)}</td>
                         <td class="p-4 text-center">${statusBadge}</td>
-                        <td class="p-4 text-right">
-                            ${isPending ? `<button onclick="markOrderDone(${rowId})" class="bg-success text-white px-3 py-1.5 rounded text-xs font-bold shadow hover:bg-green-700 transition-colors">Set Selesai</button>` : 
-                                          `<span class="text-xs text-gray-400"><i data-lucide="check" class="w-4 h-4 inline"></i> Done</span>`}
-                        </td>
-                    </tr>
-                `;
+                        <td class="p-4 text-right">${isPending ? `<button onclick="markOrderDone(${order.rowNumber})" class="bg-success text-white px-3 py-1.5 rounded text-xs font-bold shadow hover:bg-green-700 transition-colors">Set Selesai</button>` : `<span class="text-xs text-gray-400"><i data-lucide="check" class="w-4 h-4 inline"></i> Done</span>`}</td>
+                    </tr>`;
             }).join('');
             lucide.createIcons();
         }
 
         function markOrderDone(rowNumber) {
             showToast("Memproses update...");
-            const payload = { action: 'updateOrderStatus', rowNumber: rowNumber, status: 'Selesai' };
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-                .then(res => res.json())
-                .then(data => {
-                    if(data.success) { showToast("Pesanan selesai!"); fetchAdminOrders(); }
-                }).catch(err => showToast("Gagal update status."));
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'updateOrderStatus', rowNumber: rowNumber, status: 'Selesai' }) })
+                .then(res => res.json()).then(data => { if(data.success) { showToast("Pesanan selesai!"); fetchAdminOrders(); } });
         }
 
-        // ADMIN: MENU
-        function fetchAdminMenu() {
-            fetch(`${APPS_SCRIPT_URL}?action=getMenuAdmin`)
-                .then(res => res.json())
-                .then(data => { allMenuItems = data; renderAdminMenuTable(); });
-        }
-
+        // --- ADMIN MENU ---
+        function fetchAdminMenu() { fetch(`${APPS_SCRIPT_URL}?action=getInitData`).then(res => res.json()).then(data => { allMenuItems = data.menu; renderAdminMenuTable(); }); }
         function renderAdminMenuTable() {
             const tbody = document.getElementById('admin-menu-table');
             tbody.innerHTML = allMenuItems.map(item => {
                 const isActive = item.active === true || item.active === "TRUE";
-                const statusBadge = isActive ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">Aktif</span>` : 
-                                               `<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">Sold Out</span>`;
-                
-                // Encode object to pass to function
+                const statusBadge = isActive ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">Aktif</span>` : `<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">Sold Out</span>`;
                 const objStr = encodeURIComponent(JSON.stringify(item));
-
                 return `
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="p-4"><img src="${item.image}" class="w-12 h-12 object-cover rounded shadow-sm"></td>
@@ -722,77 +788,79 @@
                         <td class="p-4 text-sm text-gray-600">${item.category}</td>
                         <td class="p-4 text-sm font-bold">${formatIDR(item.price)}</td>
                         <td class="p-4 text-center">${statusBadge}</td>
-                        <td class="p-4 text-right">
-                            <button onclick="editAdminMenu('${objStr}')" class="text-blue-600 hover:text-blue-800 mr-3 text-sm font-medium transition-colors">Edit</button>
-                        </td>
-                    </tr>
-                `;
+                        <td class="p-4 text-right"><button onclick="editAdminMenu('${objStr}')" class="text-blue-600 hover:text-blue-800 mr-3 text-sm font-medium transition-colors">Edit</button></td>
+                    </tr>`;
             }).join('');
         }
-
-        function openMenuForm() {
-            document.getElementById('admin-menu-form').reset();
-            document.getElementById('form-menu-id').value = ''; // Empty means Add New
-            document.getElementById('menu-form-title').innerText = 'Tambah Menu Baru';
-            document.getElementById('menu-form-modal').classList.remove('hidden');
-            document.getElementById('menu-form-modal').classList.add('flex');
-        }
-
-        function closeMenuForm() {
-            document.getElementById('menu-form-modal').classList.add('hidden');
-            document.getElementById('menu-form-modal').classList.remove('flex');
-        }
-
+        function openMenuForm() { document.getElementById('admin-menu-form').reset(); document.getElementById('form-menu-id').value = ''; document.getElementById('menu-form-title').innerText = 'Tambah Menu Baru'; document.getElementById('menu-form-modal').classList.remove('hidden'); document.getElementById('menu-form-modal').classList.add('flex'); }
         function editAdminMenu(encodedObj) {
             const item = JSON.parse(decodeURIComponent(encodedObj));
-            document.getElementById('form-menu-id').value = item.id;
-            document.getElementById('form-menu-name').value = item.name;
-            document.getElementById('form-menu-category').value = item.category;
-            document.getElementById('form-menu-price').value = item.price;
-            document.getElementById('form-menu-img').value = item.image;
-            document.getElementById('form-menu-desc').value = item.description;
-            document.getElementById('form-menu-badge').value = item.badge;
-            
-            // Handle boolean or string boolean
-            const isActive = item.active === true || item.active === "TRUE";
-            document.getElementById('form-menu-active').value = isActive ? "true" : "false";
-
-            document.getElementById('menu-form-title').innerText = 'Edit Menu: ' + item.name;
-            document.getElementById('menu-form-modal').classList.remove('hidden');
-            document.getElementById('menu-form-modal').classList.add('flex');
+            document.getElementById('form-menu-id').value = item.id; document.getElementById('form-menu-name').value = item.name; document.getElementById('form-menu-category').value = item.category; document.getElementById('form-menu-price').value = item.price; document.getElementById('form-menu-img').value = item.image; document.getElementById('form-menu-desc').value = item.description; document.getElementById('form-menu-badge').value = item.badge;
+            document.getElementById('form-menu-active').value = (item.active === true || item.active === "TRUE") ? "true" : "false";
+            document.getElementById('menu-form-title').innerText = 'Edit Menu: ' + item.name; document.getElementById('menu-form-modal').classList.remove('hidden'); document.getElementById('menu-form-modal').classList.add('flex');
         }
-
         function saveAdminMenu(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btn-save-menu');
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin mr-2"></i> Menyimpan...`; btn.disabled = true;
-            lucide.createIcons();
-
-            const payload = {
-                action: 'saveMenu',
-                id: document.getElementById('form-menu-id').value, // If empty, backend creates new ID
-                name: document.getElementById('form-menu-name').value,
-                category: document.getElementById('form-menu-category').value,
-                price: parseFloat(document.getElementById('form-menu-price').value),
-                image: document.getElementById('form-menu-img').value,
-                description: document.getElementById('form-menu-desc').value,
-                badge: document.getElementById('form-menu-badge').value,
-                active: document.getElementById('form-menu-active').value === "true",
-                rating: 5.0 // Default for new items
-            };
-
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-                .then(res => res.json())
-                .then(data => {
-                    if(data.success) {
-                        showToast("Data Menu Berhasil Disimpan!");
-                        closeMenuForm();
-                        fetchAdminMenu(); // Reload table
-                    }
-                    btn.innerHTML = `Simpan Data`; btn.disabled = false;
-                }).catch(err => { showToast("Gagal menyimpan data."); btn.innerHTML = `Simpan Data`; btn.disabled = false; });
+            e.preventDefault(); const btn = document.getElementById('btn-save-menu'); btn.innerHTML = 'Menyimpan...'; btn.disabled = true;
+            const payload = { action: 'saveMenu', id: document.getElementById('form-menu-id').value, name: document.getElementById('form-menu-name').value, category: document.getElementById('form-menu-category').value, price: parseFloat(document.getElementById('form-menu-price').value), image: document.getElementById('form-menu-img').value, description: document.getElementById('form-menu-desc').value, badge: document.getElementById('form-menu-badge').value, active: document.getElementById('form-menu-active').value === "true", rating: 5.0 };
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { if(data.success) { showToast("Menu Disimpan!"); closeModal('menu-form-modal'); fetchAdminMenu(); } btn.innerHTML = 'Simpan'; btn.disabled = false; });
         }
 
+        // --- ADMIN COUPONS ---
+        function renderAdminCouponsTable() {
+            const tbody = document.getElementById('admin-coupons-table');
+            if(allCoupons.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-muted">Belum ada kupon.</td></tr>`; return; }
+            tbody.innerHTML = allCoupons.map(c => {
+                const isActive = c.active === true || c.active === "TRUE";
+                const badge = isActive ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">Aktif</span>` : `<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">Nonaktif</span>`;
+                const type = c.discount <= 100 ? `${c.discount}% (Persen)` : `${formatIDR(c.discount)} (Nominal)`;
+                const objStr = encodeURIComponent(JSON.stringify(c));
+                return `
+                    <tr class="hover:bg-gray-50 border-b">
+                        <td class="p-4 font-bold text-charcoal uppercase">${c.code}</td>
+                        <td class="p-4 text-sm">${c.discount <= 100 ? 'Persentase' : 'Potongan Harga'}</td>
+                        <td class="p-4 text-sm font-bold text-primary">${type}</td>
+                        <td class="p-4 text-center">${badge}</td>
+                        <td class="p-4 text-right"><button onclick="editAdminCoupon('${objStr}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Edit</button></td>
+                    </tr>`;
+            }).join('');
+        }
+        function openCouponForm() { document.getElementById('admin-coupon-form').reset(); document.getElementById('form-coupon-id').value = ''; document.getElementById('coupon-form-title').innerText = 'Buat Kupon Baru'; document.getElementById('coupon-form-modal').classList.remove('hidden'); document.getElementById('coupon-form-modal').classList.add('flex'); }
+        function editAdminCoupon(encodedObj) {
+            const c = JSON.parse(decodeURIComponent(encodedObj));
+            document.getElementById('form-coupon-id').value = c.id; document.getElementById('form-coupon-code').value = c.code; document.getElementById('form-coupon-val').value = c.discount; document.getElementById('form-coupon-active').value = (c.active === true || c.active === "TRUE") ? "true" : "false";
+            document.getElementById('coupon-form-title').innerText = 'Edit Kupon'; document.getElementById('coupon-form-modal').classList.remove('hidden'); document.getElementById('coupon-form-modal').classList.add('flex');
+        }
+        function saveAdminCoupon(e) {
+            e.preventDefault(); const btn = document.getElementById('btn-save-coupon'); btn.innerHTML = 'Menyimpan...'; btn.disabled = true;
+            const payload = { action: 'saveCoupon', id: document.getElementById('form-coupon-id').value, code: document.getElementById('form-coupon-code').value.toUpperCase(), discount: parseFloat(document.getElementById('form-coupon-val').value), active: document.getElementById('form-coupon-active').value === "true" };
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { if(data.success) { showToast("Kupon Disimpan!"); closeModal('coupon-form-modal'); fetchInitData(); } btn.innerHTML = 'Simpan'; btn.disabled = false; });
+        }
+
+        // --- ADMIN SETTINGS ---
+        function populateSettingsForm() {
+            document.getElementById('set-brand').value = globalSettings.BrandName || '';
+            document.getElementById('set-phone').value = globalSettings.Phone || '';
+            document.getElementById('set-logo').value = globalSettings.LogoURL || '';
+            document.getElementById('set-address').value = globalSettings.Address || '';
+            document.getElementById('set-fonnte').value = globalSettings.FonnteToken || '';
+            document.getElementById('set-categories').value = globalSettings.Categories || 'Main Course, Drinks, Snacks';
+        }
+
+        function saveSettings(e) {
+            e.preventDefault(); const btn = document.getElementById('btn-save-settings'); btn.innerHTML = 'Menyimpan...'; btn.disabled = true;
+            const payload = {
+                action: 'saveSettings',
+                settings: {
+                    BrandName: document.getElementById('set-brand').value,
+                    Phone: document.getElementById('set-phone').value,
+                    LogoURL: document.getElementById('set-logo').value,
+                    Address: document.getElementById('set-address').value,
+                    FonnteToken: document.getElementById('set-fonnte').value,
+                    Categories: document.getElementById('set-categories').value
+                }
+            };
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { if(data.success) { showToast("Pengaturan Disimpan!"); fetchInitData(); } btn.innerHTML = 'Simpan Pengaturan'; btn.disabled = false; });
+        }
     </script>
 </body>
 </html>
