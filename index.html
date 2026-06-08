@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyFood | Fresh Meals & Drinks</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN for standalone file) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E63946',
+                        secondary: '#F77F00',
+                        accent: '#FFB703',
+                        cream: '#FFF8F0',
+                        charcoal: '#1F2937',
+                        muted: '#64748B',
+                        espresso: '#1B120F',
+                        success: '#2A9D8F'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body { background-color: #FFF8F0; }
+        
+        /* Custom Scrollbar for horizontal scrolling (mobile categories) */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Smooth transitions */
+        .transition-all-ease { transition: all 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="text-charcoal flex flex-col min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logo -->
+                <div class="flex items-center cursor-pointer" onclick="resetFilters()">
+                    <div class="bg-primary text-white p-2 rounded-xl mr-3 shadow-sm">
+                        <i data-lucide="utensils" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-2xl font-bold tracking-tight">
+                        <span class="text-charcoal">My</span><span class="text-primary">Food</span>
+                    </span>
+                </div>
+                
+                <!-- Desktop Links -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#" class="text-charcoal font-medium hover:text-primary transition-all-ease">Home</a>
+                    <a href="#menu-section" class="text-muted hover:text-primary transition-all-ease">Menu</a>
+                    <a href="#" class="text-muted hover:text-primary transition-all-ease">Special Offers</a>
+                    <a href="#" class="text-muted hover:text-primary transition-all-ease">About Us</a>
+                </div>
+
+                <!-- Icons (Search & Cart) -->
+                <div class="flex items-center space-x-4">
+                    <button class="text-charcoal hover:text-primary transition-all-ease" onclick="focusSearch()">
+                        <i data-lucide="search" class="w-6 h-6"></i>
+                    </button>
+                    <button class="relative text-charcoal hover:text-primary transition-all-ease" onclick="toggleCart()">
+                        <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                        <span id="cart-counter" class="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Hero Banner -->
+        <div class="relative bg-charcoal rounded-3xl overflow-hidden shadow-xl mb-12 h-80 flex items-center">
+            <!-- Background Image -->
+            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80" 
+                 class="absolute inset-0 w-full h-full object-cover opacity-40" alt="Delicious Food">
+            
+            <div class="relative z-10 p-8 md:p-16 flex flex-col items-center md:items-start text-center md:text-left w-full">
+                <span class="bg-accent text-charcoal text-sm font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wide shadow-sm">Limited Time</span>
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Special Food Deals!</h1>
+                <p class="text-lg text-gray-200 mb-8 max-w-lg font-light">Enjoy fresh meals, tasty drinks, and exclusive offers from MyFood. Delivered right to your door.</p>
+                <button onclick="document.getElementById('menu-section').scrollIntoView({behavior: 'smooth'})" class="bg-primary hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-full transition-all-ease shadow-lg transform hover:-translate-y-1">
+                    Explore Menu
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu Section Layout -->
+        <div id="menu-section" class="flex flex-col md:flex-row gap-8">
+            
+            <!-- Sidebar / Horizontal Categories -->
+            <aside class="md:w-1/4">
+                <div class="sticky top-28">
+                    <h3 class="text-xl font-bold mb-4 hidden md:block">Categories</h3>
+                    <div class="flex overflow-x-auto hide-scrollbar space-x-3 md:space-x-0 md:flex-col md:space-y-2" id="category-container">
+                        <!-- Categories injected here -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Menu Area -->
+            <div class="md:w-3/4 flex flex-col">
+                <!-- Search & Filters Bar -->
+                <div class="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-2xl shadow-sm mb-6 gap-4">
+                    <h2 class="text-2xl font-bold" id="current-category-title">All Menu</h2>
+                    
+                    <div class="relative w-full sm:w-72">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted w-5 h-5"></i>
+                        <input type="text" id="search-input" placeholder="Search food..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all-ease bg-gray-50">
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loading-state" class="flex flex-col items-center justify-center py-20 text-muted">
+                    <i data-lucide="loader-2" class="w-10 h-10 animate-spin mb-4 text-primary"></i>
+                    <p>Loading fresh menu...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-muted">
+                    <i data-lucide="search-x" class="w-16 h-16 mb-4 text-gray-300"></i>
+                    <h3 class="text-xl font-semibold text-charcoal mb-2">No items found</h3>
+                    <p>We couldn't find any food matching your search.</p>
+                </div>
+
+                <!-- Menu Grid -->
+                <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+                    <!-- Cards injected here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-espresso text-gray-300 mt-12 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Brand -->
+            <div>
+                <div class="flex items-center mb-4">
+                    <div class="bg-primary text-white p-2 rounded-lg mr-3">
+                        <i data-lucide="utensils" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-white tracking-tight">My<span class="text-primary">Food</span></span>
+                </div>
+                <p class="text-sm text-gray-400 max-w-sm mb-6">Serving fresh, delicious, and affordable meals made with love. Order now and satisfy your cravings.</p>
+                <div class="flex space-x-4">
+                    <i data-lucide="instagram" class="w-5 h-5 hover:text-white cursor-pointer transition-all-ease"></i>
+                    <i data-lucide="facebook" class="w-5 h-5 hover:text-white cursor-pointer transition-all-ease"></i>
+                    <i data-lucide="twitter" class="w-5 h-5 hover:text-white cursor-pointer transition-all-ease"></i>
+                </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div>
+                <h4 class="text-white font-semibold mb-4 text-lg">Quick Links</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-primary transition-all-ease">Home</a></li>
+                    <li><a href="#menu-section" class="hover:text-primary transition-all-ease">Full Menu</a></li>
+                    <li><a href="#" class="hover:text-primary transition-all-ease">Special Offers</a></li>
+                    <li><a href="#" class="hover:text-primary transition-all-ease">About Us</a></li>
+                    <li><a href="#" class="hover:text-primary transition-all-ease">Contact Support</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact -->
+            <div>
+                <h4 class="text-white font-semibold mb-4 text-lg">Contact Us</h4>
+                <ul class="space-y-3 text-sm">
+                    <li class="flex items-start"><i data-lucide="map-pin" class="w-4 h-4 mr-2 mt-0.5 text-primary"></i> 123 Culinary Street, Foodville</li>
+                    <li class="flex items-center"><i data-lucide="phone" class="w-4 h-4 mr-2 text-primary"></i> +62 812-3456-7890</li>
+                    <li class="flex items-center"><i data-lucide="mail" class="w-4 h-4 mr-2 text-primary"></i> hello@myfood.com</li>
+                </ul>
+                <div class="mt-6">
+                    <h5 class="text-xs uppercase text-gray-500 font-semibold mb-2">Payment Methods</h5>
+                    <div class="flex space-x-2">
+                        <span class="bg-gray-800 text-xs px-2 py-1 rounded text-gray-300">GoPay</span>
+                        <span class="bg-gray-800 text-xs px-2 py-1 rounded text-gray-300">OVO</span>
+                        <span class="bg-gray-800 text-xs px-2 py-1 rounded text-gray-300">QRIS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 mt-10 pt-6 text-center text-xs text-gray-500">
+            &copy; <span id="year"></span> MyFood. All rights reserved. Designed with ❤️
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar Overlay -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-[60] hidden transition-opacity opacity-0" onclick="toggleCart()"></div>
+    
+    <!-- Cart Sidebar Drawer -->
+    <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white z-[70] transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col">
+        <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-cream">
+            <h2 class="text-xl font-bold flex items-center">
+                <i data-lucide="shopping-cart" class="w-5 h-5 mr-2 text-primary"></i> Your Cart
+            </h2>
+            <button onclick="toggleCart()" class="text-muted hover:text-charcoal bg-white p-2 rounded-full shadow-sm">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        
+        <div id="cart-items" class="flex-grow overflow-y-auto p-5 space-y-4">
+            <!-- Cart items injected here -->
+            <div class="h-full flex flex-col items-center justify-center text-muted">
+                <i data-lucide="shopping-bag" class="w-12 h-12 mb-3 text-gray-300"></i>
+                <p>Your cart is empty.</p>
+            </div>
+        </div>
+        
+        <div class="p-5 border-t border-gray-100 bg-gray-50">
+            <div class="flex justify-between text-muted mb-2 text-sm">
+                <span>Subtotal</span>
+                <span id="cart-subtotal">Rp 0</span>
+            </div>
+            <div class="flex justify-between text-lg font-bold mb-5">
+                <span>Total</span>
+                <span id="cart-total" class="text-primary">Rp 0</span>
+            </div>
+            <button id="checkout-btn" onclick="openCheckout()" class="w-full bg-primary hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all-ease shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[80] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="checkout-content">
+            <div class="p-5 border-b border-gray-100 bg-primary text-white flex justify-between items-center">
+                <h2 class="text-xl font-bold">Checkout Details</h2>
+                <button onclick="closeCheckout()" class="text-white hover:text-gray-200">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="checkout-form" class="p-6 space-y-4" onsubmit="submitOrder(event)">
+                <div>
+                    <label class="block text-sm font-medium text-charcoal mb-1">Full Name</label>
+                    <input type="text" id="cust-name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-charcoal mb-1">WhatsApp Number</label>
+                    <input type="tel" id="cust-wa" required placeholder="08..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-charcoal mb-1">Delivery Address / Notes</label>
+                    <textarea id="cust-address" required rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-charcoal mb-1">Payment Method</label>
+                    <select id="cust-payment" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white">
+                        <option value="GoPay">GoPay</option>
+                        <option value="OVO">OVO</option>
+                        <option value="DANA">DANA</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="QRIS">QRIS</option>
+                        <option value="Cash">Cash on Delivery</option>
+                    </select>
+                </div>
+                <div class="pt-4">
+                    <button type="submit" id="submit-order-btn" class="w-full bg-success hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl transition-all-ease shadow-md flex justify-center items-center">
+                        <span>Place Order (Rp <span id="checkout-total-val">0</span>)</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Toast Notification -->
+    <div id="toast" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-charcoal text-white px-6 py-3 rounded-full shadow-2xl flex items-center space-x-3 transition-all duration-300 translate-y-20 opacity-0 z-[90]">
+        <i data-lucide="check-circle" class="w-5 h-5 text-success"></i>
+        <span id="toast-message">Action successful!</span>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // --- 1. STATE MANAGEMENT ---
+        let allMenuItems = [];
+        let cart = [];
+        let currentCategory = 'All';
+        let searchQuery = '';
+        
+        // Detect if running inside Google Apps Script or locally in an AI Chat UI preview
+        const IS_GAS = typeof google !== 'undefined' && google.script;
+
+        // --- 2. INITIALIZATION & DATA FETCHING ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            document.getElementById('year').innerText = new Date().getFullYear();
+            
+            // Search Input Event Listener
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase();
+                renderMenuCards();
+            });
+
+            fetchData();
+        });
+
+        function fetchData() {
+            if (IS_GAS) {
+                google.script.run
+                    .withSuccessHandler(onDataLoaded)
+                    .withFailureHandler(onDataError)
+                    .getMenuData();
+            } else {
+                // Mock Data for Preview Interface
+                const mockData = [
+                    {id: "M01", name: "Nasi Goreng Spesial", category: "Main Course", price: 35000, rating: 4.8, image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=500&q=80", badge: "Popular", description: "Indonesian fried rice with sunny side up egg, chicken, and crackers."},
+                    {id: "M03", name: "Chicken Teriyaki Bowl", category: "Deals", price: 30000, rating: 4.6, image: "https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fit=crop&w=500&q=80", badge: "Deal", description: "Juicy grilled chicken glazed in teriyaki sauce over warm rice."},
+                    {id: "M04", name: "Beef Burger", category: "Main Course", price: 45000, rating: 4.9, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=80", badge: "New", description: "Premium beef patty with melted cheese, fresh lettuce, and tomatoes."},
+                    {id: "M08", name: "Iced Coffee Latte", category: "Drinks", price: 25000, rating: 4.9, image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=500&q=80", badge: "Popular", description: "Premium espresso blended with fresh milk and ice."},
+                    {id: "M11", name: "Pisang Goreng", category: "Snacks", price: 18000, rating: 4.6, image: "https://images.unsplash.com/photo-1601314002592-b8734bca6604?auto=format&fit=crop&w=500&q=80", badge: "Deal", description: "Traditional sweet fried banana with a crispy batter."},
+                    {id: "M12", name: "Chocolate Sundae", category: "Desserts", price: 22000, rating: 4.8, image: "https://images.unsplash.com/photo-1563805042-7684c8e9e533?auto=format&fit=crop&w=500&q=80", badge: "", description: "Vanilla ice cream topped with rich chocolate syrup and nuts."}
+                ];
+                setTimeout(() => onDataLoaded(mockData), 800); // Simulate network delay
+            }
+        }
+
+        function onDataLoaded(data) {
+            allMenuItems = data;
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('menu-grid').classList.remove('hidden');
+            
+            extractAndRenderCategories();
+            renderMenuCards();
+        }
+
+        function onDataError(error) {
+            document.getElementById('loading-state').innerHTML = `<p class="text-primary">Error loading menu: ${error.message}</p>`;
+        }
+
+        // --- 3. UI RENDERING ---
+
+        // Currency Formatter
+        const formatIDR = (number) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+        };
+
+        function extractAndRenderCategories() {
+            const categories = ['All', ...new Set(allMenuItems.map(item => item.category))];
+            const container = document.getElementById('category-container');
+            container.innerHTML = '';
+
+            categories.forEach(cat => {
+                const isSelected = cat === currentCategory;
+                const btnClasses = isSelected 
+                    ? "bg-primary text-white shadow-md font-medium" 
+                    : "bg-white text-charcoal hover:bg-cream border border-gray-200";
+                
+                container.innerHTML += `
+                    <button onclick="setCategory('${cat}')" 
+                        class="whitespace-nowrap px-5 py-2.5 rounded-xl text-sm transition-all-ease flex-shrink-0 md:w-full text-left ${btnClasses}">
+                        ${cat}
+                    </button>
+                `;
+            });
+        }
+
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.getElementById('current-category-title').innerText = cat === 'All' ? 'All Menu' : cat;
+            extractAndRenderCategories(); // Re-render to update active styling
+            renderMenuCards();
+        }
+
+        function resetFilters() {
+            setCategory('All');
+            document.getElementById('search-input').value = '';
+            searchQuery = '';
+            renderMenuCards();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function focusSearch() {
+            document.getElementById('search-input').focus();
+            document.getElementById('menu-section').scrollIntoView({behavior: 'smooth'});
+        }
+
+        function renderMenuCards() {
+            const grid = document.getElementById('menu-grid');
+            const emptyState = document.getElementById('empty-state');
+            
+            // Filter Data
+            const filteredItems = allMenuItems.filter(item => {
+                const matchesCategory = currentCategory === 'All' || item.category === currentCategory;
+                const matchesSearch = item.name.toLowerCase().includes(searchQuery) || 
+                                      item.description.toLowerCase().includes(searchQuery);
+                return matchesCategory && matchesSearch;
+            });
+
+            // Toggle visibility
+            if (filteredItems.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+                grid.classList.remove('hidden');
+            }
+
+            // Render Cards
+            grid.innerHTML = filteredItems.map(item => {
+                let badgeHTML = '';
+                if (item.badge) {
+                    let badgeColor = item.badge.toLowerCase() === 'deal' || item.badge.toLowerCase() === 'promo' ? 'bg-primary' : 
+                                     item.badge.toLowerCase() === 'new' ? 'bg-success' : 'bg-accent text-charcoal';
+                    let textColor = badgeColor.includes('bg-accent') ? 'text-charcoal' : 'text-white';
+                    badgeHTML = `<span class="absolute top-3 left-3 ${badgeColor} ${textColor} text-xs font-bold px-3 py-1 rounded-full shadow-sm">${item.badge}</span>`;
+                }
+
+                // Make safe string for JSON parsing in onclick
+                const itemJSON = encodeURIComponent(JSON.stringify(item));
+
+                return `
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all-ease border border-gray-100 flex flex-col group">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            ${badgeHTML}
+                        </div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-charcoal leading-tight">${item.name}</h3>
+                                <div class="flex items-center text-sm text-accent bg-cream px-2 py-0.5 rounded flex-shrink-0">
+                                    <i data-lucide="star" class="w-3 h-3 fill-current mr-1"></i> ${item.rating}
+                                </div>
+                            </div>
+                            <p class="text-sm text-muted mb-4 flex-grow line-clamp-2">${item.description}</p>
+                            <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-50">
+                                <span class="text-lg font-bold text-primary">${formatIDR(item.price)}</span>
+                                <button onclick="addToCart('${itemJSON}')" class="bg-charcoal hover:bg-primary text-white p-2.5 rounded-xl transition-colors duration-300 shadow-sm">
+                                    <i data-lucide="plus" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            lucide.createIcons();
+        }
+
+        // --- 4. CART MANAGEMENT ---
+        
+        function toggleCart() {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-overlay');
+            
+            if (drawer.classList.contains('translate-x-full')) {
+                // Open
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+                drawer.classList.remove('translate-x-full');
+                renderCart();
+            } else {
+                // Close
+                drawer.classList.add('translate-x-full');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        function addToCart(encodedItem) {
+            const item = JSON.parse(decodeURIComponent(encodedItem));
+            const existingItem = cart.find(cartItem => cartItem.id === item.id);
+            
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ ...item, qty: 1 });
+            }
+            
+            updateCartCounter();
+            showToast(`${item.name} added to cart!`);
+            renderCart(); // Update drawer if open
+        }
+
+        function changeQty(id, delta) {
+            const itemIndex = cart.findIndex(item => item.id === id);
+            if (itemIndex > -1) {
+                cart[itemIndex].qty += delta;
+                if (cart[itemIndex].qty <= 0) {
+                    cart.splice(itemIndex, 1); // Remove if 0
+                }
+            }
+            updateCartCounter();
+            renderCart();
+        }
+
+        function updateCartCounter() {
+            const counter = document.getElementById('cart-counter');
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            
+            if (totalQty > 0) {
+                counter.innerText = totalQty;
+                counter.classList.remove('hidden');
+                // Pop animation
+                counter.classList.add('scale-125');
+                setTimeout(() => counter.classList.remove('scale-125'), 200);
+            } else {
+                counter.classList.add('hidden');
+            }
+            
+            // Manage Checkout button state
+            document.getElementById('checkout-btn').disabled = totalQty === 0;
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-muted">
+                        <i data-lucide="shopping-bag" class="w-12 h-12 mb-3 text-gray-300"></i>
+                        <p>Your cart is empty.</p>
+                    </div>
+                `;
+                document.getElementById('cart-subtotal').innerText = 'Rp 0';
+                document.getElementById('cart-total').innerText = 'Rp 0';
+                lucide.createIcons();
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = cart.map(item => {
+                const itemTotal = item.price * item.qty;
+                total += itemTotal;
+                
+                return `
+                    <div class="flex items-center gap-4 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-lg">
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-sm text-charcoal leading-tight mb-1">${item.name}</h4>
+                            <div class="text-primary font-semibold text-sm">${formatIDR(item.price)}</div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="flex items-center bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                                <button onclick="changeQty('${item.id}', -1)" class="px-2 py-1 text-muted hover:bg-gray-200 transition">
+                                    <i data-lucide="minus" class="w-3 h-3"></i>
+                                </button>
+                                <span class="text-xs font-bold w-5 text-center">${item.qty}</span>
+                                <button onclick="changeQty('${item.id}', 1)" class="px-2 py-1 text-muted hover:bg-gray-200 transition">
+                                    <i data-lucide="plus" class="w-3 h-3"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('cart-subtotal').innerText = formatIDR(total);
+            document.getElementById('cart-total').innerText = formatIDR(total);
+            document.getElementById('checkout-total-val').innerText = total.toLocaleString('id-ID'); // For modal button
+            
+            lucide.createIcons();
+        }
+
+        // --- 5. CHECKOUT & SUBMISSION ---
+
+        function openCheckout() {
+            if (cart.length === 0) return;
+            toggleCart(); // Close drawer
+            
+            const modal = document.getElementById('checkout-modal');
+            const content = document.getElementById('checkout-content');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeCheckout() {
+            const modal = document.getElementById('checkout-modal');
+            const content = document.getElementById('checkout-content');
+            
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        function submitOrder(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submit-order-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin mr-2"></i> Processing...`;
+            lucide.createIcons();
+
+            const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            
+            const orderData = {
+                customerName: document.getElementById('cust-name').value,
+                whatsapp: document.getElementById('cust-wa').value,
+                address: document.getElementById('cust-address').value,
+                paymentMethod: document.getElementById('cust-payment').value,
+                items: cart.map(i => ({id: i.id, name: i.name, qty: i.qty, price: i.price})),
+                total: totalAmount
+            };
+
+            if (IS_GAS) {
+                google.script.run
+                    .withSuccessHandler(onOrderSuccess)
+                    .withFailureHandler((err) => {
+                        showToast("Error placing order. Please try again.");
+                        resetCheckoutBtn(totalAmount);
+                    })
+                    .submitOrder(orderData);
+            } else {
+                // Mock success for local preview
+                setTimeout(() => onOrderSuccess({success: true}), 1500);
+            }
+        }
+
+        function onOrderSuccess(response) {
+            closeCheckout();
+            showToast("Order placed successfully! We'll contact you soon.");
+            
+            // Clear cart & form
+            cart = [];
+            updateCartCounter();
+            document.getElementById('checkout-form').reset();
+            resetCheckoutBtn(0);
+        }
+
+        function resetCheckoutBtn(total) {
+            const btn = document.getElementById('submit-order-btn');
+            btn.disabled = false;
+            btn.innerHTML = `<span>Place Order (Rp <span id="checkout-total-val">${total.toLocaleString('id-ID')}</span>)</span>`;
+        }
+
+        // --- 6. UTILS ---
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+    </script>
+</body>
+</html>
