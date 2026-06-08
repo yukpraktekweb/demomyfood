@@ -290,16 +290,21 @@
 
     <!-- Application Logic -->
     <script>
-        // --- 1. STATE MANAGEMENT ---
+        // --- 1. CONFIGURATION ---
+        
+        // PASTE URL WEB APP APPS SCRIPT KAMU DI SINI:
+        // URL sudah diupdate sesuai dengan hasil deploy kamu!
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1tyWzaOZvKzzB0EN9j7e3HLw9Q6hyzTHzULhgTlecfJjt1MoMA5wULfv3YmkiXnsLeA/exec';
+        
+        const IS_READY = APPS_SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+        // --- 2. STATE MANAGEMENT ---
         let allMenuItems = [];
         let cart = [];
         let currentCategory = 'All';
         let searchQuery = '';
-        
-        // Detect if running inside Google Apps Script or locally in an AI Chat UI preview
-        const IS_GAS = typeof google !== 'undefined' && google.script;
 
-        // --- 2. INITIALIZATION & DATA FETCHING ---
+        // --- 3. INITIALIZATION & DATA FETCHING ---
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             document.getElementById('year').innerText = new Date().getFullYear();
@@ -314,22 +319,22 @@
         });
 
         function fetchData() {
-            if (IS_GAS) {
-                google.script.run
-                    .withSuccessHandler(onDataLoaded)
-                    .withFailureHandler(onDataError)
-                    .getMenuData();
+            if (IS_READY) {
+                // Fetch API GET ke Google Apps Script
+                fetch(`${APPS_SCRIPT_URL}?action=getMenu`)
+                    .then(response => response.json())
+                    .then(data => onDataLoaded(data))
+                    .catch(error => onDataError(error));
             } else {
-                // Mock Data for Preview Interface
+                // Tampilan Mock Data jika URL belum di set (buat preview Vercel awal)
                 const mockData = [
                     {id: "M01", name: "Nasi Goreng Spesial", category: "Main Course", price: 35000, rating: 4.8, image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=500&q=80", badge: "Popular", description: "Indonesian fried rice with sunny side up egg, chicken, and crackers."},
                     {id: "M03", name: "Chicken Teriyaki Bowl", category: "Deals", price: 30000, rating: 4.6, image: "https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fit=crop&w=500&q=80", badge: "Deal", description: "Juicy grilled chicken glazed in teriyaki sauce over warm rice."},
                     {id: "M04", name: "Beef Burger", category: "Main Course", price: 45000, rating: 4.9, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=80", badge: "New", description: "Premium beef patty with melted cheese, fresh lettuce, and tomatoes."},
                     {id: "M08", name: "Iced Coffee Latte", category: "Drinks", price: 25000, rating: 4.9, image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=500&q=80", badge: "Popular", description: "Premium espresso blended with fresh milk and ice."},
-                    {id: "M11", name: "Pisang Goreng", category: "Snacks", price: 18000, rating: 4.6, image: "https://images.unsplash.com/photo-1601314002592-b8734bca6604?auto=format&fit=crop&w=500&q=80", badge: "Deal", description: "Traditional sweet fried banana with a crispy batter."},
-                    {id: "M12", name: "Chocolate Sundae", category: "Desserts", price: 22000, rating: 4.8, image: "https://images.unsplash.com/photo-1563805042-7684c8e9e533?auto=format&fit=crop&w=500&q=80", badge: "", description: "Vanilla ice cream topped with rich chocolate syrup and nuts."}
                 ];
-                setTimeout(() => onDataLoaded(mockData), 800); // Simulate network delay
+                setTimeout(() => onDataLoaded(mockData), 800);
+                showToast("⚠️ URL Apps Script belum diatur di Index.html!");
             }
         }
 
@@ -343,12 +348,12 @@
         }
 
         function onDataError(error) {
-            document.getElementById('loading-state').innerHTML = `<p class="text-primary">Error loading menu: ${error.message}</p>`;
+            document.getElementById('loading-state').innerHTML = `<p class="text-primary font-bold">Error loading menu dari database. Pastikan URL Apps Script sudah benar!</p>`;
+            console.error(error);
         }
 
-        // --- 3. UI RENDERING ---
+        // --- 4. UI RENDERING ---
 
-        // Currency Formatter
         const formatIDR = (number) => {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
         };
@@ -376,7 +381,7 @@
         function setCategory(cat) {
             currentCategory = cat;
             document.getElementById('current-category-title').innerText = cat === 'All' ? 'All Menu' : cat;
-            extractAndRenderCategories(); // Re-render to update active styling
+            extractAndRenderCategories();
             renderMenuCards();
         }
 
@@ -397,7 +402,6 @@
             const grid = document.getElementById('menu-grid');
             const emptyState = document.getElementById('empty-state');
             
-            // Filter Data
             const filteredItems = allMenuItems.filter(item => {
                 const matchesCategory = currentCategory === 'All' || item.category === currentCategory;
                 const matchesSearch = item.name.toLowerCase().includes(searchQuery) || 
@@ -405,7 +409,6 @@
                 return matchesCategory && matchesSearch;
             });
 
-            // Toggle visibility
             if (filteredItems.length === 0) {
                 grid.classList.add('hidden');
                 emptyState.classList.remove('hidden');
@@ -416,7 +419,6 @@
                 grid.classList.remove('hidden');
             }
 
-            // Render Cards
             grid.innerHTML = filteredItems.map(item => {
                 let badgeHTML = '';
                 if (item.badge) {
@@ -426,7 +428,6 @@
                     badgeHTML = `<span class="absolute top-3 left-3 ${badgeColor} ${textColor} text-xs font-bold px-3 py-1 rounded-full shadow-sm">${item.badge}</span>`;
                 }
 
-                // Make safe string for JSON parsing in onclick
                 const itemJSON = encodeURIComponent(JSON.stringify(item));
 
                 return `
@@ -457,20 +458,18 @@
             lucide.createIcons();
         }
 
-        // --- 4. CART MANAGEMENT ---
+        // --- 5. CART MANAGEMENT ---
         
         function toggleCart() {
             const drawer = document.getElementById('cart-drawer');
             const overlay = document.getElementById('cart-overlay');
             
             if (drawer.classList.contains('translate-x-full')) {
-                // Open
                 overlay.classList.remove('hidden');
                 setTimeout(() => overlay.classList.remove('opacity-0'), 10);
                 drawer.classList.remove('translate-x-full');
                 renderCart();
             } else {
-                // Close
                 drawer.classList.add('translate-x-full');
                 overlay.classList.add('opacity-0');
                 setTimeout(() => overlay.classList.add('hidden'), 300);
@@ -489,7 +488,7 @@
             
             updateCartCounter();
             showToast(`${item.name} added to cart!`);
-            renderCart(); // Update drawer if open
+            renderCart();
         }
 
         function changeQty(id, delta) {
@@ -497,7 +496,7 @@
             if (itemIndex > -1) {
                 cart[itemIndex].qty += delta;
                 if (cart[itemIndex].qty <= 0) {
-                    cart.splice(itemIndex, 1); // Remove if 0
+                    cart.splice(itemIndex, 1);
                 }
             }
             updateCartCounter();
@@ -511,14 +510,12 @@
             if (totalQty > 0) {
                 counter.innerText = totalQty;
                 counter.classList.remove('hidden');
-                // Pop animation
                 counter.classList.add('scale-125');
                 setTimeout(() => counter.classList.remove('scale-125'), 200);
             } else {
                 counter.classList.add('hidden');
             }
             
-            // Manage Checkout button state
             document.getElementById('checkout-btn').disabled = totalQty === 0;
         }
 
@@ -567,16 +564,16 @@
             
             document.getElementById('cart-subtotal').innerText = formatIDR(total);
             document.getElementById('cart-total').innerText = formatIDR(total);
-            document.getElementById('checkout-total-val').innerText = total.toLocaleString('id-ID'); // For modal button
+            document.getElementById('checkout-total-val').innerText = total.toLocaleString('id-ID');
             
             lucide.createIcons();
         }
 
-        // --- 5. CHECKOUT & SUBMISSION ---
+        // --- 6. CHECKOUT & SUBMISSION (API POST) ---
 
         function openCheckout() {
             if (cart.length === 0) return;
-            toggleCart(); // Close drawer
+            toggleCart();
             
             const modal = document.getElementById('checkout-modal');
             const content = document.getElementById('checkout-content');
@@ -621,16 +618,28 @@
                 total: totalAmount
             };
 
-            if (IS_GAS) {
-                google.script.run
-                    .withSuccessHandler(onOrderSuccess)
-                    .withFailureHandler((err) => {
-                        showToast("Error placing order. Please try again.");
-                        resetCheckoutBtn(totalAmount);
-                    })
-                    .submitOrder(orderData);
+            if (IS_READY) {
+                // Post API ke Google Apps Script
+                fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    // Menggunakan text/plain untuk bypass preflight OPTIONS (CORS restriction) di Apps Script
+                    headers: { 'Content-Type': 'text/plain' }, 
+                    body: JSON.stringify(orderData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        onOrderSuccess(data);
+                    } else {
+                        throw new Error(data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast("Error processing your order. Please try again.");
+                    resetCheckoutBtn(totalAmount);
+                });
             } else {
-                // Mock success for local preview
                 setTimeout(() => onOrderSuccess({success: true}), 1500);
             }
         }
@@ -639,7 +648,6 @@
             closeCheckout();
             showToast("Order placed successfully! We'll contact you soon.");
             
-            // Clear cart & form
             cart = [];
             updateCartCounter();
             document.getElementById('checkout-form').reset();
@@ -652,7 +660,7 @@
             btn.innerHTML = `<span>Place Order (Rp <span id="checkout-total-val">${total.toLocaleString('id-ID')}</span>)</span>`;
         }
 
-        // --- 6. UTILS ---
+        // --- 7. UTILS ---
 
         function showToast(message) {
             const toast = document.getElementById('toast');
