@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyFood | Delivery & Menu</title>
+    <title>MyFood | Fresh Meals & Drinks</title>
     
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -48,7 +48,7 @@
     <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
-                <!-- Dynamic Logo & Brand -->
+                <!-- Logo -->
                 <div class="flex items-center">
                     <img id="nav-brand-logo" src="" alt="Logo" class="h-10 w-10 object-cover rounded-xl mr-3 shadow-sm cursor-pointer hidden" onclick="handleSecretClick()">
                     <div id="nav-brand-icon" class="bg-primary text-white p-2 rounded-xl mr-3 shadow-sm cursor-pointer" onclick="handleSecretClick()" title="Klik 7x untuk Admin">
@@ -76,7 +76,7 @@
                     </button>
                 </div>
                 
-                <!-- Admin Logout -->
+                <!-- Admin Logout (Hidden by default) -->
                 <div class="hidden items-center space-x-4" id="nav-admin-logout">
                      <span class="text-sm font-bold text-primary">Admin Mode</span>
                      <button onclick="logoutAdmin()" class="text-white bg-charcoal hover:bg-gray-800 px-4 py-2 rounded-lg text-sm font-medium transition-all-ease">
@@ -92,12 +92,13 @@
         <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
             <!-- Hero Banner -->
             <div class="relative bg-charcoal rounded-3xl overflow-hidden shadow-xl mb-12 h-80 flex items-center">
-                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40">
+                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80" 
+                     class="absolute inset-0 w-full h-full object-cover opacity-40" alt="Delicious Food">
                 <div class="relative z-10 p-8 md:p-16 flex flex-col items-center md:items-start text-center md:text-left w-full">
                     <span class="bg-accent text-charcoal text-sm font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wide shadow-sm">Pesan Sekarang</span>
                     <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" id="hero-title">Welcome to MyFood!</h1>
                     <p class="text-lg text-gray-200 mb-8 max-w-lg font-light">Nikmati hidangan lezat dan minuman segar langsung diantar ke tempat Anda.</p>
-                    <button onclick="document.getElementById('menu-section').scrollIntoView({behavior: 'smooth'})" class="bg-primary hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-full transition-all-ease shadow-lg">
+                    <button onclick="document.getElementById('menu-section').scrollIntoView({behavior: 'smooth'})" class="bg-primary hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-full transition-all-ease shadow-lg transform hover:-translate-y-1">
                         Lihat Menu
                     </button>
                 </div>
@@ -110,7 +111,7 @@
                     <div class="sticky top-28">
                         <h3 class="text-xl font-bold mb-4 hidden md:block">Kategori</h3>
                         <div class="flex overflow-x-auto hide-scrollbar space-x-3 md:space-x-0 md:flex-col md:space-y-2" id="category-container">
-                            <!-- Categories inject -->
+                            <!-- Categories will be injected here -->
                         </div>
                     </div>
                 </aside>
@@ -125,15 +126,16 @@
                         </div>
                     </div>
 
+                    <!-- Enhanced Error/Loading States -->
                     <div id="loading-state" class="flex flex-col items-center justify-center py-20 text-muted">
                         <i data-lucide="loader-2" class="w-10 h-10 animate-spin mb-4 text-primary"></i>
-                        <p>Memuat data...</p>
+                        <p>Memuat menu dari database...</p>
                     </div>
 
                     <div id="error-state" class="hidden flex flex-col items-center justify-center py-10 px-4 text-center bg-red-50 rounded-2xl border border-red-100">
                         <i data-lucide="alert-triangle" class="w-16 h-16 mb-4 text-primary"></i>
                         <h3 class="text-xl font-bold text-charcoal mb-2">Gagal Memuat Data</h3>
-                        <p id="error-message" class="text-muted mb-4">Pastikan Apps Script URL sudah benar.</p>
+                        <p id="error-message" class="text-muted max-w-lg mb-4">Pastikan Apps Script URL sudah benar.</p>
                     </div>
 
                     <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-muted">
@@ -142,7 +144,7 @@
                     </div>
 
                     <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
-                        <!-- Cards inject -->
+                        <!-- Cards -->
                     </div>
                 </div>
             </div>
@@ -283,20 +285,37 @@
                 <form id="admin-settings-form" onsubmit="saveSettings(event)" class="space-y-6 max-w-2xl">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label class="block text-sm font-medium mb-1">Nama Brand Toko</label><input type="text" id="set-brand" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
-                        <div><label class="block text-sm font-medium mb-1">Nomor WhatsApp Toko</label><input type="text" id="set-phone" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
+                        <div><label class="block text-sm font-medium mb-1">Nomor WhatsApp CS</label><input type="text" id="set-phone" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
                         <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">URL Logo Toko (Opsional)</label><input type="url" id="set-logo" placeholder="https://..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary text-sm"></div>
                         <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">Alamat Lengkap</label><textarea id="set-address" rows="2" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></textarea></div>
-                        
-                        <!-- Pilihan Kategori -->
                         <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">Kategori Menu Tersedia (Pisahkan dengan koma)</label>
                             <input type="text" id="set-categories" placeholder="Main Course, Drinks, Snacks" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
-                            <p class="text-xs text-muted mt-1">Ini akan muncul di pilihan dropdown saat tambah menu.</p>
                         </div>
 
-                        <div class="md:col-span-2 border-t pt-4 mt-2">
-                            <label class="block text-sm font-bold mb-1 text-charcoal">Fonnte API Token (WA Gateway)</label>
-                            <input type="text" id="set-fonnte" placeholder="Kosongkan jika tidak pakai notifikasi WA" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-gray-50">
-                            <p class="text-xs text-muted mt-1">Dapatkan token di <a href="https://fonnte.com" target="_blank" class="text-primary underline">Fonnte.com</a>. Notifikasi struk tagihan akan otomatis dikirim ke WA pelanggan.</p>
+                        <!-- WA GATEWAY SETTINGS -->
+                        <div class="md:col-span-2 border-t pt-4 mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <h3 class="font-bold text-lg text-charcoal mb-1">Integrasi WhatsApp Gateway</h3>
+                                <p class="text-xs text-muted">Kirim otomatis struk pesanan ke pelanggan.</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Provider WA Gateway</label>
+                                <select id="set-wa-provider" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-white">
+                                    <option value="Fonnte">Fonnte</option>
+                                    <option value="Wablas">Wablas</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Nomor Sender (Khusus Wablas dll)</label>
+                                <input type="text" id="set-wa-sender" placeholder="Bisa dikosongkan untuk Fonnte" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium mb-1">API Token</label>
+                                <input type="text" id="set-fonnte" placeholder="Kosongkan jika fitur WA tidak diaktifkan" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-gray-50">
+                            </div>
                         </div>
                     </div>
                     <button type="submit" id="btn-save-settings" class="bg-charcoal hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all">Simpan Pengaturan</button>
@@ -427,7 +446,7 @@
         let globalSettings = {};
         
         let cart = [];
-        let appliedCoupon = null; // { code, val, discountAmt }
+        let appliedCoupon = null; 
         let currentCategory = 'All';
         let searchQuery = '';
         let isAdminMode = false;
@@ -440,7 +459,7 @@
             document.getElementById('year').innerText = new Date().getFullYear();
             document.getElementById('search-input').addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); renderMenuCards(); });
             if(sessionStorage.getItem('myfood_admin') === 'true') isAdminMode = true;
-            fetchInitData(); // Fetch Menu, Config, Coupons
+            fetchInitData();
         });
 
         // --- 3. API CALLS ---
@@ -589,7 +608,7 @@
         function changeQty(id, d) {
             const idx = cart.findIndex(i => i.id === id);
             if (idx > -1) { cart[idx].qty += d; if (cart[idx].qty <= 0) cart.splice(idx, 1); }
-            calculateDiscount(); // recalculate if coupon applied
+            calculateDiscount(); 
             updateCartCounter(); renderCart();
         }
 
@@ -622,9 +641,9 @@
         function calculateDiscount() {
             if(!appliedCoupon || cart.length === 0) { appliedCoupon = null; return; }
             let rawTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            if(appliedCoupon.val <= 100) { // Percentage
+            if(appliedCoupon.val <= 100) { 
                 appliedCoupon.discountAmt = rawTotal * (appliedCoupon.val / 100);
-            } else { // Nominal
+            } else { 
                 appliedCoupon.discountAmt = appliedCoupon.val;
             }
             if(appliedCoupon.discountAmt > rawTotal) appliedCoupon.discountAmt = rawTotal;
@@ -688,8 +707,8 @@
             document.getElementById('customer-view').classList.add('hidden'); document.getElementById('admin-view').classList.remove('hidden'); document.getElementById('admin-view').classList.add('flex');
             document.getElementById('nav-links').classList.add('hidden'); document.getElementById('nav-icons').classList.add('hidden'); document.getElementById('nav-admin-logout').classList.remove('hidden'); document.getElementById('nav-admin-logout').classList.add('flex');
             switchAdminTab('dashboard'); 
-            fetchAdminMenu(); // Ensure full menu loaded
-            fetchAdminOrders(); // Load orders & calculate dashboard
+            fetchAdminMenu(); 
+            fetchAdminOrders(); 
         }
 
         function switchAdminTab(tab) {
@@ -715,7 +734,6 @@
                 if(o.status === 'Selesai') { omset += parseFloat(o.total); doneCount++; }
                 else { pendingCount++; }
                 
-                // Top sales (from completed orders only for accuracy)
                 if(o.status === 'Selesai') {
                     try {
                         let items = JSON.parse(o.items);
@@ -731,7 +749,6 @@
             const activeMenuCount = allMenuItems.filter(i=> i.active===true || i.active==="TRUE").length;
             document.getElementById('dash-menu-active').innerText = activeMenuCount;
 
-            // Sort Top Sales
             let sortedItems = Object.keys(itemCounts).map(k => ({name: k, qty: itemCounts[k]})).sort((a,b)=> b.qty - a.qty).slice(0,5);
             let topHtml = sortedItems.length ? sortedItems.map(i => `<li class="py-3 flex justify-between items-center text-sm"><span class="font-medium text-charcoal">${i.name}</span><span class="bg-gray-100 text-charcoal px-2 py-1 rounded font-bold">${i.qty} Terjual</span></li>`).join('') : '<li class="py-3 text-muted text-sm">Belum ada penjualan.</li>';
             document.getElementById('dash-top-sales').innerHTML = topHtml;
@@ -844,6 +861,8 @@
             document.getElementById('set-address').value = globalSettings.Address || '';
             document.getElementById('set-fonnte').value = globalSettings.FonnteToken || '';
             document.getElementById('set-categories').value = globalSettings.Categories || 'Main Course, Drinks, Snacks';
+            document.getElementById('set-wa-provider').value = globalSettings.WAProvider || 'Fonnte';
+            document.getElementById('set-wa-sender').value = globalSettings.WASenderNumber || '';
         }
 
         function saveSettings(e) {
@@ -856,7 +875,9 @@
                     LogoURL: document.getElementById('set-logo').value,
                     Address: document.getElementById('set-address').value,
                     FonnteToken: document.getElementById('set-fonnte').value,
-                    Categories: document.getElementById('set-categories').value
+                    Categories: document.getElementById('set-categories').value,
+                    WAProvider: document.getElementById('set-wa-provider').value,
+                    WASenderNumber: document.getElementById('set-wa-sender').value
                 }
             };
             fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { if(data.success) { showToast("Pengaturan Disimpan!"); fetchInitData(); } btn.innerHTML = 'Simpan Pengaturan'; btn.disabled = false; });
