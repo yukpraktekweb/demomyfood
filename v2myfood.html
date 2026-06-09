@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyFood | Delivery & Menu</title>
+    <title id="page-title">Loading Store...</title>
     
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -51,7 +51,7 @@
                 <!-- Logo & Brand -->
                 <div class="flex items-center">
                     <img id="nav-brand-logo" src="" alt="Logo" class="h-10 w-10 object-cover rounded-xl mr-3 shadow-sm cursor-pointer hidden" onclick="handleSecretClick()">
-                    <div id="nav-brand-icon" class="bg-primary text-white p-2 rounded-xl mr-3 shadow-sm cursor-pointer" onclick="handleSecretClick()" title="Klik 7x untuk Admin">
+                    <div id="nav-brand-icon" class="bg-primary text-white p-2 rounded-xl mr-3 shadow-sm cursor-pointer" onclick="handleSecretClick()" title="Klik 7x untuk Login Admin/Kasir">
                         <i data-lucide="utensils" class="w-6 h-6"></i>
                     </div>
                     <span class="text-2xl font-bold tracking-tight cursor-pointer text-primary" onclick="goHome()" id="nav-brand-name">
@@ -76,9 +76,9 @@
                     </button>
                 </div>
                 
-                <!-- Admin Logout -->
+                <!-- Admin/Kasir Logout -->
                 <div class="hidden items-center space-x-4" id="nav-admin-logout">
-                     <span class="text-sm font-bold text-primary">Admin Mode</span>
+                     <span class="text-sm font-bold text-primary uppercase" id="nav-role-badge">STAFF</span>
                      <button onclick="logoutAdmin()" class="text-white bg-charcoal hover:bg-gray-800 px-4 py-2 rounded-lg text-sm font-medium transition-all-ease">
                          Logout
                      </button>
@@ -154,14 +154,14 @@
         </footer>
     </div>
 
-    <!-- ADMIN DASHBOARD VIEW -->
+    <!-- ADMIN/KASIR DASHBOARD VIEW -->
     <div id="admin-view" class="hidden flex-grow bg-gray-50 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-bold text-charcoal">Admin Panel</h1>
+                <h1 class="text-3xl font-bold text-charcoal" id="panel-title">Dashboard</h1>
             </div>
             
-            <!-- Admin Tabs -->
+            <!-- Admin Tabs (RBAC logic applies here) -->
             <div class="flex overflow-x-auto space-x-2 hide-scrollbar mb-8 pb-2 border-b border-gray-200">
                 <button onclick="switchAdminTab('dashboard')" id="tab-dashboard" class="px-5 py-2.5 rounded-lg bg-primary text-white font-medium shadow-sm whitespace-nowrap">Dashboard</button>
                 <button onclick="switchAdminTab('orders')" id="tab-orders" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Pesanan</button>
@@ -169,13 +169,14 @@
                 <button onclick="switchAdminTab('kategori')" id="tab-kategori" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Kategori</button>
                 <button onclick="switchAdminTab('tampilan')" id="tab-tampilan" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Tampilan</button>
                 <button onclick="switchAdminTab('coupons')" id="tab-coupons" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Kupon</button>
+                <button onclick="switchAdminTab('users')" id="tab-users" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Manajemen User</button>
                 <button onclick="switchAdminTab('settings')" id="tab-settings" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Pengaturan</button>
             </div>
 
             <!-- TAB 1: DASHBOARD -->
             <div id="admin-dashboard-section" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center" id="card-omset">
                         <span class="text-muted text-sm font-semibold mb-1">Total Omset</span>
                         <span class="text-2xl font-bold text-primary" id="dash-omset">Rp 0</span>
                     </div>
@@ -314,7 +315,33 @@
                 </div>
             </div>
 
-            <!-- TAB 7: SETTINGS -->
+            <!-- TAB 7: MANAJEMEN USER (RBAC) -->
+            <div id="admin-users-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold">Manajemen User</h2>
+                        <p class="text-xs text-muted">Atur akses login untuk Kasir dan Admin lainnya.</p>
+                    </div>
+                    <button onclick="openUserForm()" class="bg-success hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center">
+                        <i data-lucide="user-plus" class="w-4 h-4 mr-1"></i> Tambah User
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-500 text-sm border-b">
+                                <th class="p-4 font-semibold">Username</th>
+                                <th class="p-4 font-semibold">Role Akses</th>
+                                <th class="p-4 font-semibold">PIN Login</th>
+                                <th class="p-4 font-semibold text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-users-table" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 8: SETTINGS -->
             <div id="admin-settings-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h2 class="text-xl font-bold mb-6">Pengaturan Toko & Pembayaran</h2>
                 <form id="admin-settings-form" onsubmit="saveSettings(event)" class="space-y-6 max-w-2xl">
@@ -431,17 +458,24 @@
         </div>
     </div>
 
-    <!-- Admin Logic Modals -->
+    <!-- Admin/Kasir Login Modals -->
     <div id="admin-login-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[90] hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 transform scale-95 opacity-0 transition-all">
-            <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">Login Admin</h2><button onclick="closeModal('admin-login-modal')" class="text-muted"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h2 class="text-xl font-bold">Login Toko</h2>
+                    <p class="text-xs text-muted">Masukkan PIN Admin atau Kasir</p>
+                </div>
+                <button onclick="closeModal('admin-login-modal')" class="text-muted"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
             <form onsubmit="processAdminLogin(event)" class="space-y-4">
                 <input type="password" id="admin-pin" placeholder="••••" required class="w-full px-4 py-3 text-center tracking-widest text-xl border rounded-lg outline-none">
-                <button type="submit" class="w-full bg-charcoal text-white font-bold py-3 rounded-xl">Login</button>
+                <button type="submit" class="w-full bg-charcoal text-white font-bold py-3 rounded-xl">Masuk</button>
             </form>
         </div>
     </div>
 
+    <!-- Manajemen Menu Modal -->
     <div id="menu-form-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[90] hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
             <div class="p-5 bg-charcoal text-white flex justify-between items-center"><h2 class="text-xl font-bold" id="menu-form-title">Tambah Menu</h2><button onclick="closeModal('menu-form-modal')" class="text-white"><i data-lucide="x" class="w-6 h-6"></i></button></div>
@@ -463,7 +497,7 @@
         </div>
     </div>
 
-    <!-- Slider Form Modal (NEW) -->
+    <!-- Slider Form Modal -->
     <div id="slider-form-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[90] hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col">
             <div class="p-5 bg-charcoal text-white flex justify-between items-center"><h2 class="text-xl font-bold">Tambah Slider</h2><button onclick="closeModal('slider-form-modal')" class="text-white"><i data-lucide="x" class="w-6 h-6"></i></button></div>
@@ -479,6 +513,7 @@
         </div>
     </div>
 
+    <!-- Coupon Form Modal -->
     <div id="coupon-form-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[90] hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col">
             <div class="p-5 bg-charcoal text-white flex justify-between items-center"><h2 class="text-xl font-bold" id="coupon-form-title">Buat Kupon</h2><button onclick="closeModal('coupon-form-modal')" class="text-white"><i data-lucide="x" class="w-6 h-6"></i></button></div>
@@ -490,6 +525,39 @@
                     <div><label class="block text-sm font-medium mb-1">Status</label><select id="form-coupon-active" class="w-full px-3 py-2 border rounded-lg bg-white outline-none"><option value="true">Aktif</option><option value="false">Nonaktif</option></select></div>
                     <div class="pt-4 border-t flex justify-end space-x-3"><button type="submit" id="btn-save-coupon" class="px-4 py-2 bg-primary text-white font-bold rounded-lg">Simpan</button></div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manajemen User (RBAC) Form Modal -->
+    <div id="user-form-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[90] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col">
+            <div class="p-5 bg-charcoal text-white flex justify-between items-center"><h2 class="text-xl font-bold" id="user-form-title">Tambah User</h2><button onclick="closeModal('user-form-modal')" class="text-white"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+            <div class="p-6">
+                <form id="admin-user-form" onsubmit="saveAdminUser(event)" class="space-y-4">
+                    <input type="hidden" id="form-user-old-username">
+                    <div><label class="block text-sm font-medium mb-1">Username *</label><input type="text" id="form-user-username" required class="w-full px-3 py-2 border rounded-lg outline-none lowercase"></div>
+                    <div><label class="block text-sm font-medium mb-1">PIN / Password *</label><input type="text" id="form-user-pin" required class="w-full px-3 py-2 border rounded-lg outline-none"></div>
+                    <div><label class="block text-sm font-medium mb-1">Peran (Role)</label>
+                        <select id="form-user-role" class="w-full px-3 py-2 border rounded-lg bg-white outline-none">
+                            <option value="kasir">Kasir (Hanya Pesanan)</option>
+                            <option value="admin">Admin (Akses Penuh)</option>
+                        </select>
+                    </div>
+                    <div class="pt-4 border-t flex justify-end space-x-3"><button type="submit" id="btn-save-user" class="px-4 py-2 bg-primary text-white font-bold rounded-lg">Simpan</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 transform scale-95 opacity-0 transition-all">
+            <h3 class="text-lg font-bold mb-2">Konfirmasi</h3>
+            <p id="confirm-message" class="text-sm text-muted mb-6">Yakin ingin melanjutkan?</p>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeModal('confirm-modal')" class="px-4 py-2 bg-gray-100 text-charcoal rounded-lg font-medium">Batal</button>
+                <button id="confirm-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold transition-colors">Yakin</button>
             </div>
         </div>
     </div>
@@ -510,12 +578,14 @@
         let allMenuItems = []; 
         let allOrders = []; 
         let allCoupons = [];
+        let allUsers = [];
         let globalSettings = {}; 
         let cart = []; 
         let appliedCoupon = null; 
         let currentCategory = 'All'; 
         let searchQuery = ''; 
         let isAdminMode = false;
+        let userRole = ''; // 'admin' atau 'kasir'
         let secretClickCount = 0; 
         let secretClickTimer; 
         let requiredAdminClicks = 7;
@@ -540,8 +610,10 @@
                 });
             }
             
+            // Check session untuk RBAC
             if(sessionStorage.getItem('myfood_admin') === 'true') {
                 isAdminMode = true;
+                userRole = sessionStorage.getItem('myfood_role') || 'admin';
             }
             
             const urlParams = new URLSearchParams(window.location.search);
@@ -606,8 +678,9 @@
             const colorHexSpan = document.getElementById('set-color-hex');
             if(colorHexSpan) colorHexSpan.innerText = primColor.toUpperCase();
 
-            // Apply Brand Text
+            // Apply Brand Text & Title
             const bName = globalSettings.BrandName || 'MyFood';
+            document.title = bName + ' | Delivery & Menu'; 
             
             const navBrandName = document.getElementById('nav-brand-name');
             if(navBrandName) navBrandName.innerText = bName;
@@ -1221,7 +1294,7 @@
             setTimeout(() => t.classList.add('translate-y-20','opacity-0'), 3000); 
         }
 
-        // --- 6. ADMIN DASHBOARD LOGIC ---
+        // --- 6. ADMIN & RBAC LOGIC ---
         function handleSecretClick() { 
             secretClickCount++; 
             clearTimeout(secretClickTimer); 
@@ -1268,9 +1341,14 @@
                 .then(data => { 
                     if(data.success) { 
                         sessionStorage.setItem('myfood_admin', 'true'); 
+                        // Set Role dari API (default ke admin jika lama)
+                        sessionStorage.setItem('myfood_role', data.role || 'admin'); 
+                        
                         isAdminMode = true; 
+                        userRole = data.role || 'admin';
+                        
                         closeModal('admin-login-modal'); 
-                        showToast("Login Admin Berhasil"); 
+                        showToast(`Login Berhasil sebagai ${userRole.toUpperCase()}`); 
                         activateAdminUI(); 
                     } else { 
                         showToast(data.error || "PIN Salah!"); 
@@ -1292,7 +1370,9 @@
 
         function logoutAdmin() { 
             sessionStorage.removeItem('myfood_admin'); 
+            sessionStorage.removeItem('myfood_role'); 
             isAdminMode = false; 
+            userRole = '';
             
             const navLinks = document.getElementById('nav-links');
             const navIcons = document.getElementById('nav-icons');
@@ -1330,19 +1410,49 @@
             if(navLogout) {
                 navLogout.classList.remove('hidden'); 
                 navLogout.classList.add('flex');
+                document.getElementById('nav-role-badge').innerText = userRole;
             }
             
-            switchAdminTab('dashboard'); 
+            // RBAC Logic: Sembunyikan tab jika Kasir
+            const adminTabs = ['tab-menu', 'tab-kategori', 'tab-tampilan', 'tab-coupons', 'tab-settings', 'tab-users'];
+            if(userRole === 'kasir') {
+                adminTabs.forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) el.classList.add('hidden');
+                });
+                const omsetCard = document.getElementById('card-omset');
+                if(omsetCard) omsetCard.classList.add('hidden');
+                document.getElementById('panel-title').innerText = "Panel Kasir";
+                
+                switchAdminTab('orders'); 
+            } else {
+                // Admin (Munculkan semua)
+                adminTabs.forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) el.classList.remove('hidden');
+                });
+                const omsetCard = document.getElementById('card-omset');
+                if(omsetCard) omsetCard.classList.remove('hidden');
+                document.getElementById('panel-title').innerText = "Admin Dashboard";
+
+                switchAdminTab('dashboard'); 
+            }
+            
             fetchAdminMenu(); 
             fetchAdminOrders(); 
         }
 
         function switchAdminTab(tab) {
-            ['dashboard','orders','menu','kategori','tampilan','coupons','settings'].forEach(t => {
+            ['dashboard','orders','menu','kategori','tampilan','coupons','settings','users'].forEach(t => {
                 const section = document.getElementById(`admin-${t}-section`);
                 const tabBtn = document.getElementById(`tab-${t}`);
                 if(section) section.classList.add('hidden');
-                if(tabBtn) tabBtn.className = "px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap transition-all-ease";
+                if(tabBtn) {
+                    tabBtn.className = "px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap transition-all-ease";
+                    if(userRole === 'kasir' && t !== 'dashboard' && t !== 'orders') {
+                        tabBtn.classList.add('hidden'); // Ensure it stays hidden for kasir
+                    }
+                }
             });
             
             const actSection = document.getElementById(`admin-${tab}-section`);
@@ -1352,11 +1462,12 @@
             if(actTabBtn) actTabBtn.className = "px-5 py-2.5 rounded-lg bg-primary text-white font-medium shadow-sm whitespace-nowrap transition-all-ease";
             
             if(tab === 'orders' || tab === 'dashboard') fetchAdminOrders();
-            if(tab === 'menu') renderAdminMenuTable();
-            if(tab === 'kategori') renderAdminCategoriesList();
-            if(tab === 'tampilan') renderAdminSlidersList();
-            if(tab === 'coupons') renderAdminCouponsTable();
-            if(tab === 'settings') populateSettingsForm();
+            if(tab === 'menu' && userRole === 'admin') renderAdminMenuTable();
+            if(tab === 'kategori' && userRole === 'admin') renderAdminCategoriesList();
+            if(tab === 'tampilan' && userRole === 'admin') renderAdminSlidersList();
+            if(tab === 'coupons' && userRole === 'admin') renderAdminCouponsTable();
+            if(tab === 'settings' && userRole === 'admin') populateSettingsForm();
+            if(tab === 'users' && userRole === 'admin') fetchAdminUsers();
         }
 
         // --- DASHBOARD CALCULATION ---
@@ -1880,6 +1991,149 @@
                         btn.disabled = false; 
                     }
                 });
+        }
+
+        // --- MANAJEMEN USER (RBAC) ---
+        function fetchAdminUsers() {
+            if(userRole !== 'admin') return;
+            fetch(`${APPS_SCRIPT_URL}?action=getUsers`)
+                .then(res => res.json())
+                .then(data => {
+                    allUsers = data;
+                    renderAdminUsersTable();
+                });
+        }
+
+        function renderAdminUsersTable() {
+            const tbody = document.getElementById('admin-users-table');
+            if(!tbody) return;
+            
+            if(allUsers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-muted">Belum ada user.</td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = allUsers.map(u => {
+                const isKasir = u.role === 'kasir';
+                const roleBadge = isKasir ? `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold uppercase">Kasir</span>` : `<span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-bold uppercase">Admin</span>`;
+                const objStr = encodeURIComponent(JSON.stringify(u));
+                // Admin utama (default) biasanya tidak bisa dihapus, tapi di sini kita handle secara UI
+                const canDelete = u.username !== 'admin';
+                
+                return `
+                    <tr class="hover:bg-gray-50 border-b">
+                        <td class="p-4 font-bold text-charcoal">${u.username}</td>
+                        <td class="p-4 text-sm">${roleBadge}</td>
+                        <td class="p-4 text-sm font-mono bg-gray-100 px-2 rounded inline-block mt-3">${u.pin}</td>
+                        <td class="p-4 text-right">
+                            <button onclick="editAdminUser('${objStr}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium mr-3">Edit</button>
+                            ${canDelete ? `<button onclick="deleteAdminUser('${u.username}')" class="text-red-500 hover:text-red-700 text-sm font-medium"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button>` : ''}
+                        </td>
+                    </tr>`;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function openUserForm() {
+            const form = document.getElementById('admin-user-form');
+            if(form) form.reset();
+            
+            const idInput = document.getElementById('form-user-old-username');
+            if(idInput) idInput.value = '';
+            
+            const title = document.getElementById('user-form-title');
+            if(title) title.innerText = 'Tambah User';
+            
+            const modal = document.getElementById('user-form-modal');
+            if(modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        }
+
+        function editAdminUser(encodedObj) {
+            const u = JSON.parse(decodeURIComponent(encodedObj));
+            
+            const fillField = (id, val) => {
+                const el = document.getElementById(id);
+                if(el) el.value = val;
+            };
+            
+            fillField('form-user-old-username', u.username);
+            fillField('form-user-username', u.username);
+            fillField('form-user-pin', u.pin);
+            fillField('form-user-role', u.role);
+            
+            const title = document.getElementById('user-form-title');
+            if(title) title.innerText = 'Edit User';
+            
+            const modal = document.getElementById('user-form-modal');
+            if(modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        }
+
+        function saveAdminUser(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-user');
+            if(btn) { btn.innerHTML = 'Menyimpan...'; btn.disabled = true; }
+            
+            const getVal = (id) => {
+                const el = document.getElementById(id);
+                return el ? el.value : '';
+            };
+            
+            const payload = {
+                action: 'saveUser',
+                oldUsername: getVal('form-user-old-username'),
+                username: getVal('form-user-username').trim().toLowerCase(),
+                pin: getVal('form-user-pin').trim(),
+                role: getVal('form-user-role')
+            };
+            
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) { 
+                        showToast("User tersimpan!"); 
+                        closeModal('user-form-modal'); 
+                        fetchAdminUsers(); 
+                    } else {
+                        showToast(data.error || "Gagal menyimpan user.");
+                    }
+                    if(btn) { btn.innerHTML = 'Simpan'; btn.disabled = false; }
+                })
+                .catch(err => {
+                    showToast("Terjadi kesalahan jaringan.");
+                    if(btn) { btn.innerHTML = 'Simpan'; btn.disabled = false; }
+                });
+        }
+        
+        function deleteAdminUser(username) {
+            const modal = document.getElementById('confirm-modal');
+            const msgEl = document.getElementById('confirm-message');
+            const btnEl = document.getElementById('confirm-btn');
+            
+            if(msgEl) msgEl.innerText = `Yakin hapus user "${username}"?`;
+            
+            if(btnEl) {
+                btnEl.onclick = () => {
+                    closeModal('confirm-modal');
+                    fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({action: 'deleteUser', username: username}) })
+                        .then(res => res.json())
+                        .then(data => {
+                            if(data.success) { 
+                                showToast("User dihapus!"); 
+                                fetchAdminUsers(); 
+                            } else {
+                                showToast(data.error || "Gagal menghapus user");
+                            }
+                        });
+                };
+            }
+            
+            if(modal) { 
+                modal.classList.remove('hidden'); 
+                modal.classList.add('flex'); 
+                setTimeout(()=>{ 
+                    if(modal.children[0]) modal.children[0].classList.remove('scale-95','opacity-0'); 
+                }, 10); 
+            }
         }
     </script>
 </body>
