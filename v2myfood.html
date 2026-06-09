@@ -3,22 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyFood | Fresh Meals & Drinks</title>
+    <title>MyFood | Delivery & Menu</title>
     
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* CSS Variables untuk Tema Warna Dinamis */
+        :root {
+            --color-primary: #E63946;
+        }
+        body { background-color: #FFF8F0; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .transition-all-ease { transition: all 0.3s ease-in-out; }
+    </style>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#E63946',
-                        secondary: '#F77F00',
-                        accent: '#FFB703',
-                        cream: '#FFF8F0',
+                        primary: 'var(--color-primary)',
                         charcoal: '#1F2937',
                         muted: '#64748B',
                         espresso: '#1B120F',
@@ -34,13 +41,6 @@
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        body { background-color: #FFF8F0; }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .transition-all-ease { transition: all 0.3s ease-in-out; }
-    </style>
 </head>
 <body class="text-charcoal flex flex-col min-h-screen">
 
@@ -48,14 +48,15 @@
     <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
-                <!-- Logo -->
+                <!-- Logo & Brand -->
                 <div class="flex items-center">
                     <img id="nav-brand-logo" src="" alt="Logo" class="h-10 w-10 object-cover rounded-xl mr-3 shadow-sm cursor-pointer hidden" onclick="handleSecretClick()">
                     <div id="nav-brand-icon" class="bg-primary text-white p-2 rounded-xl mr-3 shadow-sm cursor-pointer" onclick="handleSecretClick()" title="Klik 7x untuk Admin">
                         <i data-lucide="utensils" class="w-6 h-6"></i>
                     </div>
-                    <span class="text-2xl font-bold tracking-tight cursor-pointer" onclick="goHome()" id="nav-brand-name">
-                        <span class="text-charcoal">My</span><span class="text-primary">Food</span>
+                    <!-- BUG FIX: Tidak ada lagi text split dobel -->
+                    <span class="text-2xl font-bold tracking-tight cursor-pointer text-primary" onclick="goHome()" id="nav-brand-name">
+                        MyFood
                     </span>
                 </div>
                 
@@ -76,7 +77,7 @@
                     </button>
                 </div>
                 
-                <!-- Admin Logout (Hidden by default) -->
+                <!-- Admin Logout -->
                 <div class="hidden items-center space-x-4" id="nav-admin-logout">
                      <span class="text-sm font-bold text-primary">Admin Mode</span>
                      <button onclick="logoutAdmin()" class="text-white bg-charcoal hover:bg-gray-800 px-4 py-2 rounded-lg text-sm font-medium transition-all-ease">
@@ -90,18 +91,10 @@
     <!-- CUSTOMER VIEW (STORE) -->
     <div id="customer-view" class="flex-grow">
         <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
-            <!-- Hero Banner -->
-            <div class="relative bg-charcoal rounded-3xl overflow-hidden shadow-xl mb-12 h-80 flex items-center">
-                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80" 
-                     class="absolute inset-0 w-full h-full object-cover opacity-40" alt="Delicious Food">
-                <div class="relative z-10 p-8 md:p-16 flex flex-col items-center md:items-start text-center md:text-left w-full">
-                    <span class="bg-accent text-charcoal text-sm font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wide shadow-sm">Pesan Sekarang</span>
-                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" id="hero-title">Welcome to MyFood!</h1>
-                    <p class="text-lg text-gray-200 mb-8 max-w-lg font-light">Nikmati hidangan lezat dan minuman segar langsung di tempat atau antar ke tempat Anda.</p>
-                    <button onclick="document.getElementById('menu-section').scrollIntoView({behavior: 'smooth'})" class="bg-primary hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-full transition-all-ease shadow-lg transform hover:-translate-y-1">
-                        Lihat Menu
-                    </button>
-                </div>
+            
+            <!-- Hero Slider (Carousel Dinamis) -->
+            <div class="relative bg-charcoal rounded-3xl overflow-hidden shadow-xl mb-12 h-80 flex items-center" id="hero-slider-container">
+                <!-- Di-inject via JS -->
             </div>
 
             <!-- Menu Section -->
@@ -111,7 +104,7 @@
                     <div class="sticky top-28">
                         <h3 class="text-xl font-bold mb-4 hidden md:block">Kategori</h3>
                         <div class="flex overflow-x-auto hide-scrollbar space-x-3 md:space-x-0 md:flex-col md:space-y-2" id="category-container">
-                            <!-- Categories will be injected here -->
+                            <!-- Categories inject -->
                         </div>
                     </div>
                 </aside>
@@ -126,7 +119,6 @@
                         </div>
                     </div>
 
-                    <!-- Enhanced Error/Loading States -->
                     <div id="loading-state" class="flex flex-col items-center justify-center py-20 text-muted">
                         <i data-lucide="loader-2" class="w-10 h-10 animate-spin mb-4 text-primary"></i>
                         <p>Memuat menu dari database...</p>
@@ -144,7 +136,7 @@
                     </div>
 
                     <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
-                        <!-- Cards -->
+                        <!-- Cards inject -->
                     </div>
                 </div>
             </div>
@@ -175,7 +167,9 @@
                 <button onclick="switchAdminTab('dashboard')" id="tab-dashboard" class="px-5 py-2.5 rounded-lg bg-primary text-white font-medium shadow-sm whitespace-nowrap">Dashboard</button>
                 <button onclick="switchAdminTab('orders')" id="tab-orders" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Pesanan</button>
                 <button onclick="switchAdminTab('menu')" id="tab-menu" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Menu</button>
-                <button onclick="switchAdminTab('coupons')" id="tab-coupons" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Kupon Diskon</button>
+                <button onclick="switchAdminTab('kategori')" id="tab-kategori" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Kategori</button>
+                <button onclick="switchAdminTab('tampilan')" id="tab-tampilan" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Tampilan</button>
+                <button onclick="switchAdminTab('coupons')" id="tab-coupons" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Kupon</button>
                 <button onclick="switchAdminTab('settings')" id="tab-settings" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Pengaturan</button>
             </div>
 
@@ -192,7 +186,7 @@
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
                         <span class="text-muted text-sm font-semibold mb-1">Pesanan Menunggu</span>
-                        <span class="text-2xl font-bold text-secondary" id="dash-orders-pending">0</span>
+                        <span class="text-2xl font-bold text-yellow-500" id="dash-orders-pending">0</span>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
                         <span class="text-muted text-sm font-semibold mb-1">Menu Aktif</span>
@@ -202,9 +196,7 @@
                 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <h2 class="text-xl font-bold mb-4 flex items-center"><i data-lucide="trending-up" class="w-5 h-5 mr-2 text-success"></i> Menu Terlaris</h2>
-                    <ul id="dash-top-sales" class="divide-y divide-gray-100">
-                        <li class="py-3 text-muted text-sm">Memuat data penjualan...</li>
-                    </ul>
+                    <ul id="dash-top-sales" class="divide-y divide-gray-100"></ul>
                 </div>
             </div>
 
@@ -255,7 +247,51 @@
                 </div>
             </div>
 
-            <!-- TAB 4: COUPONS -->
+            <!-- TAB 4: KATEGORI -->
+            <div id="admin-kategori-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-xl font-bold mb-6">Kelola Kategori Menu</h2>
+                <div class="flex gap-2 mb-6 max-w-lg">
+                    <input type="text" id="new-category-input" placeholder="Nama kategori baru..." class="flex-grow px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
+                    <button onclick="addAdminCategory()" class="bg-success hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold">Tambah</button>
+                </div>
+                <div class="max-w-lg">
+                    <ul id="admin-category-list" class="divide-y divide-gray-100 border rounded-lg bg-gray-50"></ul>
+                </div>
+            </div>
+
+            <!-- TAB 5: TAMPILAN & TEMA -->
+            <div id="admin-tampilan-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-xl font-bold mb-6">Tampilan & Tema Toko</h2>
+                
+                <div class="mb-8 p-6 border rounded-xl bg-gray-50 max-w-2xl">
+                    <h3 class="font-bold text-charcoal mb-2">Tema Warna Utama (Brand Color)</h3>
+                    <p class="text-xs text-muted mb-4">Pilih warna yang sesuai dengan identitas restoran Anda.</p>
+                    <div class="flex items-center gap-4">
+                        <input type="color" id="set-color-primary" onchange="previewColor()" class="w-14 h-14 rounded cursor-pointer border border-gray-300">
+                        <span id="set-color-hex" class="font-mono text-sm font-bold text-gray-600 bg-white px-3 py-1 border rounded">#E63946</span>
+                    </div>
+                </div>
+
+                <div class="mb-4 flex justify-between items-center max-w-4xl">
+                    <div>
+                        <h3 class="font-bold text-charcoal">Slider Promo (Hero Banner)</h3>
+                        <p class="text-xs text-muted">Gambar besar di halaman depan. Bisa lebih dari 1 gambar.</p>
+                    </div>
+                    <button onclick="openSliderForm()" class="bg-charcoal text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center"><i data-lucide="plus" class="w-4 h-4 mr-1"></i> Tambah Slider</button>
+                </div>
+                <div class="overflow-x-auto max-w-4xl border rounded-lg">
+                    <table class="w-full text-left border-collapse">
+                        <thead><tr class="bg-gray-100 border-b"><th class="p-3">Gambar</th><th class="p-3">Info Teks</th><th class="p-3 text-right">Aksi</th></tr></thead>
+                        <tbody id="admin-slider-table" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t max-w-4xl">
+                    <button onclick="saveTampilan()" id="btn-save-tampilan" class="bg-primary hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold shadow-md transition-all">Simpan Perubahan Tampilan</button>
+                </div>
+            </div>
+
+            <!-- TAB 6: COUPONS -->
             <div id="admin-coupons-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold">Kelola Kupon Diskon</h2>
@@ -279,7 +315,7 @@
                 </div>
             </div>
 
-            <!-- TAB 5: SETTINGS -->
+            <!-- TAB 7: SETTINGS -->
             <div id="admin-settings-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h2 class="text-xl font-bold mb-6">Pengaturan Toko & Pembayaran</h2>
                 <form id="admin-settings-form" onsubmit="saveSettings(event)" class="space-y-6 max-w-2xl">
@@ -288,9 +324,6 @@
                         <div><label class="block text-sm font-medium mb-1">Nomor WhatsApp CS</label><input type="text" id="set-phone" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
                         <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">URL Logo Toko (Opsional)</label><input type="url" id="set-logo" placeholder="https://..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary text-sm"></div>
                         <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">Alamat Lengkap</label><textarea id="set-address" rows="2" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></textarea></div>
-                        <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">Kategori Menu Tersedia (Pisahkan dengan koma)</label>
-                            <input type="text" id="set-categories" placeholder="Main Course, Drinks, Snacks" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
-                        </div>
 
                         <!-- SETTING PEMBAYARAN -->
                         <div class="md:col-span-2 border-t pt-4 mt-2">
@@ -298,44 +331,24 @@
                             <p class="text-xs text-muted mb-4">Informasi ini akan muncul saat pelanggan memilih metode pembayaran di Checkout.</p>
                             
                             <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium mb-1">URL Gambar QRIS Statis (Opsional)</label>
-                                    <input type="url" id="set-qris-url" placeholder="https://link-gambar-qris-anda.com/qris.jpg" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary text-sm">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium mb-1">Info Manual Bank Transfer (Opsional)</label>
-                                    <textarea id="set-bank-info" rows="3" placeholder="BCA: 1234567890 a/n MyFood&#10;Mandiri: 0987654321 a/n MyFood" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></textarea>
-                                </div>
+                                <div><label class="block text-sm font-medium mb-1">URL Gambar QRIS Statis (Opsional)</label><input type="url" id="set-qris-url" placeholder="https://link-gambar-qris-anda.com/qris.jpg" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary text-sm"></div>
+                                <div><label class="block text-sm font-medium mb-1">Info Manual Bank Transfer (Opsional)</label><textarea id="set-bank-info" rows="3" placeholder="BCA: 1234567890 a/n MyFood&#10;Mandiri: 0987654321 a/n MyFood" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></textarea></div>
                             </div>
                         </div>
 
                         <!-- WA GATEWAY SETTINGS -->
                         <div class="md:col-span-2 border-t pt-4 mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="md:col-span-2">
-                                <h3 class="font-bold text-lg text-charcoal mb-1">Integrasi WhatsApp Gateway</h3>
-                                <p class="text-xs text-muted">Kirim otomatis struk pesanan ke pelanggan.</p>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-1">Provider WA Gateway</label>
+                            <div class="md:col-span-2"><h3 class="font-bold text-lg text-charcoal mb-1">Integrasi WhatsApp Gateway</h3><p class="text-xs text-muted">Kirim otomatis struk pesanan ke pelanggan.</p></div>
+                            <div><label class="block text-sm font-medium mb-1">Provider WA Gateway</label>
                                 <select id="set-wa-provider" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-white">
-                                    <option value="Fonnte">Fonnte</option>
-                                    <option value="Wablas">Wablas</option>
+                                    <option value="Fonnte">Fonnte</option><option value="Wablas">Wablas</option>
                                 </select>
                             </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-1">Nomor Sender (Opsional)</label>
-                                <input type="text" id="set-wa-sender" placeholder="Bisa dikosongkan untuk Fonnte" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
-                            </div>
-
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium mb-1">API Token</label>
-                                <input type="text" id="set-fonnte" placeholder="Kosongkan jika fitur WA tidak diaktifkan" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-gray-50">
-                            </div>
+                            <div><label class="block text-sm font-medium mb-1">Nomor Sender (Opsional)</label><input type="text" id="set-wa-sender" placeholder="Kosongkan untuk Fonnte" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
+                            <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">API Token</label><input type="text" id="set-fonnte" placeholder="Kosongkan jika fitur WA tidak diaktifkan" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-gray-50"></div>
                         </div>
                     </div>
-                    <button type="submit" id="btn-save-settings" class="bg-charcoal hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all">Simpan Pengaturan</button>
+                    <button type="submit" id="btn-save-settings" class="bg-charcoal hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all">Simpan Pengaturan Utama</button>
                 </form>
             </div>
         </div>
@@ -349,8 +362,6 @@
             <button onclick="toggleCart()" class="text-muted hover:text-charcoal bg-white p-2 rounded-full shadow-sm"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
         <div id="cart-items" class="flex-grow overflow-y-auto p-5 space-y-4"></div>
-        
-        <!-- Kupon Area di Keranjang -->
         <div class="px-5 py-3 border-t border-gray-100 bg-white">
             <div class="flex gap-2">
                 <input type="text" id="coupon-input" placeholder="Kode Kupon" class="flex-grow px-3 py-2 border rounded-lg text-sm uppercase outline-none focus:border-primary">
@@ -358,7 +369,6 @@
             </div>
             <p id="coupon-msg" class="text-xs font-bold mt-2 hidden"></p>
         </div>
-
         <div class="p-5 border-t border-gray-100 bg-gray-50">
             <div class="flex justify-between text-sm mb-1 text-muted"><span>Subtotal</span><span id="cart-subtotal">Rp 0</span></div>
             <div class="flex justify-between text-sm mb-3 text-success hidden" id="cart-discount-row"><span>Diskon</span><span id="cart-discount">-Rp 0</span></div>
@@ -367,7 +377,29 @@
         </div>
     </div>
 
-    <!-- Checkout Form -->
+    <!-- Product Detail Modal (NEW) -->
+    <div id="product-detail-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[80] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[90vh]" id="product-detail-content">
+            <div class="relative h-64 w-full flex-shrink-0">
+                <img id="pd-img" src="" class="w-full h-full object-cover">
+                <button onclick="closeProductDetail()" class="absolute top-4 right-4 bg-white text-charcoal p-2 rounded-full shadow-lg hover:bg-gray-100"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-grow flex flex-col">
+                <div class="flex justify-between items-start mb-2">
+                    <h2 id="pd-name" class="text-2xl font-bold text-charcoal"></h2>
+                    <span id="pd-price" class="text-xl font-bold text-primary whitespace-nowrap ml-4"></span>
+                </div>
+                <div id="pd-badge-container" class="mb-4"></div>
+                <p id="pd-desc" class="text-muted text-sm mb-6 whitespace-pre-line flex-grow"></p>
+                
+                <button id="pd-add-btn" onclick="" class="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-red-700 transition-all shadow-md flex justify-center items-center mt-4">
+                    <i data-lucide="shopping-cart" class="w-5 h-5 mr-2"></i> Tambah ke Keranjang
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
     <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[80] hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-y-auto max-h-[95vh] transform scale-95 opacity-0 transition-all duration-300" id="checkout-content">
             <div class="p-5 bg-primary text-white flex justify-between items-center sticky top-0 z-10">
@@ -375,71 +407,32 @@
                 <button onclick="closeCheckout()" class="text-white hover:text-gray-200"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
             <form id="checkout-form" class="p-6 space-y-4" onsubmit="submitOrder(event)">
-                
-                <div>
-                    <label class="block text-sm font-medium mb-1 text-charcoal">Nama Pemesan</label>
-                    <input type="text" id="cust-name" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-1 text-charcoal">Nomor WhatsApp (Aktif)</label>
-                    <input type="tel" id="cust-wa" required placeholder="08..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none">
-                </div>
-                
-                <!-- POS & DINE IN SELECTION -->
+                <div><label class="block text-sm font-medium mb-1">Nama Pemesan</label><input type="text" id="cust-name" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none"></div>
+                <div><label class="block text-sm font-medium mb-1">Nomor WhatsApp</label><input type="tel" id="cust-wa" required placeholder="08..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none"></div>
                 <div class="p-4 bg-gray-50 border rounded-xl space-y-3">
-                    <div>
-                        <label class="block text-sm font-bold mb-1 text-charcoal">Tipe Pesanan</label>
+                    <div><label class="block text-sm font-bold mb-1">Tipe Pesanan</label>
                         <select id="cust-order-type" onchange="toggleOrderType()" class="w-full px-4 py-2 border rounded-lg outline-none bg-white focus:ring-2 focus:ring-primary">
-                            <option value="Dine-In">Makan di Tempat (Dine-In)</option>
-                            <option value="Delivery">Kirim ke Alamat (Delivery)</option>
-                            <option value="Takeaway">Ambil Sendiri (Takeaway)</option>
+                            <option value="Dine-In">Makan di Tempat (Dine-In)</option><option value="Delivery">Kirim ke Alamat (Delivery)</option><option value="Takeaway">Ambil Sendiri (Takeaway)</option>
                         </select>
                     </div>
-
-                    <div id="table-number-container">
-                        <label class="block text-sm font-medium mb-1 text-charcoal">Nomor Meja</label>
-                        <input type="text" id="cust-table" placeholder="Contoh: 12" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none">
-                    </div>
-
-                    <div id="address-container" class="hidden">
-                        <label class="block text-sm font-medium mb-1 text-charcoal">Alamat Lengkap Pengiriman</label>
-                        <textarea id="cust-address" rows="2" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none resize-none"></textarea>
-                    </div>
+                    <div id="table-number-container"><label class="block text-sm font-medium mb-1">Nomor Meja</label><input type="text" id="cust-table" placeholder="Contoh: 12" class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                    <div id="address-container" class="hidden"><label class="block text-sm font-medium mb-1">Alamat Pengiriman</label><textarea id="cust-address" rows="2" class="w-full px-4 py-2 border rounded-lg outline-none resize-none"></textarea></div>
                 </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-1 text-charcoal">Catatan Tambahan (Opsional)</label>
-                    <textarea id="cust-note" rows="2" placeholder="Cth: Pedas, dipisah, dll" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none resize-none"></textarea>
-                </div>
-
-                <!-- PAYMENT SELECTION -->
+                <div><label class="block text-sm font-medium mb-1">Catatan Tambahan</label><textarea id="cust-note" rows="2" placeholder="Cth: Pedas, dll" class="w-full px-4 py-2 border rounded-lg outline-none resize-none"></textarea></div>
                 <div class="p-4 bg-gray-50 border rounded-xl">
-                    <label class="block text-sm font-bold mb-1 text-charcoal">Metode Pembayaran</label>
+                    <label class="block text-sm font-bold mb-1">Metode Pembayaran</label>
                     <select id="cust-payment" onchange="togglePaymentInfo()" class="w-full px-4 py-2 border rounded-lg outline-none bg-white focus:ring-2 focus:ring-primary">
-                        <option value="Cash / Kasir">Bayar di Kasir (Cash/EDC)</option>
-                        <option value="QRIS">QRIS Statis</option>
-                        <option value="Bank Transfer">Bank Transfer (Manual)</option>
+                        <option value="Cash / Kasir">Bayar di Kasir</option><option value="QRIS">QRIS Statis</option><option value="Bank Transfer">Bank Transfer</option>
                     </select>
-
-                    <!-- Dynamic Payment Info Displays -->
-                    <div id="qris-info" class="hidden mt-3 p-3 bg-white border border-dashed border-gray-300 rounded-lg text-center">
-                        <p class="text-sm font-bold mb-2 text-charcoal">Scan QRIS ini untuk membayar:</p>
-                        <img id="qris-img-display" src="" alt="QRIS" class="mx-auto max-h-48 rounded shadow-sm object-contain">
-                    </div>
-                    
-                    <div id="bank-info" class="hidden mt-3 p-3 bg-white border border-dashed border-gray-300 rounded-lg text-center text-sm">
-                        <p class="font-bold mb-1 text-charcoal">Transfer ke Rekening Berikut:</p>
-                        <p id="bank-text-display" class="whitespace-pre-wrap text-muted"></p>
-                    </div>
+                    <div id="qris-info" class="hidden mt-3 p-3 bg-white border border-dashed rounded-lg text-center"><p class="text-sm font-bold mb-2">Scan QRIS:</p><img id="qris-img-display" src="" class="mx-auto max-h-48 rounded shadow-sm object-contain"></div>
+                    <div id="bank-info" class="hidden mt-3 p-3 bg-white border border-dashed rounded-lg text-center text-sm"><p class="font-bold mb-1">Transfer ke:</p><p id="bank-text-display" class="whitespace-pre-wrap text-muted"></p></div>
                 </div>
-
-                <div class="pt-2 text-xs text-gray-500 mb-2 text-center">*Struk pesanan digital akan dikirim ke WhatsApp Anda.</div>
-                <button type="submit" id="submit-order-btn" class="w-full bg-success text-white font-bold py-3.5 rounded-xl shadow-md transition-all hover:bg-green-700 text-lg">Pesan Sekarang</button>
+                <button type="submit" id="submit-order-btn" class="w-full bg-success text-white font-bold py-3.5 rounded-xl shadow-md">Pesan Sekarang</button>
             </form>
         </div>
     </div>
 
-    <!-- Modals (Login, Menu, Coupon) -->
+    <!-- Admin Logic Modals -->
     <div id="admin-login-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[90] hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 transform scale-95 opacity-0 transition-all">
             <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">Login Admin</h2><button onclick="closeModal('admin-login-modal')" class="text-muted"><i data-lucide="x" class="w-5 h-5"></i></button></div>
@@ -458,14 +451,10 @@
                     <input type="hidden" id="form-menu-id">
                     <div class="grid grid-cols-2 gap-4">
                         <div class="col-span-2"><label class="block text-sm font-medium mb-1">Nama Menu *</label><input type="text" id="form-menu-name" required class="w-full px-3 py-2 border rounded-lg outline-none"></div>
-                        <div><label class="block text-sm font-medium mb-1">Kategori *</label>
-                             <select id="form-menu-category" class="w-full px-3 py-2 border rounded-lg outline-none bg-white">
-                                <!-- Injected from settings -->
-                             </select>
-                        </div>
+                        <div><label class="block text-sm font-medium mb-1">Kategori *</label><select id="form-menu-category" class="w-full px-3 py-2 border rounded-lg outline-none bg-white"></select></div>
                         <div><label class="block text-sm font-medium mb-1">Harga (Rp) *</label><input type="number" id="form-menu-price" required class="w-full px-3 py-2 border rounded-lg outline-none"></div>
                         <div class="col-span-2"><label class="block text-sm font-medium mb-1">Link Gambar URL *</label><input type="url" id="form-menu-img" required class="w-full px-3 py-2 border rounded-lg outline-none text-sm"></div>
-                        <div class="col-span-2"><label class="block text-sm font-medium mb-1">Deskripsi Singkat</label><textarea id="form-menu-desc" rows="2" class="w-full px-3 py-2 border rounded-lg outline-none resize-none"></textarea></div>
+                        <div class="col-span-2"><label class="block text-sm font-medium mb-1">Deskripsi Produk (Opsional)</label><textarea id="form-menu-desc" rows="3" class="w-full px-3 py-2 border rounded-lg outline-none resize-none"></textarea></div>
                         <div><label class="block text-sm font-medium mb-1">Badge Promo</label><input type="text" id="form-menu-badge" placeholder="New / Promo" class="w-full px-3 py-2 border rounded-lg outline-none"></div>
                         <div><label class="block text-sm font-medium mb-1">Status</label><select id="form-menu-active" class="w-full px-3 py-2 border rounded-lg outline-none bg-white"><option value="true">Aktif</option><option value="false">Sold Out</option></select></div>
                     </div>
@@ -475,19 +464,32 @@
         </div>
     </div>
 
-    <!-- Coupon Form Modal -->
+    <!-- Slider Form Modal (NEW) -->
+    <div id="slider-form-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[90] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col">
+            <div class="p-5 bg-charcoal text-white flex justify-between items-center"><h2 class="text-xl font-bold">Tambah Slider</h2><button onclick="closeModal('slider-form-modal')" class="text-white"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+            <div class="p-6">
+                <form id="admin-slider-form" onsubmit="addAdminSlider(event)" class="space-y-4">
+                    <div><label class="block text-sm font-medium mb-1">URL Gambar Banner *</label><input type="url" id="form-slider-img" required class="w-full px-3 py-2 border rounded-lg outline-none"></div>
+                    <div><label class="block text-sm font-medium mb-1">Judul Promosi *</label><input type="text" id="form-slider-title" required class="w-full px-3 py-2 border rounded-lg outline-none"></div>
+                    <div><label class="block text-sm font-medium mb-1">Sub Judul</label><input type="text" id="form-slider-subtitle" class="w-full px-3 py-2 border rounded-lg outline-none"></div>
+                    <div><label class="block text-sm font-medium mb-1">Teks Badge (Cth: Spesial)</label><input type="text" id="form-slider-badge" class="w-full px-3 py-2 border rounded-lg outline-none"></div>
+                    <div class="pt-4 border-t flex justify-end"><button type="submit" class="px-4 py-2 bg-primary text-white font-bold rounded-lg">Tambahkan</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div id="coupon-form-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[90] hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col">
             <div class="p-5 bg-charcoal text-white flex justify-between items-center"><h2 class="text-xl font-bold" id="coupon-form-title">Buat Kupon</h2><button onclick="closeModal('coupon-form-modal')" class="text-white"><i data-lucide="x" class="w-6 h-6"></i></button></div>
             <div class="p-6">
                 <form id="admin-coupon-form" onsubmit="saveAdminCoupon(event)" class="space-y-4">
                     <input type="hidden" id="form-coupon-id">
-                    <div><label class="block text-sm font-medium mb-1">Kode Kupon * (Tanpa spasi)</label><input type="text" id="form-coupon-code" required class="w-full px-3 py-2 border rounded-lg uppercase outline-none"></div>
-                    <div><label class="block text-sm font-medium mb-1">Nilai Potongan *</label><input type="number" id="form-coupon-val" required class="w-full px-3 py-2 border rounded-lg outline-none">
-                         <p class="text-xs text-muted mt-1">Isi <b>1-100</b> untuk Persen (%). Isi <b>>100</b> untuk nominal Rp.</p>
-                    </div>
-                    <div><label class="block text-sm font-medium mb-1">Status Kupon</label><select id="form-coupon-active" class="w-full px-3 py-2 border rounded-lg bg-white outline-none"><option value="true">Aktif</option><option value="false">Nonaktif</option></select></div>
-                    <div class="pt-4 border-t flex justify-end space-x-3"><button type="button" onclick="closeModal('coupon-form-modal')" class="px-4 py-2 text-charcoal hover:bg-gray-100 rounded-lg">Batal</button><button type="submit" id="btn-save-coupon" class="px-4 py-2 bg-primary text-white font-bold rounded-lg">Simpan</button></div>
+                    <div><label class="block text-sm font-medium mb-1">Kode Kupon *</label><input type="text" id="form-coupon-code" required class="w-full px-3 py-2 border rounded-lg uppercase outline-none"></div>
+                    <div><label class="block text-sm font-medium mb-1">Nilai Potongan *</label><input type="number" id="form-coupon-val" required class="w-full px-3 py-2 border rounded-lg outline-none"><p class="text-xs text-muted mt-1">1-100 utk Persen. >100 utk Nominal</p></div>
+                    <div><label class="block text-sm font-medium mb-1">Status</label><select id="form-coupon-active" class="w-full px-3 py-2 border rounded-lg bg-white outline-none"><option value="true">Aktif</option><option value="false">Nonaktif</option></select></div>
+                    <div class="pt-4 border-t flex justify-end space-x-3"><button type="submit" id="btn-save-coupon" class="px-4 py-2 bg-primary text-white font-bold rounded-lg">Simpan</button></div>
                 </form>
             </div>
         </div>
@@ -506,29 +508,38 @@
         // --- 1. CONFIGURATION ---
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1tyWzaOZvKzzB0EN9j7e3HLw9Q6hyzTHzULhgTlecfJjt1MoMA5wULfv3YmkiXnsLeA/exec';
         
-        // --- 2. STATE ---
-        let allMenuItems = [];
+        let allMenuItems = []; 
         let allOrders = []; 
         let allCoupons = [];
-        let globalSettings = {};
-        
-        let cart = [];
+        let globalSettings = {}; 
+        let cart = []; 
         let appliedCoupon = null; 
-        let currentCategory = 'All';
-        let searchQuery = '';
+        let currentCategory = 'All'; 
+        let searchQuery = ''; 
         let isAdminMode = false;
-        
-        let secretClickCount = 0; let secretClickTimer;
+        let secretClickCount = 0; 
+        let secretClickTimer; 
         let requiredAdminClicks = 7;
-        let initialTableNumber = null; // For QR Code parsing
+        let initialTableNumber = null;
+        
+        let adminCategories = []; 
+        let adminHeroSliders = [];
+        let currentSlide = 0; 
+        let slideInterval;
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             document.getElementById('year').innerText = new Date().getFullYear();
-            document.getElementById('search-input').addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); renderMenuCards(); });
-            if(sessionStorage.getItem('myfood_admin') === 'true') isAdminMode = true;
             
-            // Check for Table URL Parameter (e.g. ?table=5)
+            document.getElementById('search-input').addEventListener('input', (e) => { 
+                searchQuery = e.target.value.toLowerCase(); 
+                renderMenuCards(); 
+            });
+            
+            if(sessionStorage.getItem('myfood_admin') === 'true') {
+                isAdminMode = true;
+            }
+            
             const urlParams = new URLSearchParams(window.location.search);
             const tableParam = urlParams.get('table');
             if (tableParam) {
@@ -538,7 +549,7 @@
             fetchInitData();
         });
 
-        // --- 3. API CALLS ---
+        // --- 2. API FETCHING ---
         function fetchInitData() {
             document.getElementById('loading-state').classList.remove('hidden');
             document.getElementById('menu-grid').classList.add('hidden');
@@ -546,18 +557,21 @@
             fetch(`${APPS_SCRIPT_URL}?action=getInitData`)
                 .then(res => res.json())
                 .then(data => {
-                    allMenuItems = data.menu;
-                    globalSettings = data.settings;
+                    allMenuItems = data.menu; 
+                    globalSettings = data.settings; 
                     allCoupons = data.coupons;
                     
                     applyGlobalSettings();
                     
                     document.getElementById('loading-state').classList.add('hidden');
                     document.getElementById('menu-grid').classList.remove('hidden');
-                    extractAndRenderCategories();
+                    
+                    extractAndRenderCategories(); 
                     renderMenuCards();
                     
-                    if(isAdminMode) activateAdminUI();
+                    if(isAdminMode) {
+                        activateAdminUI();
+                    }
                 })
                 .catch(err => {
                     document.getElementById('loading-state').classList.add('hidden');
@@ -567,8 +581,15 @@
         }
 
         function applyGlobalSettings() {
+            // Apply Colors
+            const primColor = globalSettings.ColorPrimary || '#E63946';
+            document.documentElement.style.setProperty('--color-primary', primColor);
+            document.getElementById('set-color-primary').value = primColor;
+            document.getElementById('set-color-hex').innerText = primColor.toUpperCase();
+
+            // Apply Brand Text
             const bName = globalSettings.BrandName || 'MyFood';
-            document.getElementById('nav-brand-name').innerHTML = `<span class="text-charcoal">${bName.split(' ')[0]||'My'}</span><span class="text-primary">${bName.split(' ').slice(1).join(' ')||'Food'}</span>`;
+            document.getElementById('nav-brand-name').innerText = bName;
             document.getElementById('hero-title').innerText = `Welcome to ${bName}!`;
             document.getElementById('footer-brand').innerText = bName;
             
@@ -580,142 +601,168 @@
             
             document.getElementById('footer-address').innerText = globalSettings.Address || 'Alamat belum diatur';
             document.getElementById('footer-phone').innerText = globalSettings.Phone || '-';
-            if(globalSettings.AdminClicks) requiredAdminClicks = parseInt(globalSettings.AdminClicks);
+            if(globalSettings.AdminClicks) {
+                requiredAdminClicks = parseInt(globalSettings.AdminClicks);
+            }
 
-            // Set Admin Form Categories
-            const catStr = globalSettings.Categories || 'Main Course, Drinks, Snacks';
-            const catArr = catStr.split(',').map(s=>s.trim());
+            // Parse Categories
+            try {
+                adminCategories = JSON.parse(globalSettings.Categories);
+                if(!Array.isArray(adminCategories)) {
+                    adminCategories = globalSettings.Categories.split(',').map(s=>s.trim());
+                }
+            } catch(e) { 
+                adminCategories = (globalSettings.Categories || 'Main Course, Drinks, Snacks').split(',').map(s=>s.trim()); 
+            }
+            
+            // Set Form Category Select
             const catSelect = document.getElementById('form-menu-category');
-            catSelect.innerHTML = catArr.map(c => `<option value="${c}">${c}</option>`).join('');
+            catSelect.innerHTML = adminCategories.map(c => `<option value="${c}">${c}</option>`).join('');
+
+            // Parse Hero Sliders
+            try { 
+                adminHeroSliders = JSON.parse(globalSettings.HeroSliders || '[]'); 
+            } catch(e) { 
+                adminHeroSliders = []; 
+            }
+            renderCustomerSliders();
         }
 
-        // --- CHECKOUT & POS LOGIC ---
-        function toggleOrderType() {
-            const type = document.getElementById('cust-order-type').value;
-            if (type === 'Dine-In') {
-                document.getElementById('table-number-container').classList.remove('hidden');
-                document.getElementById('address-container').classList.add('hidden');
-            } else if (type === 'Delivery') {
-                document.getElementById('table-number-container').classList.add('hidden');
-                document.getElementById('address-container').classList.remove('hidden');
-            } else { // Takeaway
-                document.getElementById('table-number-container').classList.add('hidden');
-                document.getElementById('address-container').classList.add('hidden');
+        // --- 3. CUSTOMER SLIDER & MENU LOGIC ---
+        function renderCustomerSliders() {
+            const container = document.getElementById('hero-slider-container');
+            if(adminHeroSliders.length === 0) {
+                container.innerHTML = `
+                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40">
+                    <div class="relative z-10 p-8 md:p-16 flex flex-col items-center md:items-start text-center md:text-left w-full">
+                        <span class="bg-accent text-charcoal text-sm font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wide shadow-sm">Pesan Sekarang</span>
+                        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" id="hero-title">Welcome to ${globalSettings.BrandName||'MyFood'}!</h1>
+                        <p class="text-lg text-gray-200 mb-8 max-w-lg font-light">Nikmati hidangan lezat dan minuman segar langsung di tempat atau antar ke tempat Anda.</p>
+                        <button onclick="document.getElementById('menu-section').scrollIntoView({behavior: 'smooth'})" class="bg-primary hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-full transition-all-ease shadow-lg">Lihat Menu</button>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = adminHeroSliders.map((slide, i) => `
+                <div class="absolute inset-0 w-full h-full transition-opacity duration-1000 ${i===0?'opacity-100 z-10':'opacity-0 z-0'}" id="slide-${i}">
+                    <img src="${slide.img}" class="absolute inset-0 w-full h-full object-cover opacity-40">
+                    <div class="relative z-10 p-8 md:p-16 flex flex-col items-center md:items-start text-center md:text-left w-full h-full justify-center">
+                        ${slide.badge ? `<span class="bg-accent text-charcoal text-sm font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wide shadow-sm">${slide.badge}</span>` : ''}
+                        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">${slide.title}</h1>
+                        ${slide.subtitle ? `<p class="text-lg text-gray-200 mb-8 max-w-lg font-light">${slide.subtitle}</p>` : ''}
+                        <button onclick="document.getElementById('menu-section').scrollIntoView({behavior: 'smooth'})" class="bg-primary text-white font-semibold py-3 px-8 rounded-full transition-all-ease shadow-lg">Lihat Menu</button>
+                    </div>
+                </div>
+            `).join('');
+
+            if(adminHeroSliders.length > 1) {
+                container.innerHTML += `<div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
+                    ${adminHeroSliders.map((_, i) => `<button onclick="goToSlide(${i})" class="w-3 h-3 rounded-full bg-white ${i===0?'opacity-100':'opacity-50'} transition-opacity" id="slide-dot-${i}"></button>`).join('')}
+                </div>`;
+                clearInterval(slideInterval);
+                slideInterval = setInterval(nextSlide, 5000);
             }
         }
 
-        function togglePaymentInfo() {
-            const payment = document.getElementById('cust-payment').value;
-            const qrisDiv = document.getElementById('qris-info');
-            const bankDiv = document.getElementById('bank-info');
-            
-            qrisDiv.classList.add('hidden');
-            bankDiv.classList.add('hidden');
-
-            if(payment === 'QRIS' && globalSettings.QRISURL) {
-                document.getElementById('qris-img-display').src = globalSettings.QRISURL;
-                qrisDiv.classList.remove('hidden');
-            } else if (payment === 'Bank Transfer' && globalSettings.BankInfo) {
-                document.getElementById('bank-text-display').innerText = globalSettings.BankInfo;
-                bankDiv.classList.remove('hidden');
+        function nextSlide() { 
+            if(adminHeroSliders.length > 1) {
+                goToSlide((currentSlide + 1) % adminHeroSliders.length); 
             }
         }
 
-        function submitOrder(e) {
-            e.preventDefault();
-
-            const orderType = document.getElementById('cust-order-type').value;
-            const tableStr = document.getElementById('cust-table').value;
-            const addrStr = document.getElementById('cust-address').value;
+        function goToSlide(index) {
+            if(adminHeroSliders.length <= 1) return;
+            document.getElementById(`slide-${currentSlide}`).classList.replace('opacity-100', 'opacity-0');
+            document.getElementById(`slide-${currentSlide}`).classList.replace('z-10', 'z-0');
+            document.getElementById(`slide-dot-${currentSlide}`).classList.replace('opacity-100', 'opacity-50');
             
-            // Validasi POS dinamis
-            if (orderType === 'Dine-In' && !tableStr.trim()) { showToast("Mohon isi Nomor Meja!"); return; }
-            if (orderType === 'Delivery' && !addrStr.trim()) { showToast("Mohon isi Alamat Pengiriman!"); return; }
-
-            const btn = document.getElementById('submit-order-btn');
-            btn.disabled = true; btn.innerHTML = 'Memproses...';
-
-            // Menyusun payload "Address" secara pintar agar tetap terbaca rapi oleh Code.gs
-            let formattedInfo = `Tipe Pesanan: ${orderType}\n`;
-            if (orderType === 'Dine-In') formattedInfo += `Meja: ${tableStr}\n`;
-            if (orderType === 'Delivery') formattedInfo += `Alamat: ${addrStr}\n`;
+            currentSlide = index;
             
-            const note = document.getElementById('cust-note').value;
-            if (note.trim()) formattedInfo += `Catatan Tambahan: ${note}`;
-
-            let rawTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            let finalTotal = rawTotal - (appliedCoupon ? appliedCoupon.discountAmt : 0);
-
-            const orderData = {
-                action: 'submitOrder',
-                customerName: document.getElementById('cust-name').value,
-                whatsapp: document.getElementById('cust-wa').value,
-                address: formattedInfo.trim(),
-                paymentMethod: document.getElementById('cust-payment').value,
-                items: cart.map(i => ({id: i.id, name: i.name, qty: i.qty, price: i.price})),
-                total: finalTotal,
-                coupon: appliedCoupon ? appliedCoupon.code : ''
-            };
-
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(orderData) })
-                .then(res => res.json())
-                .then(data => {
-                    closeCheckout();
-                    showToast("Berhasil! Struk pesanan telah dikirim ke WA Anda.");
-                    cart = []; appliedCoupon = null; updateCartCounter();
-                    document.getElementById('checkout-form').reset();
-                    document.getElementById('coupon-input').value = '';
-                    document.getElementById('coupon-msg').classList.add('hidden');
-                    // Reset to initial table if any
-                    if(initialTableNumber) {
-                        document.getElementById('cust-order-type').value = 'Dine-In';
-                        document.getElementById('cust-table').value = initialTableNumber;
-                        toggleOrderType();
-                    }
-                    btn.disabled = false; btn.innerHTML = 'Pesan Sekarang';
-                }).catch(err => { showToast("Gagal memproses pesanan."); btn.disabled = false; btn.innerHTML = 'Coba Lagi'; });
+            document.getElementById(`slide-${currentSlide}`).classList.replace('opacity-0', 'opacity-100');
+            document.getElementById(`slide-${currentSlide}`).classList.replace('z-0', 'z-10');
+            document.getElementById(`slide-dot-${currentSlide}`).classList.replace('opacity-50', 'opacity-100');
         }
 
-        // --- 4. CUSTOMER UI FUNCTIONS ---
         const formatIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n);
+        
+        function goHome() { 
+            document.getElementById('admin-view').classList.add('hidden'); 
+            document.getElementById('customer-view').classList.remove('hidden'); 
+            resetFilters(); 
+            window.scrollTo(0,0); 
+        }
 
-        function goHome() { document.getElementById('admin-view').classList.add('hidden'); document.getElementById('customer-view').classList.remove('hidden'); resetFilters(); }
-        function resetFilters() { currentCategory = 'All'; searchQuery = ''; document.getElementById('search-input').value = ''; document.getElementById('current-category-title').innerText = 'All Menu'; extractAndRenderCategories(); renderMenuCards(); }
-        function focusSearch() { goHome(); document.getElementById('search-input').focus(); document.getElementById('menu-section').scrollIntoView(); }
+        function resetFilters() { 
+            currentCategory = 'All'; 
+            searchQuery = ''; 
+            document.getElementById('search-input').value = ''; 
+            document.getElementById('current-category-title').innerText = 'All Menu'; 
+            extractAndRenderCategories(); 
+            renderMenuCards(); 
+        }
+
+        function focusSearch() { 
+            goHome(); 
+            document.getElementById('search-input').focus(); 
+            document.getElementById('menu-section').scrollIntoView(); 
+        }
 
         function extractAndRenderCategories() {
             const activeItems = allMenuItems.filter(i => i.active === true || i.active === "TRUE");
-            const categories = ['All', ...new Set(activeItems.map(item => item.category))];
-            const container = document.getElementById('category-container');
+            const avCat = ['All', ...new Set(activeItems.map(item => item.category))];
+            const container = document.getElementById('category-container'); 
             container.innerHTML = '';
-            categories.forEach(cat => {
+            
+            avCat.forEach(cat => {
                 const isSel = cat === currentCategory;
                 const cls = isSel ? "bg-primary text-white font-medium" : "bg-white border text-charcoal";
                 container.innerHTML += `<button onclick="setCategory('${cat}')" class="whitespace-nowrap px-5 py-2.5 rounded-xl text-sm md:w-full text-left ${cls}">${cat}</button>`;
             });
         }
 
-        function setCategory(cat) { currentCategory = cat; document.getElementById('current-category-title').innerText = cat; extractAndRenderCategories(); renderMenuCards(); }
+        function setCategory(cat) { 
+            currentCategory = cat; 
+            document.getElementById('current-category-title').innerText = cat; 
+            extractAndRenderCategories(); 
+            renderMenuCards(); 
+        }
 
         function renderMenuCards() {
-            const grid = document.getElementById('menu-grid'); const empty = document.getElementById('empty-state');
+            const grid = document.getElementById('menu-grid'); 
+            const empty = document.getElementById('empty-state');
+            
             let filtered = allMenuItems.filter(i => (i.active === true || i.active === "TRUE"));
-            filtered = filtered.filter(item => { return (currentCategory === 'All' || item.category === currentCategory) && (item.name.toLowerCase().includes(searchQuery) || (item.description || "").toLowerCase().includes(searchQuery)); });
+            filtered = filtered.filter(item => { 
+                return (currentCategory === 'All' || item.category === currentCategory) && 
+                       (item.name.toLowerCase().includes(searchQuery) || (item.description || "").toLowerCase().includes(searchQuery)); 
+            });
 
-            if (filtered.length === 0) { grid.classList.add('hidden'); empty.classList.remove('hidden'); empty.classList.add('flex'); } 
-            else { empty.classList.add('hidden'); empty.classList.remove('flex'); grid.classList.remove('hidden'); }
+            if (filtered.length === 0) { 
+                grid.classList.add('hidden'); 
+                empty.classList.remove('hidden'); 
+                empty.classList.add('flex'); 
+            } else { 
+                empty.classList.add('hidden'); 
+                empty.classList.remove('flex'); 
+                grid.classList.remove('hidden'); 
+            }
 
             grid.innerHTML = filtered.map(item => {
                 let badge = item.badge ? `<span class="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">${item.badge}</span>` : '';
+                const itemStr = encodeURIComponent(JSON.stringify(item)).replace(/'/g, "\\'");
                 return `
-                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border flex flex-col group transition-all">
-                        <div class="relative h-48 overflow-hidden"><img src="${item.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform"><div class="absolute inset-0 bg-black bg-opacity-10"></div>${badge}</div>
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border flex flex-col group transition-all cursor-pointer" onclick="openProductDetail('${itemStr}')">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="${item.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                            <div class="absolute inset-0 bg-black bg-opacity-10"></div>
+                            ${badge}
+                        </div>
                         <div class="p-5 flex flex-col flex-grow">
                             <h3 class="text-lg font-bold text-charcoal leading-tight">${item.name}</h3>
                             <p class="text-sm text-muted mt-2 mb-4 flex-grow line-clamp-2">${item.description || ''}</p>
                             <div class="flex justify-between items-center mt-auto pt-4 border-t">
                                 <span class="text-lg font-bold text-primary">${formatIDR(item.price)}</span>
-                                <button onclick="addToCart('${item.id}')" class="bg-charcoal hover:bg-primary text-white p-2.5 rounded-xl transition-colors shadow-sm"><i data-lucide="plus" class="w-5 h-5"></i></button>
+                                <button onclick="event.stopPropagation(); addToCart('${item.id}')" class="bg-charcoal hover:bg-primary text-white p-2.5 rounded-xl transition-colors shadow-sm"><i data-lucide="plus" class="w-5 h-5"></i></button>
                             </div>
                         </div>
                     </div>`;
@@ -723,147 +770,405 @@
             lucide.createIcons();
         }
 
-        // --- 5. CART & COUPON ---
-        function toggleCart() {
-            const dr = document.getElementById('cart-drawer'); const ov = document.getElementById('cart-overlay');
-            if (dr.classList.contains('translate-x-full')) { ov.classList.remove('hidden'); setTimeout(()=>ov.classList.remove('opacity-0'),10); dr.classList.remove('translate-x-full'); renderCart(); } 
-            else { dr.classList.add('translate-x-full'); ov.classList.add('opacity-0'); setTimeout(()=>ov.classList.add('hidden'),300); }
-        }
-
-        function addToCart(id) {
-            const item = allMenuItems.find(i => i.id === id); const ex = cart.find(i => i.id === id);
-            if (ex) ex.qty += 1; else cart.push({ ...item, qty: 1 });
-            updateCartCounter(); showToast(`Ditambahkan ke keranjang!`); renderCart();
-        }
-
-        function changeQty(id, d) {
-            const idx = cart.findIndex(i => i.id === id);
-            if (idx > -1) { cart[idx].qty += d; if (cart[idx].qty <= 0) cart.splice(idx, 1); }
-            calculateDiscount(); 
-            updateCartCounter(); renderCart();
-        }
-
-        function updateCartCounter() {
-            const cnt = document.getElementById('cart-counter'); const tot = cart.reduce((s, i) => s + i.qty, 0);
-            if (tot > 0) { cnt.innerText = tot; cnt.classList.remove('hidden'); } else cnt.classList.add('hidden');
-            document.getElementById('checkout-btn').disabled = tot === 0;
-            if(tot === 0) { appliedCoupon = null; document.getElementById('coupon-input').value = ''; document.getElementById('coupon-msg').classList.add('hidden'); }
-        }
-
-        function applyCoupon() {
-            const code = document.getElementById('coupon-input').value.trim().toUpperCase();
-            const msg = document.getElementById('coupon-msg');
-            msg.classList.remove('hidden');
+        function openProductDetail(encodedStr) {
+            const item = JSON.parse(decodeURIComponent(encodedStr));
+            document.getElementById('pd-img').src = item.image;
+            document.getElementById('pd-name').innerText = item.name;
+            document.getElementById('pd-price').innerText = formatIDR(item.price);
+            document.getElementById('pd-desc').innerText = item.description || 'Tidak ada deskripsi detail.';
             
-            if(cart.length === 0) { msg.innerText = "Keranjang kosong"; msg.className = "text-xs font-bold mt-2 text-red-500 block"; return; }
-            if(!code) { appliedCoupon = null; msg.classList.add('hidden'); calculateDiscount(); renderCart(); return; }
+            document.getElementById('pd-badge-container').innerHTML = item.badge ? `<span class="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">${item.badge}</span>` : '';
+            
+            const btn = document.getElementById('pd-add-btn');
+            btn.onclick = () => { 
+                closeProductDetail(); 
+                addToCart(item.id); 
+            };
 
-            const validCoupon = allCoupons.find(c => c.code.toUpperCase() === code && (c.active===true||c.active==="TRUE"));
-            if(validCoupon) {
-                msg.innerText = `Kupon berhasil dipakai!`; msg.className = "text-xs font-bold mt-2 text-success block";
-                appliedCoupon = { code: validCoupon.code, val: parseFloat(validCoupon.discount) };
-            } else {
-                appliedCoupon = null;
-                msg.innerText = `Kupon tidak valid atau kadaluarsa.`; msg.className = "text-xs font-bold mt-2 text-red-500 block";
-            }
-            calculateDiscount(); renderCart();
+            const modal = document.getElementById('product-detail-modal');
+            modal.classList.remove('hidden'); 
+            modal.classList.add('flex');
+            setTimeout(() => {
+                document.getElementById('product-detail-content').classList.remove('scale-95','opacity-0');
+            }, 10);
         }
 
-        function calculateDiscount() {
-            if(!appliedCoupon || cart.length === 0) { appliedCoupon = null; return; }
-            let rawTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            if(appliedCoupon.val <= 100) { 
-                appliedCoupon.discountAmt = rawTotal * (appliedCoupon.val / 100);
+        function closeProductDetail() { 
+            closeModal('product-detail-modal'); 
+        }
+
+        // --- 4. CHECKOUT & POS ---
+        function toggleOrderType() {
+            const type = document.getElementById('cust-order-type').value;
+            if (type === 'Dine-In') { 
+                document.getElementById('table-number-container').classList.remove('hidden'); 
+                document.getElementById('address-container').classList.add('hidden'); 
+            } else if (type === 'Delivery') { 
+                document.getElementById('table-number-container').classList.add('hidden'); 
+                document.getElementById('address-container').classList.remove('hidden'); 
             } else { 
-                appliedCoupon.discountAmt = appliedCoupon.val;
+                document.getElementById('table-number-container').classList.add('hidden'); 
+                document.getElementById('address-container').classList.add('hidden'); 
             }
-            if(appliedCoupon.discountAmt > rawTotal) appliedCoupon.discountAmt = rawTotal;
         }
 
-        function renderCart() {
-            const cont = document.getElementById('cart-items');
-            if (cart.length === 0) { cont.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-muted"><p>Keranjang kosong.</p></div>`; document.getElementById('cart-total').innerText = 'Rp 0'; document.getElementById('cart-subtotal').innerText='Rp 0'; document.getElementById('cart-discount-row').classList.add('hidden'); return; }
+        function togglePaymentInfo() {
+            const payment = document.getElementById('cust-payment').value; 
+            const qrisDiv = document.getElementById('qris-info'); 
+            const bankDiv = document.getElementById('bank-info');
             
-            let rawTotal = 0;
-            cont.innerHTML = cart.map(i => {
-                rawTotal += i.price * i.qty;
-                return `<div class="flex items-center gap-4 bg-white p-3 rounded-xl border"><img src="${i.image}" class="w-16 h-16 object-cover rounded-lg"><div class="flex-grow"><h4 class="font-bold text-sm leading-tight mb-1">${i.name}</h4><div class="text-primary font-semibold text-sm">${formatIDR(i.price)}</div></div>
-                        <div class="flex items-center bg-gray-50 rounded-lg border overflow-hidden"><button onclick="changeQty('${i.id}', -1)" class="px-2 py-1 hover:bg-gray-200 transition-colors">-</button><span class="text-xs font-bold w-5 text-center">${i.qty}</span><button onclick="changeQty('${i.id}', 1)" class="px-2 py-1 hover:bg-gray-200 transition-colors">+</button></div></div>`;
-            }).join('');
+            qrisDiv.classList.add('hidden'); 
+            bankDiv.classList.add('hidden');
             
-            document.getElementById('cart-subtotal').innerText = formatIDR(rawTotal);
-            if(appliedCoupon) {
-                document.getElementById('cart-discount-row').classList.remove('hidden');
-                document.getElementById('cart-discount').innerText = `-${formatIDR(appliedCoupon.discountAmt)}`;
-                document.getElementById('cart-total').innerText = formatIDR(rawTotal - appliedCoupon.discountAmt);
-            } else {
-                document.getElementById('cart-discount-row').classList.add('hidden');
-                document.getElementById('cart-total').innerText = formatIDR(rawTotal);
+            if(payment === 'QRIS' && globalSettings.QRISURL) { 
+                document.getElementById('qris-img-display').src = globalSettings.QRISURL; 
+                qrisDiv.classList.remove('hidden'); 
+            } else if (payment === 'Bank Transfer' && globalSettings.BankInfo) { 
+                document.getElementById('bank-text-display').innerText = globalSettings.BankInfo; 
+                bankDiv.classList.remove('hidden'); 
             }
+        }
+
+        function submitOrder(e) {
+            e.preventDefault();
+            const orderType = document.getElementById('cust-order-type').value; 
+            const tableStr = document.getElementById('cust-table').value; 
+            const addrStr = document.getElementById('cust-address').value;
+            
+            if (orderType === 'Dine-In' && !tableStr.trim()) { 
+                showToast("Mohon isi Nomor Meja!"); 
+                return; 
+            }
+            if (orderType === 'Delivery' && !addrStr.trim()) { 
+                showToast("Mohon isi Alamat Pengiriman!"); 
+                return; 
+            }
+            
+            const btn = document.getElementById('submit-order-btn'); 
+            btn.disabled = true; 
+            btn.innerHTML = 'Memproses...';
+            
+            let formattedInfo = `Tipe Pesanan: ${orderType}\n`;
+            if (orderType === 'Dine-In') formattedInfo += `Meja: ${tableStr}\n`;
+            if (orderType === 'Delivery') formattedInfo += `Alamat: ${addrStr}\n`;
+            
+            const note = document.getElementById('cust-note').value; 
+            if (note.trim()) formattedInfo += `Catatan: ${note}`;
+            
+            let rawTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            let finalTotal = rawTotal - (appliedCoupon ? appliedCoupon.discountAmt : 0);
+            
+            const orderData = {
+                action: 'submitOrder', 
+                customerName: document.getElementById('cust-name').value, 
+                whatsapp: document.getElementById('cust-wa').value,
+                address: formattedInfo.trim(), 
+                paymentMethod: document.getElementById('cust-payment').value,
+                items: cart.map(i => ({id: i.id, name: i.name, qty: i.qty, price: i.price})), 
+                total: finalTotal, 
+                coupon: appliedCoupon ? appliedCoupon.code : ''
+            };
+            
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(orderData) })
+                .then(res => res.json())
+                .then(data => {
+                    closeCheckout(); 
+                    showToast("Struk pesanan dikirim ke WA Anda."); 
+                    cart = []; 
+                    appliedCoupon = null; 
+                    updateCartCounter(); 
+                    document.getElementById('checkout-form').reset(); 
+                    document.getElementById('coupon-input').value = ''; 
+                    document.getElementById('coupon-msg').classList.add('hidden');
+                    if(initialTableNumber) { 
+                        document.getElementById('cust-order-type').value = 'Dine-In'; 
+                        document.getElementById('cust-table').value = initialTableNumber; 
+                        toggleOrderType(); 
+                    }
+                    btn.disabled = false; 
+                    btn.innerHTML = 'Pesan Sekarang';
+                })
+                .catch(err => { 
+                    showToast("Gagal memproses pesanan."); 
+                    btn.disabled = false; 
+                    btn.innerHTML = 'Coba Lagi'; 
+                });
+        }
+
+        // --- 5. CART ---
+        function toggleCart() { 
+            const dr = document.getElementById('cart-drawer'); 
+            const ov = document.getElementById('cart-overlay'); 
+            if (dr.classList.contains('translate-x-full')) { 
+                ov.classList.remove('hidden'); 
+                setTimeout(()=>ov.classList.remove('opacity-0'),10); 
+                dr.classList.remove('translate-x-full'); 
+                renderCart(); 
+            } else { 
+                dr.classList.add('translate-x-full'); 
+                ov.classList.add('opacity-0'); 
+                setTimeout(()=>ov.classList.add('hidden'),300); 
+            } 
+        }
+
+        function addToCart(id) { 
+            const item = allMenuItems.find(i => i.id === id); 
+            const ex = cart.find(i => i.id === id); 
+            if (ex) {
+                ex.qty += 1; 
+            } else {
+                cart.push({ ...item, qty: 1 }); 
+            }
+            updateCartCounter(); 
+            showToast(`Ditambahkan ke keranjang!`); 
+            renderCart(); 
+        }
+
+        function changeQty(id, d) { 
+            const idx = cart.findIndex(i => i.id === id); 
+            if (idx > -1) { 
+                cart[idx].qty += d; 
+                if (cart[idx].qty <= 0) {
+                    cart.splice(idx, 1); 
+                }
+            } 
+            calculateDiscount(); 
+            updateCartCounter(); 
+            renderCart(); 
+        }
+
+        function updateCartCounter() { 
+            const cnt = document.getElementById('cart-counter'); 
+            const tot = cart.reduce((s, i) => s + i.qty, 0); 
+            
+            if (tot > 0) { 
+                cnt.innerText = tot; 
+                cnt.classList.remove('hidden'); 
+            } else {
+                cnt.classList.add('hidden'); 
+            }
+            
+            document.getElementById('checkout-btn').disabled = tot === 0; 
+            
+            if(tot === 0) { 
+                appliedCoupon = null; 
+                document.getElementById('coupon-input').value = ''; 
+                document.getElementById('coupon-msg').classList.add('hidden'); 
+            } 
+        }
+
+        function applyCoupon() { 
+            const code = document.getElementById('coupon-input').value.trim().toUpperCase(); 
+            const msg = document.getElementById('coupon-msg'); 
+            msg.classList.remove('hidden'); 
+            
+            if(cart.length === 0) { 
+                msg.innerText = "Keranjang kosong"; 
+                msg.className = "text-xs font-bold mt-2 text-red-500 block"; 
+                return; 
+            } 
+            
+            if(!code) { 
+                appliedCoupon = null; 
+                msg.classList.add('hidden'); 
+                calculateDiscount(); 
+                renderCart(); 
+                return; 
+            } 
+            
+            const validCoupon = allCoupons.find(c => c.code.toUpperCase() === code && (c.active===true||c.active==="TRUE")); 
+            
+            if(validCoupon) { 
+                msg.innerText = `Kupon berhasil dipakai!`; 
+                msg.className = "text-xs font-bold mt-2 text-success block"; 
+                appliedCoupon = { code: validCoupon.code, val: parseFloat(validCoupon.discount) }; 
+            } else { 
+                appliedCoupon = null; 
+                msg.innerText = `Kupon tidak valid.`; 
+                msg.className = "text-xs font-bold mt-2 text-red-500 block"; 
+            } 
+            
+            calculateDiscount(); 
+            renderCart(); 
+        }
+
+        function calculateDiscount() { 
+            if(!appliedCoupon || cart.length === 0) { 
+                appliedCoupon = null; 
+                return; 
+            } 
+            let rawTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0); 
+            if(appliedCoupon.val <= 100) { 
+                appliedCoupon.discountAmt = rawTotal * (appliedCoupon.val / 100); 
+            } else { 
+                appliedCoupon.discountAmt = appliedCoupon.val; 
+            } 
+            if(appliedCoupon.discountAmt > rawTotal) {
+                appliedCoupon.discountAmt = rawTotal; 
+            }
+        }
+
+        function renderCart() { 
+            const cont = document.getElementById('cart-items'); 
+            if (cart.length === 0) { 
+                cont.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-muted"><p>Keranjang kosong.</p></div>`; 
+                document.getElementById('cart-total').innerText = 'Rp 0'; 
+                document.getElementById('cart-subtotal').innerText='Rp 0'; 
+                document.getElementById('cart-discount-row').classList.add('hidden'); 
+                return; 
+            } 
+            
+            let rawTotal = 0; 
+            cont.innerHTML = cart.map(i => { 
+                rawTotal += i.price * i.qty; 
+                return `
+                    <div class="flex items-center gap-4 bg-white p-3 rounded-xl border">
+                        <img src="${i.image}" class="w-16 h-16 object-cover rounded-lg">
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-sm leading-tight mb-1">${i.name}</h4>
+                            <div class="text-primary font-semibold text-sm">${formatIDR(i.price)}</div>
+                        </div>
+                        <div class="flex items-center bg-gray-50 rounded-lg border overflow-hidden">
+                            <button onclick="changeQty('${i.id}', -1)" class="px-2 py-1 hover:bg-gray-200 transition-colors">-</button>
+                            <span class="text-xs font-bold w-5 text-center">${i.qty}</span>
+                            <button onclick="changeQty('${i.id}', 1)" class="px-2 py-1 hover:bg-gray-200 transition-colors">+</button>
+                        </div>
+                    </div>`; 
+            }).join(''); 
+            
+            document.getElementById('cart-subtotal').innerText = formatIDR(rawTotal); 
+            
+            if(appliedCoupon) { 
+                document.getElementById('cart-discount-row').classList.remove('hidden'); 
+                document.getElementById('cart-discount').innerText = `-${formatIDR(appliedCoupon.discountAmt)}`; 
+                document.getElementById('cart-total').innerText = formatIDR(rawTotal - appliedCoupon.discountAmt); 
+            } else { 
+                document.getElementById('cart-discount-row').classList.add('hidden'); 
+                document.getElementById('cart-total').innerText = formatIDR(rawTotal); 
+            } 
         }
 
         function openCheckout() { 
-            if(cart.length>0) { 
+            if(cart.length > 0) { 
                 toggleCart(); 
-                
-                // Auto-fill table number if accessed via QR Link
-                if(initialTableNumber) {
-                    document.getElementById('cust-order-type').value = 'Dine-In';
-                    document.getElementById('cust-table').value = initialTableNumber;
-                    toggleOrderType();
-                } else {
-                    toggleOrderType(); // trigger ui correct display
-                }
-                
-                togglePaymentInfo(); // trigger if user opens checkout multiple times
-                
+                if(initialTableNumber) { 
+                    document.getElementById('cust-order-type').value = 'Dine-In'; 
+                    document.getElementById('cust-table').value = initialTableNumber; 
+                    toggleOrderType(); 
+                } else { 
+                    toggleOrderType(); 
+                } 
+                togglePaymentInfo(); 
                 document.getElementById('checkout-modal').classList.remove('hidden'); 
                 document.getElementById('checkout-modal').classList.add('flex'); 
-                setTimeout(()=>{document.getElementById('checkout-content').classList.remove('scale-95','opacity-0');},10); 
+                setTimeout(()=>{
+                    document.getElementById('checkout-content').classList.remove('scale-95','opacity-0');
+                }, 10); 
             } 
         }
-        
-        function closeModal(id) { document.getElementById(id).children[0].classList.add('scale-95','opacity-0'); setTimeout(()=>{document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex');},300); }
-        function closeCheckout() { closeModal('checkout-modal'); }
-        function showToast(m) { const t = document.getElementById('toast'); document.getElementById('toast-message').innerText = m; t.classList.remove('translate-y-20','opacity-0'); setTimeout(()=>t.classList.add('translate-y-20','opacity-0'),3000); }
+
+        function closeModal(id) { 
+            document.getElementById(id).children[0].classList.add('scale-95','opacity-0'); 
+            setTimeout(() => {
+                document.getElementById(id).classList.add('hidden'); 
+                document.getElementById(id).classList.remove('flex');
+            }, 300); 
+        }
+
+        function closeCheckout() { 
+            closeModal('checkout-modal'); 
+        }
+
+        function showToast(m) { 
+            const t = document.getElementById('toast'); 
+            document.getElementById('toast-message').innerText = m; 
+            t.classList.remove('translate-y-20','opacity-0'); 
+            setTimeout(() => t.classList.add('translate-y-20','opacity-0'), 3000); 
+        }
 
         // --- 6. ADMIN DASHBOARD LOGIC ---
-        function handleSecretClick() {
-            secretClickCount++; clearTimeout(secretClickTimer);
-            if (secretClickCount >= requiredAdminClicks) { secretClickCount = 0; openAdminLogin(); } 
-            else { secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 2000); }
+        function handleSecretClick() { 
+            secretClickCount++; 
+            clearTimeout(secretClickTimer); 
+            if (secretClickCount >= requiredAdminClicks) { 
+                secretClickCount = 0; 
+                openAdminLogin(); 
+            } else { 
+                secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 2000); 
+            } 
         }
 
         function openAdminLogin() { 
-            if(isAdminMode) { activateAdminUI(); return; }
-            document.getElementById('admin-login-modal').classList.remove('hidden'); document.getElementById('admin-login-modal').classList.add('flex'); setTimeout(()=>{document.getElementById('admin-login-modal').children[0].classList.remove('scale-95','opacity-0');},10); 
+            if(isAdminMode) { 
+                activateAdminUI(); 
+                return; 
+            } 
+            document.getElementById('admin-login-modal').classList.remove('hidden'); 
+            document.getElementById('admin-login-modal').classList.add('flex'); 
+            setTimeout(() => {
+                document.getElementById('admin-login-modal').children[0].classList.remove('scale-95','opacity-0');
+            }, 10); 
         }
-        
-        function processAdminLogin(e) {
-            e.preventDefault(); const pinInput = document.getElementById('admin-pin'); const pin = pinInput.value; const btn = e.target.querySelector('button[type="submit"]');
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i>`; btn.disabled = true; lucide.createIcons();
 
+        function processAdminLogin(e) { 
+            e.preventDefault(); 
+            const pinInput = document.getElementById('admin-pin'); 
+            const pin = pinInput.value; 
+            const btn = e.target.querySelector('button[type="submit"]'); 
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i>`; 
+            btn.disabled = true; 
+            lucide.createIcons(); 
+            
             fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'verifyPin', pin: pin }) })
                 .then(res => res.json())
-                .then(data => {
-                    if(data.success) { sessionStorage.setItem('myfood_admin', 'true'); isAdminMode = true; closeModal('admin-login-modal'); showToast("Login Admin Berhasil"); activateAdminUI(); } 
-                    else { showToast(data.error || "PIN Salah!"); pinInput.value = ''; }
-                    btn.innerHTML = 'Login'; btn.disabled = false;
-                }).catch(err => { showToast("Terjadi kesalahan jaringan."); btn.innerHTML = 'Login'; btn.disabled = false; });
+                .then(data => { 
+                    if(data.success) { 
+                        sessionStorage.setItem('myfood_admin', 'true'); 
+                        isAdminMode = true; 
+                        closeModal('admin-login-modal'); 
+                        showToast("Login Admin Berhasil"); 
+                        activateAdminUI(); 
+                    } else { 
+                        showToast(data.error || "PIN Salah!"); 
+                        pinInput.value = ''; 
+                    } 
+                    btn.innerHTML = 'Login'; 
+                    btn.disabled = false; 
+                })
+                .catch(err => { 
+                    showToast("Terjadi kesalahan jaringan."); 
+                    btn.innerHTML = 'Login'; 
+                    btn.disabled = false; 
+                }); 
         }
 
-        function logoutAdmin() { sessionStorage.removeItem('myfood_admin'); isAdminMode = false; document.getElementById('nav-links').classList.remove('hidden'); document.getElementById('nav-icons').classList.remove('hidden'); document.getElementById('nav-admin-logout').classList.add('hidden'); document.getElementById('nav-admin-logout').classList.remove('flex'); goHome(); showToast("Logout berhasil."); }
+        function logoutAdmin() { 
+            sessionStorage.removeItem('myfood_admin'); 
+            isAdminMode = false; 
+            document.getElementById('nav-links').classList.remove('hidden'); 
+            document.getElementById('nav-icons').classList.remove('hidden'); 
+            document.getElementById('nav-admin-logout').classList.add('hidden'); 
+            document.getElementById('nav-admin-logout').classList.remove('flex'); 
+            goHome(); 
+            showToast("Logout berhasil."); 
+        }
 
         function activateAdminUI() {
-            document.getElementById('customer-view').classList.add('hidden'); document.getElementById('admin-view').classList.remove('hidden'); document.getElementById('admin-view').classList.add('flex');
-            document.getElementById('nav-links').classList.add('hidden'); document.getElementById('nav-icons').classList.add('hidden'); document.getElementById('nav-admin-logout').classList.remove('hidden'); document.getElementById('nav-admin-logout').classList.add('flex');
+            document.getElementById('customer-view').classList.add('hidden'); 
+            document.getElementById('admin-view').classList.remove('hidden'); 
+            document.getElementById('admin-view').classList.add('flex');
+            document.getElementById('nav-links').classList.add('hidden'); 
+            document.getElementById('nav-icons').classList.add('hidden'); 
+            document.getElementById('nav-admin-logout').classList.remove('hidden'); 
+            document.getElementById('nav-admin-logout').classList.add('flex');
+            
             switchAdminTab('dashboard'); 
             fetchAdminMenu(); 
             fetchAdminOrders(); 
         }
 
         function switchAdminTab(tab) {
-            ['dashboard','orders','menu','coupons','settings'].forEach(t => {
+            ['dashboard','orders','menu','kategori','tampilan','coupons','settings'].forEach(t => {
                 document.getElementById(`admin-${t}-section`).classList.add('hidden');
                 document.getElementById(`tab-${t}`).className = "px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap transition-all-ease";
             });
@@ -872,56 +1177,78 @@
             
             if(tab === 'orders' || tab === 'dashboard') fetchAdminOrders();
             if(tab === 'menu') renderAdminMenuTable();
+            if(tab === 'kategori') renderAdminCategoriesList();
+            if(tab === 'tampilan') renderAdminSlidersList();
             if(tab === 'coupons') renderAdminCouponsTable();
             if(tab === 'settings') populateSettingsForm();
         }
 
         // --- DASHBOARD CALCULATION ---
         function calculateDashboard() {
-            let omset = 0; let doneCount = 0; let pendingCount = 0;
+            let omset = 0; 
+            let doneCount = 0; 
+            let pendingCount = 0; 
             let itemCounts = {};
-
+            
             allOrders.forEach(o => {
-                if(o.status === 'Selesai') { omset += parseFloat(o.total); doneCount++; }
-                else { pendingCount++; }
+                if(o.status === 'Selesai') { 
+                    omset += parseFloat(o.total); 
+                    doneCount++; 
+                } else { 
+                    pendingCount++; 
+                }
                 
-                if(o.status === 'Selesai') {
-                    try {
-                        let items = JSON.parse(o.items);
-                        items.forEach(i => { itemCounts[i.name] = (itemCounts[i.name] || 0) + i.qty; });
-                    } catch(e){}
+                if(o.status === 'Selesai') { 
+                    try { 
+                        let items = JSON.parse(o.items); 
+                        items.forEach(i => { 
+                            itemCounts[i.name] = (itemCounts[i.name] || 0) + i.qty; 
+                        }); 
+                    } catch(e){} 
                 }
             });
-
+            
             document.getElementById('dash-omset').innerText = formatIDR(omset);
             document.getElementById('dash-orders-done').innerText = doneCount;
             document.getElementById('dash-orders-pending').innerText = pendingCount;
+            document.getElementById('dash-menu-active').innerText = allMenuItems.filter(i=> i.active===true || i.active==="TRUE").length;
             
-            const activeMenuCount = allMenuItems.filter(i=> i.active===true || i.active==="TRUE").length;
-            document.getElementById('dash-menu-active').innerText = activeMenuCount;
-
             let sortedItems = Object.keys(itemCounts).map(k => ({name: k, qty: itemCounts[k]})).sort((a,b)=> b.qty - a.qty).slice(0,5);
-            let topHtml = sortedItems.length ? sortedItems.map(i => `<li class="py-3 flex justify-between items-center text-sm"><span class="font-medium text-charcoal">${i.name}</span><span class="bg-gray-100 text-charcoal px-2 py-1 rounded font-bold">${i.qty} Terjual</span></li>`).join('') : '<li class="py-3 text-muted text-sm">Belum ada penjualan.</li>';
-            document.getElementById('dash-top-sales').innerHTML = topHtml;
+            
+            document.getElementById('dash-top-sales').innerHTML = sortedItems.length ? 
+                sortedItems.map(i => `<li class="py-3 flex justify-between items-center text-sm"><span class="font-medium text-charcoal">${i.name}</span><span class="bg-gray-100 text-charcoal px-2 py-1 rounded font-bold">${i.qty} Terjual</span></li>`).join('') : 
+                '<li class="py-3 text-muted text-sm">Belum ada penjualan.</li>';
         }
 
         // --- ADMIN ORDERS ---
-        function fetchAdminOrders() {
+        function fetchAdminOrders() { 
             fetch(`${APPS_SCRIPT_URL}?action=getOrders`)
                 .then(res => res.json())
-                .then(data => { allOrders = data; renderAdminOrdersTable(); calculateDashboard(); })
-                .catch(err => { console.error(err); });
+                .then(data => { 
+                    allOrders = data; 
+                    renderAdminOrdersTable(); 
+                    calculateDashboard(); 
+                }); 
         }
 
         function renderAdminOrdersTable() {
             const tbody = document.getElementById('admin-orders-table');
-            if(allOrders.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-muted">Belum ada pesanan masuk.</td></tr>`; return; }
-            const sorted = [...allOrders].reverse();
-            tbody.innerHTML = sorted.map(order => {
+            if(allOrders.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-muted">Belum ada pesanan masuk.</td></tr>`; 
+                return; 
+            }
+            
+            tbody.innerHTML = [...allOrders].reverse().map(order => {
                 const isPending = order.status === 'Pending';
                 const statusBadge = isPending ? `<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-bold uppercase">Pending</span>` : `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold uppercase">Selesai</span>`;
-                let itemsList = "N/A"; try { itemsList = JSON.parse(order.items).map(i => `${i.qty}x ${i.name}`).join('<br>'); } catch(e) {}
+                let itemsList = "N/A"; 
+                
+                try { 
+                    itemsList = JSON.parse(order.items).map(i => `${i.qty}x ${i.name}`).join('<br>'); 
+                } catch(e) {}
+                
                 let cp = order.coupon && order.coupon !== "-" ? `<br><span class="text-xs text-primary font-bold">Kupon: ${order.coupon}</span>` : '';
+                
                 return `
                     <tr class="hover:bg-gray-50 transition">
                         <td class="p-4 text-sm text-gray-500">${new Date(order.timestamp).toLocaleString('id-ID', {hour:'2-digit', minute:'2-digit', day:'numeric', month:'short'})}</td>
@@ -932,7 +1259,7 @@
                         <td class="p-4 text-right">
                             <div class="flex flex-col items-end gap-1">
                                 <span class="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded whitespace-pre-line text-right border border-gray-200">${order.address}</span>
-                                ${isPending ? `<button onclick="markOrderDone(${order.rowNumber})" class="bg-success text-white px-3 py-1.5 mt-1 rounded text-xs font-bold shadow hover:bg-green-700 transition-colors">Set Selesai</button>` : `<span class="text-xs text-gray-400 mt-1"><i data-lucide="check" class="w-4 h-4 inline"></i> Done</span>`}
+                                ${isPending ? `<button onclick="markOrderDone(${order.rowNumber})" class="bg-success text-white px-3 py-1.5 mt-1 rounded text-xs font-bold shadow hover:bg-green-700">Set Selesai</button>` : `<span class="text-xs text-gray-400 mt-1"><i data-lucide="check" class="w-4 h-4 inline"></i> Done</span>`}
                             </div>
                         </td>
                     </tr>`;
@@ -940,19 +1267,32 @@
             lucide.createIcons();
         }
 
-        function markOrderDone(rowNumber) {
-            showToast("Memproses update...");
+        function markOrderDone(rowNumber) { 
+            showToast("Memproses update..."); 
             fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'updateOrderStatus', rowNumber: rowNumber, status: 'Selesai' }) })
-                .then(res => res.json()).then(data => { if(data.success) { showToast("Pesanan selesai!"); fetchAdminOrders(); } });
+                .then(res => res.json())
+                .then(data => { 
+                    if(data.success) { 
+                        showToast("Pesanan selesai!"); 
+                        fetchAdminOrders(); 
+                    } 
+                }); 
         }
 
         // --- ADMIN MENU ---
-        function fetchAdminMenu() { fetch(`${APPS_SCRIPT_URL}?action=getInitData`).then(res => res.json()).then(data => { allMenuItems = data.menu; renderAdminMenuTable(); }); }
+        function fetchAdminMenu() { 
+            fetch(`${APPS_SCRIPT_URL}?action=getInitData`)
+                .then(res => res.json())
+                .then(data => { 
+                    allMenuItems = data.menu; 
+                    renderAdminMenuTable(); 
+                }); 
+        }
+
         function renderAdminMenuTable() {
             const tbody = document.getElementById('admin-menu-table');
             tbody.innerHTML = allMenuItems.map(item => {
                 const isActive = item.active === true || item.active === "TRUE";
-                const statusBadge = isActive ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">Aktif</span>` : `<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">Sold Out</span>`;
                 const objStr = encodeURIComponent(JSON.stringify(item));
                 return `
                     <tr class="hover:bg-gray-50 transition-colors">
@@ -960,31 +1300,189 @@
                         <td class="p-4 text-sm font-medium text-charcoal">${item.name}<br><span class="text-xs text-muted font-normal badge">${item.badge || '-'}</span></td>
                         <td class="p-4 text-sm text-gray-600">${item.category}</td>
                         <td class="p-4 text-sm font-bold">${formatIDR(item.price)}</td>
-                        <td class="p-4 text-center">${statusBadge}</td>
+                        <td class="p-4 text-center">${isActive ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">Aktif</span>` : `<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">Sold Out</span>`}</td>
                         <td class="p-4 text-right"><button onclick="editAdminMenu('${objStr}')" class="text-blue-600 hover:text-blue-800 mr-3 text-sm font-medium transition-colors">Edit</button></td>
                     </tr>`;
             }).join('');
         }
-        function openMenuForm() { document.getElementById('admin-menu-form').reset(); document.getElementById('form-menu-id').value = ''; document.getElementById('menu-form-title').innerText = 'Tambah Menu Baru'; document.getElementById('menu-form-modal').classList.remove('hidden'); document.getElementById('menu-form-modal').classList.add('flex'); }
+
+        function openMenuForm() { 
+            document.getElementById('admin-menu-form').reset(); 
+            document.getElementById('form-menu-id').value = ''; 
+            document.getElementById('menu-form-title').innerText = 'Tambah Menu Baru'; 
+            document.getElementById('menu-form-modal').classList.remove('hidden'); 
+            document.getElementById('menu-form-modal').classList.add('flex'); 
+        }
+
         function editAdminMenu(encodedObj) {
             const item = JSON.parse(decodeURIComponent(encodedObj));
-            document.getElementById('form-menu-id').value = item.id; document.getElementById('form-menu-name').value = item.name; document.getElementById('form-menu-category').value = item.category; document.getElementById('form-menu-price').value = item.price; document.getElementById('form-menu-img').value = item.image; document.getElementById('form-menu-desc').value = item.description; document.getElementById('form-menu-badge').value = item.badge;
+            document.getElementById('form-menu-id').value = item.id; 
+            document.getElementById('form-menu-name').value = item.name; 
+            document.getElementById('form-menu-category').value = item.category; 
+            document.getElementById('form-menu-price').value = item.price; 
+            document.getElementById('form-menu-img').value = item.image; 
+            document.getElementById('form-menu-desc').value = item.description; 
+            document.getElementById('form-menu-badge').value = item.badge; 
             document.getElementById('form-menu-active').value = (item.active === true || item.active === "TRUE") ? "true" : "false";
-            document.getElementById('menu-form-title').innerText = 'Edit Menu: ' + item.name; document.getElementById('menu-form-modal').classList.remove('hidden'); document.getElementById('menu-form-modal').classList.add('flex');
+            document.getElementById('menu-form-title').innerText = 'Edit Menu: ' + item.name; 
+            document.getElementById('menu-form-modal').classList.remove('hidden'); 
+            document.getElementById('menu-form-modal').classList.add('flex');
         }
+
         function saveAdminMenu(e) {
-            e.preventDefault(); const btn = document.getElementById('btn-save-menu'); btn.innerHTML = 'Menyimpan...'; btn.disabled = true;
-            const payload = { action: 'saveMenu', id: document.getElementById('form-menu-id').value, name: document.getElementById('form-menu-name').value, category: document.getElementById('form-menu-category').value, price: parseFloat(document.getElementById('form-menu-price').value), image: document.getElementById('form-menu-img').value, description: document.getElementById('form-menu-desc').value, badge: document.getElementById('form-menu-badge').value, active: document.getElementById('form-menu-active').value === "true", rating: 5.0 };
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { if(data.success) { showToast("Menu Disimpan!"); closeModal('menu-form-modal'); fetchAdminMenu(); } btn.innerHTML = 'Simpan'; btn.disabled = false; });
+            e.preventDefault(); 
+            const btn = document.getElementById('btn-save-menu'); 
+            btn.innerHTML = 'Menyimpan...'; 
+            btn.disabled = true;
+            
+            const payload = { 
+                action: 'saveMenu', 
+                id: document.getElementById('form-menu-id').value, 
+                name: document.getElementById('form-menu-name').value, 
+                category: document.getElementById('form-menu-category').value, 
+                price: parseFloat(document.getElementById('form-menu-price').value), 
+                image: document.getElementById('form-menu-img').value, 
+                description: document.getElementById('form-menu-desc').value, 
+                badge: document.getElementById('form-menu-badge').value, 
+                active: document.getElementById('form-menu-active').value === "true", 
+                rating: 5.0 
+            };
+            
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
+                .then(res => res.json())
+                .then(data => { 
+                    if(data.success) { 
+                        showToast("Menu Disimpan!"); 
+                        closeModal('menu-form-modal'); 
+                        fetchAdminMenu(); 
+                    } 
+                    btn.innerHTML = 'Simpan'; 
+                    btn.disabled = false; 
+                });
+        }
+
+        // --- ADMIN CATEGORIES (KATEGORI) ---
+        function renderAdminCategoriesList() {
+            const list = document.getElementById('admin-category-list');
+            if(adminCategories.length === 0) { 
+                list.innerHTML = `<li class="p-4 text-sm text-muted text-center">Belum ada kategori</li>`; 
+                return; 
+            }
+            list.innerHTML = adminCategories.map((c, i) => `
+                <li class="p-4 flex justify-between items-center text-charcoal font-medium">
+                    ${c} <button onclick="deleteAdminCategory(${i})" class="text-red-500 hover:text-red-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </li>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function addAdminCategory() {
+            const input = document.getElementById('new-category-input'); 
+            const val = input.value.trim();
+            if(val && !adminCategories.includes(val)) { 
+                adminCategories.push(val); 
+                input.value = ''; 
+                saveCategoriesToDb(); 
+                renderAdminCategoriesList(); 
+            }
+        }
+
+        function deleteAdminCategory(idx) { 
+            adminCategories.splice(idx, 1); 
+            saveCategoriesToDb(); 
+            renderAdminCategoriesList(); 
+        }
+
+        function saveCategoriesToDb() {
+            showToast("Menyimpan kategori...");
+            fetch(APPS_SCRIPT_URL, { 
+                method: 'POST', 
+                body: JSON.stringify({ action: 'saveSettings', settings: { Categories: JSON.stringify(adminCategories) } }) 
+            }).then(() => { 
+                showToast("Kategori tersimpan!"); 
+                fetchInitData(); 
+            });
+        }
+
+        // --- ADMIN TAMPILAN (COLORS & SLIDERS) ---
+        function previewColor() {
+            const c = document.getElementById('set-color-primary').value;
+            document.getElementById('set-color-hex').innerText = c.toUpperCase();
+            document.documentElement.style.setProperty('--color-primary', c);
+        }
+
+        function renderAdminSlidersList() {
+            const tbody = document.getElementById('admin-slider-table');
+            if(adminHeroSliders.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-muted">Belum ada slider</td></tr>`; 
+                return; 
+            }
+            tbody.innerHTML = adminHeroSliders.map((s, i) => `
+                <tr class="hover:bg-gray-50 border-b">
+                    <td class="p-3"><img src="${s.img}" class="w-20 h-10 object-cover rounded"></td>
+                    <td class="p-3 text-sm font-medium">${s.title}</td>
+                    <td class="p-3 text-right"><button onclick="deleteAdminSlider(${i})" class="text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+                </tr>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function openSliderForm() {
+            document.getElementById('admin-slider-form').reset();
+            document.getElementById('slider-form-modal').classList.remove('hidden'); 
+            document.getElementById('slider-form-modal').classList.add('flex');
+        }
+
+        function addAdminSlider(e) {
+            e.preventDefault();
+            adminHeroSliders.push({
+                img: document.getElementById('form-slider-img').value, 
+                title: document.getElementById('form-slider-title').value,
+                subtitle: document.getElementById('form-slider-subtitle').value, 
+                badge: document.getElementById('form-slider-badge').value
+            });
+            closeModal('slider-form-modal'); 
+            renderAdminSlidersList();
+        }
+
+        function deleteAdminSlider(idx) { 
+            adminHeroSliders.splice(idx, 1); 
+            renderAdminSlidersList(); 
+        }
+        
+        function saveTampilan() {
+            const btn = document.getElementById('btn-save-tampilan'); 
+            btn.innerHTML = 'Menyimpan...'; 
+            btn.disabled = true;
+            
+            const payload = {
+                action: 'saveSettings',
+                settings: { 
+                    ColorPrimary: document.getElementById('set-color-primary').value, 
+                    HeroSliders: JSON.stringify(adminHeroSliders) 
+                }
+            };
+            
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
+                .then(res => res.json())
+                .then(() => { 
+                    showToast("Tema & Slider disimpan!"); 
+                    btn.innerHTML='Simpan Perubahan Tampilan'; 
+                    btn.disabled=false; 
+                    fetchInitData(); 
+                });
         }
 
         // --- ADMIN COUPONS ---
         function renderAdminCouponsTable() {
             const tbody = document.getElementById('admin-coupons-table');
-            if(allCoupons.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-muted">Belum ada kupon.</td></tr>`; return; }
+            if(allCoupons.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-muted">Belum ada kupon.</td></tr>`; 
+                return; 
+            }
+            
             tbody.innerHTML = allCoupons.map(c => {
                 const isActive = c.active === true || c.active === "TRUE";
-                const badge = isActive ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">Aktif</span>` : `<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">Nonaktif</span>`;
                 const type = c.discount <= 100 ? `${c.discount}% (Persen)` : `${formatIDR(c.discount)} (Nominal)`;
                 const objStr = encodeURIComponent(JSON.stringify(c));
                 return `
@@ -992,57 +1490,102 @@
                         <td class="p-4 font-bold text-charcoal uppercase">${c.code}</td>
                         <td class="p-4 text-sm">${c.discount <= 100 ? 'Persentase' : 'Potongan Harga'}</td>
                         <td class="p-4 text-sm font-bold text-primary">${type}</td>
-                        <td class="p-4 text-center">${badge}</td>
+                        <td class="p-4 text-center">${isActive ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">Aktif</span>` : `<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">Nonaktif</span>`}</td>
                         <td class="p-4 text-right"><button onclick="editAdminCoupon('${objStr}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Edit</button></td>
                     </tr>`;
             }).join('');
         }
-        function openCouponForm() { document.getElementById('admin-coupon-form').reset(); document.getElementById('form-coupon-id').value = ''; document.getElementById('coupon-form-title').innerText = 'Buat Kupon Baru'; document.getElementById('coupon-form-modal').classList.remove('hidden'); document.getElementById('coupon-form-modal').classList.add('flex'); }
+
+        function openCouponForm() { 
+            document.getElementById('admin-coupon-form').reset(); 
+            document.getElementById('form-coupon-id').value = ''; 
+            document.getElementById('coupon-form-title').innerText = 'Buat Kupon Baru'; 
+            document.getElementById('coupon-form-modal').classList.remove('hidden'); 
+            document.getElementById('coupon-form-modal').classList.add('flex'); 
+        }
+
         function editAdminCoupon(encodedObj) {
             const c = JSON.parse(decodeURIComponent(encodedObj));
-            document.getElementById('form-coupon-id').value = c.id; document.getElementById('form-coupon-code').value = c.code; document.getElementById('form-coupon-val').value = c.discount; document.getElementById('form-coupon-active').value = (c.active === true || c.active === "TRUE") ? "true" : "false";
-            document.getElementById('coupon-form-title').innerText = 'Edit Kupon'; document.getElementById('coupon-form-modal').classList.remove('hidden'); document.getElementById('coupon-form-modal').classList.add('flex');
+            document.getElementById('form-coupon-id').value = c.id; 
+            document.getElementById('form-coupon-code').value = c.code; 
+            document.getElementById('form-coupon-val').value = c.discount; 
+            document.getElementById('form-coupon-active').value = (c.active === true || c.active === "TRUE") ? "true" : "false";
+            document.getElementById('coupon-form-title').innerText = 'Edit Kupon'; 
+            document.getElementById('coupon-form-modal').classList.remove('hidden'); 
+            document.getElementById('coupon-form-modal').classList.add('flex');
         }
+
         function saveAdminCoupon(e) {
-            e.preventDefault(); const btn = document.getElementById('btn-save-coupon'); btn.innerHTML = 'Menyimpan...'; btn.disabled = true;
-            const payload = { action: 'saveCoupon', id: document.getElementById('form-coupon-id').value, code: document.getElementById('form-coupon-code').value.toUpperCase(), discount: parseFloat(document.getElementById('form-coupon-val').value), active: document.getElementById('form-coupon-active').value === "true" };
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { if(data.success) { showToast("Kupon Disimpan!"); closeModal('coupon-form-modal'); fetchInitData(); } btn.innerHTML = 'Simpan'; btn.disabled = false; });
+            e.preventDefault(); 
+            const btn = document.getElementById('btn-save-coupon'); 
+            btn.innerHTML = 'Menyimpan...'; 
+            btn.disabled = true;
+            
+            const payload = { 
+                action: 'saveCoupon', 
+                id: document.getElementById('form-coupon-id').value, 
+                code: document.getElementById('form-coupon-code').value.toUpperCase(), 
+                discount: parseFloat(document.getElementById('form-coupon-val').value), 
+                active: document.getElementById('form-coupon-active').value === "true" 
+            };
+            
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
+                .then(res => res.json())
+                .then(data => { 
+                    if(data.success) { 
+                        showToast("Kupon Disimpan!"); 
+                        closeModal('coupon-form-modal'); 
+                        fetchInitData(); 
+                    } 
+                    btn.innerHTML = 'Simpan'; 
+                    btn.disabled = false; 
+                });
         }
 
         // --- ADMIN SETTINGS ---
         function populateSettingsForm() {
-            document.getElementById('set-brand').value = globalSettings.BrandName || '';
-            document.getElementById('set-phone').value = globalSettings.Phone || '';
-            document.getElementById('set-logo').value = globalSettings.LogoURL || '';
-            document.getElementById('set-address').value = globalSettings.Address || '';
-            document.getElementById('set-fonnte').value = globalSettings.FonnteToken || '';
-            document.getElementById('set-categories').value = globalSettings.Categories || 'Main Course, Drinks, Snacks';
-            document.getElementById('set-wa-provider').value = globalSettings.WAProvider || 'Fonnte';
-            document.getElementById('set-wa-sender').value = globalSettings.WASenderNumber || '';
-            
-            // Pengaturan Pembayaran
-            document.getElementById('set-qris-url').value = globalSettings.QRISURL || '';
+            document.getElementById('set-brand').value = globalSettings.BrandName || ''; 
+            document.getElementById('set-phone').value = globalSettings.Phone || ''; 
+            document.getElementById('set-logo').value = globalSettings.LogoURL || ''; 
+            document.getElementById('set-address').value = globalSettings.Address || ''; 
+            document.getElementById('set-fonnte').value = globalSettings.FonnteToken || ''; 
+            document.getElementById('set-wa-provider').value = globalSettings.WAProvider || 'Fonnte'; 
+            document.getElementById('set-wa-sender').value = globalSettings.WASenderNumber || ''; 
+            document.getElementById('set-qris-url').value = globalSettings.QRISURL || ''; 
             document.getElementById('set-bank-info').value = globalSettings.BankInfo || '';
         }
 
         function saveSettings(e) {
-            e.preventDefault(); const btn = document.getElementById('btn-save-settings'); btn.innerHTML = 'Menyimpan...'; btn.disabled = true;
-            const payload = {
-                action: 'saveSettings',
-                settings: {
-                    BrandName: document.getElementById('set-brand').value,
-                    Phone: document.getElementById('set-phone').value,
-                    LogoURL: document.getElementById('set-logo').value,
-                    Address: document.getElementById('set-address').value,
-                    FonnteToken: document.getElementById('set-fonnte').value,
-                    Categories: document.getElementById('set-categories').value,
-                    WAProvider: document.getElementById('set-wa-provider').value,
-                    WASenderNumber: document.getElementById('set-wa-sender').value,
-                    QRISURL: document.getElementById('set-qris-url').value,
-                    BankInfo: document.getElementById('set-bank-info').value
-                }
+            e.preventDefault(); 
+            const btn = document.getElementById('btn-save-settings'); 
+            btn.innerHTML = 'Menyimpan...'; 
+            btn.disabled = true;
+            
+            const payload = { 
+                action: 'saveSettings', 
+                settings: { 
+                    BrandName: document.getElementById('set-brand').value, 
+                    Phone: document.getElementById('set-phone').value, 
+                    LogoURL: document.getElementById('set-logo').value, 
+                    Address: document.getElementById('set-address').value, 
+                    FonnteToken: document.getElementById('set-fonnte').value, 
+                    WAProvider: document.getElementById('set-wa-provider').value, 
+                    WASenderNumber: document.getElementById('set-wa-sender').value, 
+                    QRISURL: document.getElementById('set-qris-url').value, 
+                    BankInfo: document.getElementById('set-bank-info').value 
+                } 
             };
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { if(data.success) { showToast("Pengaturan Disimpan!"); fetchInitData(); } btn.innerHTML = 'Simpan Pengaturan'; btn.disabled = false; });
+            
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
+                .then(res => res.json())
+                .then(data => { 
+                    if(data.success) { 
+                        showToast("Pengaturan Disimpan!"); 
+                        fetchInitData(); 
+                    } 
+                    btn.innerHTML = 'Simpan Pengaturan Utama'; 
+                    btn.disabled = false; 
+                });
         }
     </script>
 </body>
