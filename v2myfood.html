@@ -54,7 +54,6 @@
                     <div id="nav-brand-icon" class="bg-primary text-white p-2 rounded-xl mr-3 shadow-sm cursor-pointer" onclick="handleSecretClick()" title="Klik 7x untuk Admin">
                         <i data-lucide="utensils" class="w-6 h-6"></i>
                     </div>
-                    <!-- BUG FIX: Tidak ada lagi text split dobel -->
                     <span class="text-2xl font-bold tracking-tight cursor-pointer text-primary" onclick="goHome()" id="nav-brand-name">
                         MyFood
                     </span>
@@ -377,7 +376,7 @@
         </div>
     </div>
 
-    <!-- Product Detail Modal (NEW) -->
+    <!-- Product Detail Modal -->
     <div id="product-detail-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[80] hidden items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[90vh]" id="product-detail-content">
             <div class="relative h-64 w-full flex-shrink-0">
@@ -529,12 +528,17 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            document.getElementById('year').innerText = new Date().getFullYear();
             
-            document.getElementById('search-input').addEventListener('input', (e) => { 
-                searchQuery = e.target.value.toLowerCase(); 
-                renderMenuCards(); 
-            });
+            const yearEl = document.getElementById('year');
+            if (yearEl) yearEl.innerText = new Date().getFullYear();
+            
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => { 
+                    searchQuery = e.target.value.toLowerCase(); 
+                    renderMenuCards(); 
+                });
+            }
             
             if(sessionStorage.getItem('myfood_admin') === 'true') {
                 isAdminMode = true;
@@ -551,20 +555,29 @@
 
         // --- 2. API FETCHING ---
         function fetchInitData() {
-            document.getElementById('loading-state').classList.remove('hidden');
-            document.getElementById('menu-grid').classList.add('hidden');
+            const loadingState = document.getElementById('loading-state');
+            const menuGrid = document.getElementById('menu-grid');
+            const errorState = document.getElementById('error-state');
+            
+            if (loadingState) loadingState.classList.remove('hidden');
+            if (menuGrid) menuGrid.classList.add('hidden');
+            if (errorState) errorState.classList.add('hidden');
             
             fetch(`${APPS_SCRIPT_URL}?action=getInitData`)
                 .then(res => res.json())
                 .then(data => {
-                    allMenuItems = data.menu; 
-                    globalSettings = data.settings; 
-                    allCoupons = data.coupons;
+                    if(data.success === false) {
+                        throw new Error(data.error || "Gagal memuat data dari API");
+                    }
+                    
+                    allMenuItems = data.menu || []; 
+                    globalSettings = data.settings || {}; 
+                    allCoupons = data.coupons || [];
                     
                     applyGlobalSettings();
                     
-                    document.getElementById('loading-state').classList.add('hidden');
-                    document.getElementById('menu-grid').classList.remove('hidden');
+                    if (loadingState) loadingState.classList.add('hidden');
+                    if (menuGrid) menuGrid.classList.remove('hidden');
                     
                     extractAndRenderCategories(); 
                     renderMenuCards();
@@ -574,9 +587,11 @@
                     }
                 })
                 .catch(err => {
-                    document.getElementById('loading-state').classList.add('hidden');
-                    document.getElementById('error-state').classList.remove('hidden');
-                    document.getElementById('error-message').innerText = err.toString();
+                    if (loadingState) loadingState.classList.add('hidden');
+                    if (errorState) errorState.classList.remove('hidden');
+                    
+                    const errorMsg = document.getElementById('error-message');
+                    if (errorMsg) errorMsg.innerText = err.toString();
                 });
         }
 
@@ -584,23 +599,39 @@
             // Apply Colors
             const primColor = globalSettings.ColorPrimary || '#E63946';
             document.documentElement.style.setProperty('--color-primary', primColor);
-            document.getElementById('set-color-primary').value = primColor;
-            document.getElementById('set-color-hex').innerText = primColor.toUpperCase();
+            
+            const colorPrimaryInput = document.getElementById('set-color-primary');
+            if(colorPrimaryInput) colorPrimaryInput.value = primColor;
+            
+            const colorHexSpan = document.getElementById('set-color-hex');
+            if(colorHexSpan) colorHexSpan.innerText = primColor.toUpperCase();
 
             // Apply Brand Text
             const bName = globalSettings.BrandName || 'MyFood';
-            document.getElementById('nav-brand-name').innerText = bName;
-            document.getElementById('hero-title').innerText = `Welcome to ${bName}!`;
-            document.getElementById('footer-brand').innerText = bName;
+            
+            const navBrandName = document.getElementById('nav-brand-name');
+            if(navBrandName) navBrandName.innerText = bName;
+            
+            const footerBrand = document.getElementById('footer-brand');
+            if(footerBrand) footerBrand.innerText = bName;
             
             if(globalSettings.LogoURL) {
-                document.getElementById('nav-brand-icon').classList.add('hidden');
-                document.getElementById('nav-brand-logo').classList.remove('hidden');
-                document.getElementById('nav-brand-logo').src = globalSettings.LogoURL;
+                const navIcon = document.getElementById('nav-brand-icon');
+                if(navIcon) navIcon.classList.add('hidden');
+                
+                const navLogo = document.getElementById('nav-brand-logo');
+                if(navLogo) {
+                    navLogo.classList.remove('hidden');
+                    navLogo.src = globalSettings.LogoURL;
+                }
             }
             
-            document.getElementById('footer-address').innerText = globalSettings.Address || 'Alamat belum diatur';
-            document.getElementById('footer-phone').innerText = globalSettings.Phone || '-';
+            const footerAddress = document.getElementById('footer-address');
+            if(footerAddress) footerAddress.innerText = globalSettings.Address || 'Alamat belum diatur';
+            
+            const footerPhone = document.getElementById('footer-phone');
+            if(footerPhone) footerPhone.innerText = globalSettings.Phone || '-';
+            
             if(globalSettings.AdminClicks) {
                 requiredAdminClicks = parseInt(globalSettings.AdminClicks);
             }
@@ -617,7 +648,9 @@
             
             // Set Form Category Select
             const catSelect = document.getElementById('form-menu-category');
-            catSelect.innerHTML = adminCategories.map(c => `<option value="${c}">${c}</option>`).join('');
+            if(catSelect) {
+                catSelect.innerHTML = adminCategories.map(c => `<option value="${c}">${c}</option>`).join('');
+            }
 
             // Parse Hero Sliders
             try { 
@@ -625,18 +658,21 @@
             } catch(e) { 
                 adminHeroSliders = []; 
             }
+            
             renderCustomerSliders();
         }
 
         // --- 3. CUSTOMER SLIDER & MENU LOGIC ---
         function renderCustomerSliders() {
             const container = document.getElementById('hero-slider-container');
+            if(!container) return;
+            
             if(adminHeroSliders.length === 0) {
                 container.innerHTML = `
                     <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40">
                     <div class="relative z-10 p-8 md:p-16 flex flex-col items-center md:items-start text-center md:text-left w-full">
                         <span class="bg-accent text-charcoal text-sm font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wide shadow-sm">Pesan Sekarang</span>
-                        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" id="hero-title">Welcome to ${globalSettings.BrandName||'MyFood'}!</h1>
+                        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Welcome to ${globalSettings.BrandName||'MyFood'}!</h1>
                         <p class="text-lg text-gray-200 mb-8 max-w-lg font-light">Nikmati hidangan lezat dan minuman segar langsung di tempat atau antar ke tempat Anda.</p>
                         <button onclick="document.getElementById('menu-section').scrollIntoView({behavior: 'smooth'})" class="bg-primary hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-full transition-all-ease shadow-lg">Lihat Menu</button>
                     </div>`;
@@ -672,22 +708,31 @@
 
         function goToSlide(index) {
             if(adminHeroSliders.length <= 1) return;
-            document.getElementById(`slide-${currentSlide}`).classList.replace('opacity-100', 'opacity-0');
-            document.getElementById(`slide-${currentSlide}`).classList.replace('z-10', 'z-0');
-            document.getElementById(`slide-dot-${currentSlide}`).classList.replace('opacity-100', 'opacity-50');
+            
+            const prevSlide = document.getElementById(`slide-${currentSlide}`);
+            const prevDot = document.getElementById(`slide-dot-${currentSlide}`);
+            if(prevSlide) prevSlide.classList.replace('opacity-100', 'opacity-0');
+            if(prevSlide) prevSlide.classList.replace('z-10', 'z-0');
+            if(prevDot) prevDot.classList.replace('opacity-100', 'opacity-50');
             
             currentSlide = index;
             
-            document.getElementById(`slide-${currentSlide}`).classList.replace('opacity-0', 'opacity-100');
-            document.getElementById(`slide-${currentSlide}`).classList.replace('z-0', 'z-10');
-            document.getElementById(`slide-dot-${currentSlide}`).classList.replace('opacity-50', 'opacity-100');
+            const newSlide = document.getElementById(`slide-${currentSlide}`);
+            const newDot = document.getElementById(`slide-dot-${currentSlide}`);
+            if(newSlide) newSlide.classList.replace('opacity-0', 'opacity-100');
+            if(newSlide) newSlide.classList.replace('z-0', 'z-10');
+            if(newDot) newDot.classList.replace('opacity-50', 'opacity-100');
         }
 
         const formatIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n);
         
         function goHome() { 
-            document.getElementById('admin-view').classList.add('hidden'); 
-            document.getElementById('customer-view').classList.remove('hidden'); 
+            const adminView = document.getElementById('admin-view');
+            const customerView = document.getElementById('customer-view');
+            
+            if(adminView) adminView.classList.add('hidden'); 
+            if(customerView) customerView.classList.remove('hidden'); 
+            
             resetFilters(); 
             window.scrollTo(0,0); 
         }
@@ -695,22 +740,32 @@
         function resetFilters() { 
             currentCategory = 'All'; 
             searchQuery = ''; 
-            document.getElementById('search-input').value = ''; 
-            document.getElementById('current-category-title').innerText = 'All Menu'; 
+            const searchInput = document.getElementById('search-input');
+            if(searchInput) searchInput.value = ''; 
+            
+            const catTitle = document.getElementById('current-category-title');
+            if(catTitle) catTitle.innerText = 'All Menu'; 
+            
             extractAndRenderCategories(); 
             renderMenuCards(); 
         }
 
         function focusSearch() { 
             goHome(); 
-            document.getElementById('search-input').focus(); 
-            document.getElementById('menu-section').scrollIntoView(); 
+            const searchInput = document.getElementById('search-input');
+            if(searchInput) searchInput.focus(); 
+            
+            const menuSection = document.getElementById('menu-section');
+            if(menuSection) menuSection.scrollIntoView(); 
         }
 
         function extractAndRenderCategories() {
             const activeItems = allMenuItems.filter(i => i.active === true || i.active === "TRUE");
             const avCat = ['All', ...new Set(activeItems.map(item => item.category))];
+            
             const container = document.getElementById('category-container'); 
+            if(!container) return;
+            
             container.innerHTML = '';
             
             avCat.forEach(cat => {
@@ -722,7 +777,9 @@
 
         function setCategory(cat) { 
             currentCategory = cat; 
-            document.getElementById('current-category-title').innerText = cat; 
+            const catTitle = document.getElementById('current-category-title');
+            if(catTitle) catTitle.innerText = cat; 
+            
             extractAndRenderCategories(); 
             renderMenuCards(); 
         }
@@ -730,6 +787,8 @@
         function renderMenuCards() {
             const grid = document.getElementById('menu-grid'); 
             const empty = document.getElementById('empty-state');
+            
+            if(!grid || !empty) return;
             
             let filtered = allMenuItems.filter(i => (i.active === true || i.active === "TRUE"));
             filtered = filtered.filter(item => { 
@@ -772,25 +831,36 @@
 
         function openProductDetail(encodedStr) {
             const item = JSON.parse(decodeURIComponent(encodedStr));
-            document.getElementById('pd-img').src = item.image;
-            document.getElementById('pd-name').innerText = item.name;
-            document.getElementById('pd-price').innerText = formatIDR(item.price);
-            document.getElementById('pd-desc').innerText = item.description || 'Tidak ada deskripsi detail.';
             
-            document.getElementById('pd-badge-container').innerHTML = item.badge ? `<span class="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">${item.badge}</span>` : '';
-            
+            const pdImg = document.getElementById('pd-img');
+            const pdName = document.getElementById('pd-name');
+            const pdPrice = document.getElementById('pd-price');
+            const pdDesc = document.getElementById('pd-desc');
+            const pdBadge = document.getElementById('pd-badge-container');
             const btn = document.getElementById('pd-add-btn');
-            btn.onclick = () => { 
-                closeProductDetail(); 
-                addToCart(item.id); 
-            };
+            
+            if(pdImg) pdImg.src = item.image;
+            if(pdName) pdName.innerText = item.name;
+            if(pdPrice) pdPrice.innerText = formatIDR(item.price);
+            if(pdDesc) pdDesc.innerText = item.description || 'Tidak ada deskripsi detail.';
+            if(pdBadge) pdBadge.innerHTML = item.badge ? `<span class="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">${item.badge}</span>` : '';
+            
+            if(btn) {
+                btn.onclick = () => { 
+                    closeProductDetail(); 
+                    addToCart(item.id); 
+                };
+            }
 
             const modal = document.getElementById('product-detail-modal');
-            modal.classList.remove('hidden'); 
-            modal.classList.add('flex');
-            setTimeout(() => {
-                document.getElementById('product-detail-content').classList.remove('scale-95','opacity-0');
-            }, 10);
+            if(modal) {
+                modal.classList.remove('hidden'); 
+                modal.classList.add('flex');
+                setTimeout(() => {
+                    const content = document.getElementById('product-detail-content');
+                    if(content) content.classList.remove('scale-95','opacity-0');
+                }, 10);
+            }
         }
 
         function closeProductDetail() { 
@@ -799,33 +869,44 @@
 
         // --- 4. CHECKOUT & POS ---
         function toggleOrderType() {
-            const type = document.getElementById('cust-order-type').value;
+            const typeEl = document.getElementById('cust-order-type');
+            if(!typeEl) return;
+            
+            const type = typeEl.value;
+            const tableCont = document.getElementById('table-number-container');
+            const addrCont = document.getElementById('address-container');
+            
             if (type === 'Dine-In') { 
-                document.getElementById('table-number-container').classList.remove('hidden'); 
-                document.getElementById('address-container').classList.add('hidden'); 
+                if(tableCont) tableCont.classList.remove('hidden'); 
+                if(addrCont) addrCont.classList.add('hidden'); 
             } else if (type === 'Delivery') { 
-                document.getElementById('table-number-container').classList.add('hidden'); 
-                document.getElementById('address-container').classList.remove('hidden'); 
+                if(tableCont) tableCont.classList.add('hidden'); 
+                if(addrCont) addrCont.classList.remove('hidden'); 
             } else { 
-                document.getElementById('table-number-container').classList.add('hidden'); 
-                document.getElementById('address-container').classList.add('hidden'); 
+                if(tableCont) tableCont.classList.add('hidden'); 
+                if(addrCont) addrCont.classList.add('hidden'); 
             }
         }
 
         function togglePaymentInfo() {
-            const payment = document.getElementById('cust-payment').value; 
+            const paymentEl = document.getElementById('cust-payment');
+            if(!paymentEl) return;
+            
+            const payment = paymentEl.value; 
             const qrisDiv = document.getElementById('qris-info'); 
             const bankDiv = document.getElementById('bank-info');
             
-            qrisDiv.classList.add('hidden'); 
-            bankDiv.classList.add('hidden');
+            if(qrisDiv) qrisDiv.classList.add('hidden'); 
+            if(bankDiv) bankDiv.classList.add('hidden');
             
             if(payment === 'QRIS' && globalSettings.QRISURL) { 
-                document.getElementById('qris-img-display').src = globalSettings.QRISURL; 
-                qrisDiv.classList.remove('hidden'); 
+                const imgDisp = document.getElementById('qris-img-display');
+                if(imgDisp) imgDisp.src = globalSettings.QRISURL; 
+                if(qrisDiv) qrisDiv.classList.remove('hidden'); 
             } else if (payment === 'Bank Transfer' && globalSettings.BankInfo) { 
-                document.getElementById('bank-text-display').innerText = globalSettings.BankInfo; 
-                bankDiv.classList.remove('hidden'); 
+                const bankDisp = document.getElementById('bank-text-display');
+                if(bankDisp) bankDisp.innerText = globalSettings.BankInfo; 
+                if(bankDiv) bankDiv.classList.remove('hidden'); 
             }
         }
 
@@ -845,15 +926,17 @@
             }
             
             const btn = document.getElementById('submit-order-btn'); 
-            btn.disabled = true; 
-            btn.innerHTML = 'Memproses...';
+            if(btn) {
+                btn.disabled = true; 
+                btn.innerHTML = 'Memproses...';
+            }
             
             let formattedInfo = `Tipe Pesanan: ${orderType}\n`;
             if (orderType === 'Dine-In') formattedInfo += `Meja: ${tableStr}\n`;
             if (orderType === 'Delivery') formattedInfo += `Alamat: ${addrStr}\n`;
             
-            const note = document.getElementById('cust-note').value; 
-            if (note.trim()) formattedInfo += `Catatan: ${note}`;
+            const noteEl = document.getElementById('cust-note');
+            if(noteEl && noteEl.value.trim()) formattedInfo += `Catatan: ${noteEl.value}`;
             
             let rawTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
             let finalTotal = rawTotal - (appliedCoupon ? appliedCoupon.discountAmt : 0);
@@ -877,21 +960,35 @@
                     cart = []; 
                     appliedCoupon = null; 
                     updateCartCounter(); 
-                    document.getElementById('checkout-form').reset(); 
-                    document.getElementById('coupon-input').value = ''; 
-                    document.getElementById('coupon-msg').classList.add('hidden');
+                    
+                    const form = document.getElementById('checkout-form');
+                    if(form) form.reset(); 
+                    
+                    const couponInput = document.getElementById('coupon-input');
+                    if(couponInput) couponInput.value = ''; 
+                    
+                    const couponMsg = document.getElementById('coupon-msg');
+                    if(couponMsg) couponMsg.classList.add('hidden');
+                    
                     if(initialTableNumber) { 
-                        document.getElementById('cust-order-type').value = 'Dine-In'; 
-                        document.getElementById('cust-table').value = initialTableNumber; 
+                        const typeEl = document.getElementById('cust-order-type');
+                        const tableEl = document.getElementById('cust-table');
+                        if(typeEl) typeEl.value = 'Dine-In'; 
+                        if(tableEl) tableEl.value = initialTableNumber; 
                         toggleOrderType(); 
                     }
-                    btn.disabled = false; 
-                    btn.innerHTML = 'Pesan Sekarang';
+                    
+                    if(btn) {
+                        btn.disabled = false; 
+                        btn.innerHTML = 'Pesan Sekarang';
+                    }
                 })
                 .catch(err => { 
                     showToast("Gagal memproses pesanan."); 
-                    btn.disabled = false; 
-                    btn.innerHTML = 'Coba Lagi'; 
+                    if(btn) {
+                        btn.disabled = false; 
+                        btn.innerHTML = 'Coba Lagi'; 
+                    }
                 });
         }
 
@@ -899,6 +996,8 @@
         function toggleCart() { 
             const dr = document.getElementById('cart-drawer'); 
             const ov = document.getElementById('cart-overlay'); 
+            if(!dr || !ov) return;
+            
             if (dr.classList.contains('translate-x-full')) { 
                 ov.classList.remove('hidden'); 
                 setTimeout(()=>ov.classList.remove('opacity-0'),10); 
@@ -939,6 +1038,8 @@
 
         function updateCartCounter() { 
             const cnt = document.getElementById('cart-counter'); 
+            if(!cnt) return;
+            
             const tot = cart.reduce((s, i) => s + i.qty, 0); 
             
             if (tot > 0) { 
@@ -948,18 +1049,25 @@
                 cnt.classList.add('hidden'); 
             }
             
-            document.getElementById('checkout-btn').disabled = tot === 0; 
+            const checkoutBtn = document.getElementById('checkout-btn');
+            if(checkoutBtn) checkoutBtn.disabled = tot === 0; 
             
             if(tot === 0) { 
                 appliedCoupon = null; 
-                document.getElementById('coupon-input').value = ''; 
-                document.getElementById('coupon-msg').classList.add('hidden'); 
+                const couponInput = document.getElementById('coupon-input');
+                if(couponInput) couponInput.value = ''; 
+                
+                const couponMsg = document.getElementById('coupon-msg');
+                if(couponMsg) couponMsg.classList.add('hidden'); 
             } 
         }
 
         function applyCoupon() { 
-            const code = document.getElementById('coupon-input').value.trim().toUpperCase(); 
+            const codeInput = document.getElementById('coupon-input');
             const msg = document.getElementById('coupon-msg'); 
+            if(!codeInput || !msg) return;
+            
+            const code = codeInput.value.trim().toUpperCase(); 
             msg.classList.remove('hidden'); 
             
             if(cart.length === 0) { 
@@ -1010,11 +1118,18 @@
 
         function renderCart() { 
             const cont = document.getElementById('cart-items'); 
+            if(!cont) return;
+            
             if (cart.length === 0) { 
                 cont.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-muted"><p>Keranjang kosong.</p></div>`; 
-                document.getElementById('cart-total').innerText = 'Rp 0'; 
-                document.getElementById('cart-subtotal').innerText='Rp 0'; 
-                document.getElementById('cart-discount-row').classList.add('hidden'); 
+                const cartTotal = document.getElementById('cart-total');
+                if(cartTotal) cartTotal.innerText = 'Rp 0'; 
+                
+                const cartSubtotal = document.getElementById('cart-subtotal');
+                if(cartSubtotal) cartSubtotal.innerText='Rp 0'; 
+                
+                const cartDiscRow = document.getElementById('cart-discount-row');
+                if(cartDiscRow) cartDiscRow.classList.add('hidden'); 
                 return; 
             } 
             
@@ -1036,15 +1151,20 @@
                     </div>`; 
             }).join(''); 
             
-            document.getElementById('cart-subtotal').innerText = formatIDR(rawTotal); 
+            const subTotEl = document.getElementById('cart-subtotal');
+            if(subTotEl) subTotEl.innerText = formatIDR(rawTotal); 
+            
+            const discRow = document.getElementById('cart-discount-row');
+            const discVal = document.getElementById('cart-discount');
+            const totalEl = document.getElementById('cart-total');
             
             if(appliedCoupon) { 
-                document.getElementById('cart-discount-row').classList.remove('hidden'); 
-                document.getElementById('cart-discount').innerText = `-${formatIDR(appliedCoupon.discountAmt)}`; 
-                document.getElementById('cart-total').innerText = formatIDR(rawTotal - appliedCoupon.discountAmt); 
+                if(discRow) discRow.classList.remove('hidden'); 
+                if(discVal) discVal.innerText = `-${formatIDR(appliedCoupon.discountAmt)}`; 
+                if(totalEl) totalEl.innerText = formatIDR(rawTotal - appliedCoupon.discountAmt); 
             } else { 
-                document.getElementById('cart-discount-row').classList.add('hidden'); 
-                document.getElementById('cart-total').innerText = formatIDR(rawTotal); 
+                if(discRow) discRow.classList.add('hidden'); 
+                if(totalEl) totalEl.innerText = formatIDR(rawTotal); 
             } 
         }
 
@@ -1052,26 +1172,38 @@
             if(cart.length > 0) { 
                 toggleCart(); 
                 if(initialTableNumber) { 
-                    document.getElementById('cust-order-type').value = 'Dine-In'; 
-                    document.getElementById('cust-table').value = initialTableNumber; 
+                    const typeEl = document.getElementById('cust-order-type');
+                    const tableEl = document.getElementById('cust-table');
+                    if(typeEl) typeEl.value = 'Dine-In'; 
+                    if(tableEl) tableEl.value = initialTableNumber; 
                     toggleOrderType(); 
                 } else { 
                     toggleOrderType(); 
                 } 
                 togglePaymentInfo(); 
-                document.getElementById('checkout-modal').classList.remove('hidden'); 
-                document.getElementById('checkout-modal').classList.add('flex'); 
-                setTimeout(()=>{
-                    document.getElementById('checkout-content').classList.remove('scale-95','opacity-0');
-                }, 10); 
+                
+                const modal = document.getElementById('checkout-modal');
+                if(modal) {
+                    modal.classList.remove('hidden'); 
+                    modal.classList.add('flex'); 
+                    setTimeout(()=>{
+                        const content = document.getElementById('checkout-content');
+                        if(content) content.classList.remove('scale-95','opacity-0');
+                    }, 10); 
+                }
             } 
         }
 
         function closeModal(id) { 
-            document.getElementById(id).children[0].classList.add('scale-95','opacity-0'); 
+            const modal = document.getElementById(id);
+            if(!modal) return;
+            
+            const content = modal.children[0];
+            if(content) content.classList.add('scale-95','opacity-0'); 
+            
             setTimeout(() => {
-                document.getElementById(id).classList.add('hidden'); 
-                document.getElementById(id).classList.remove('flex');
+                modal.classList.add('hidden'); 
+                modal.classList.remove('flex');
             }, 300); 
         }
 
@@ -1081,7 +1213,10 @@
 
         function showToast(m) { 
             const t = document.getElementById('toast'); 
-            document.getElementById('toast-message').innerText = m; 
+            const msg = document.getElementById('toast-message');
+            if(!t || !msg) return;
+            
+            msg.innerText = m; 
             t.classList.remove('translate-y-20','opacity-0'); 
             setTimeout(() => t.classList.add('translate-y-20','opacity-0'), 3000); 
         }
@@ -1103,20 +1238,29 @@
                 activateAdminUI(); 
                 return; 
             } 
-            document.getElementById('admin-login-modal').classList.remove('hidden'); 
-            document.getElementById('admin-login-modal').classList.add('flex'); 
-            setTimeout(() => {
-                document.getElementById('admin-login-modal').children[0].classList.remove('scale-95','opacity-0');
-            }, 10); 
+            const modal = document.getElementById('admin-login-modal');
+            if(modal) {
+                modal.classList.remove('hidden'); 
+                modal.classList.add('flex'); 
+                setTimeout(() => {
+                    const content = modal.children[0];
+                    if(content) content.classList.remove('scale-95','opacity-0');
+                }, 10);
+            }
         }
 
         function processAdminLogin(e) { 
             e.preventDefault(); 
             const pinInput = document.getElementById('admin-pin'); 
+            if(!pinInput) return;
+            
             const pin = pinInput.value; 
             const btn = e.target.querySelector('button[type="submit"]'); 
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i>`; 
-            btn.disabled = true; 
+            
+            if(btn) {
+                btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i>`; 
+                btn.disabled = true; 
+            }
             lucide.createIcons(); 
             
             fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'verifyPin', pin: pin }) })
@@ -1132,35 +1276,61 @@
                         showToast(data.error || "PIN Salah!"); 
                         pinInput.value = ''; 
                     } 
-                    btn.innerHTML = 'Login'; 
-                    btn.disabled = false; 
+                    if(btn) {
+                        btn.innerHTML = 'Login'; 
+                        btn.disabled = false; 
+                    }
                 })
                 .catch(err => { 
                     showToast("Terjadi kesalahan jaringan."); 
-                    btn.innerHTML = 'Login'; 
-                    btn.disabled = false; 
+                    if(btn) {
+                        btn.innerHTML = 'Login'; 
+                        btn.disabled = false; 
+                    }
                 }); 
         }
 
         function logoutAdmin() { 
             sessionStorage.removeItem('myfood_admin'); 
             isAdminMode = false; 
-            document.getElementById('nav-links').classList.remove('hidden'); 
-            document.getElementById('nav-icons').classList.remove('hidden'); 
-            document.getElementById('nav-admin-logout').classList.add('hidden'); 
-            document.getElementById('nav-admin-logout').classList.remove('flex'); 
+            
+            const navLinks = document.getElementById('nav-links');
+            const navIcons = document.getElementById('nav-icons');
+            const navLogout = document.getElementById('nav-admin-logout');
+            
+            if(navLinks) navLinks.classList.remove('hidden'); 
+            if(navIcons) navIcons.classList.remove('hidden'); 
+            
+            if(navLogout) {
+                navLogout.classList.add('hidden'); 
+                navLogout.classList.remove('flex'); 
+            }
+            
             goHome(); 
             showToast("Logout berhasil."); 
         }
 
         function activateAdminUI() {
-            document.getElementById('customer-view').classList.add('hidden'); 
-            document.getElementById('admin-view').classList.remove('hidden'); 
-            document.getElementById('admin-view').classList.add('flex');
-            document.getElementById('nav-links').classList.add('hidden'); 
-            document.getElementById('nav-icons').classList.add('hidden'); 
-            document.getElementById('nav-admin-logout').classList.remove('hidden'); 
-            document.getElementById('nav-admin-logout').classList.add('flex');
+            const custView = document.getElementById('customer-view');
+            const adminView = document.getElementById('admin-view');
+            
+            if(custView) custView.classList.add('hidden'); 
+            if(adminView) {
+                adminView.classList.remove('hidden'); 
+                adminView.classList.add('flex');
+            }
+            
+            const navLinks = document.getElementById('nav-links');
+            const navIcons = document.getElementById('nav-icons');
+            const navLogout = document.getElementById('nav-admin-logout');
+            
+            if(navLinks) navLinks.classList.add('hidden'); 
+            if(navIcons) navIcons.classList.add('hidden'); 
+            
+            if(navLogout) {
+                navLogout.classList.remove('hidden'); 
+                navLogout.classList.add('flex');
+            }
             
             switchAdminTab('dashboard'); 
             fetchAdminMenu(); 
@@ -1169,11 +1339,17 @@
 
         function switchAdminTab(tab) {
             ['dashboard','orders','menu','kategori','tampilan','coupons','settings'].forEach(t => {
-                document.getElementById(`admin-${t}-section`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).className = "px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap transition-all-ease";
+                const section = document.getElementById(`admin-${t}-section`);
+                const tabBtn = document.getElementById(`tab-${t}`);
+                if(section) section.classList.add('hidden');
+                if(tabBtn) tabBtn.className = "px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap transition-all-ease";
             });
-            document.getElementById(`admin-${tab}-section`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).className = "px-5 py-2.5 rounded-lg bg-primary text-white font-medium shadow-sm whitespace-nowrap transition-all-ease";
+            
+            const actSection = document.getElementById(`admin-${tab}-section`);
+            const actTabBtn = document.getElementById(`tab-${tab}`);
+            
+            if(actSection) actSection.classList.remove('hidden');
+            if(actTabBtn) actTabBtn.className = "px-5 py-2.5 rounded-lg bg-primary text-white font-medium shadow-sm whitespace-nowrap transition-all-ease";
             
             if(tab === 'orders' || tab === 'dashboard') fetchAdminOrders();
             if(tab === 'menu') renderAdminMenuTable();
@@ -1208,16 +1384,24 @@
                 }
             });
             
-            document.getElementById('dash-omset').innerText = formatIDR(omset);
-            document.getElementById('dash-orders-done').innerText = doneCount;
-            document.getElementById('dash-orders-pending').innerText = pendingCount;
-            document.getElementById('dash-menu-active').innerText = allMenuItems.filter(i=> i.active===true || i.active==="TRUE").length;
+            const dashOmset = document.getElementById('dash-omset');
+            const dashDone = document.getElementById('dash-orders-done');
+            const dashPend = document.getElementById('dash-orders-pending');
+            const dashActive = document.getElementById('dash-menu-active');
+            const topSales = document.getElementById('dash-top-sales');
+            
+            if(dashOmset) dashOmset.innerText = formatIDR(omset);
+            if(dashDone) dashDone.innerText = doneCount;
+            if(dashPend) dashPend.innerText = pendingCount;
+            if(dashActive) dashActive.innerText = allMenuItems.filter(i=> i.active===true || i.active==="TRUE").length;
             
             let sortedItems = Object.keys(itemCounts).map(k => ({name: k, qty: itemCounts[k]})).sort((a,b)=> b.qty - a.qty).slice(0,5);
             
-            document.getElementById('dash-top-sales').innerHTML = sortedItems.length ? 
-                sortedItems.map(i => `<li class="py-3 flex justify-between items-center text-sm"><span class="font-medium text-charcoal">${i.name}</span><span class="bg-gray-100 text-charcoal px-2 py-1 rounded font-bold">${i.qty} Terjual</span></li>`).join('') : 
-                '<li class="py-3 text-muted text-sm">Belum ada penjualan.</li>';
+            if(topSales) {
+                topSales.innerHTML = sortedItems.length ? 
+                    sortedItems.map(i => `<li class="py-3 flex justify-between items-center text-sm"><span class="font-medium text-charcoal">${i.name}</span><span class="bg-gray-100 text-charcoal px-2 py-1 rounded font-bold">${i.qty} Terjual</span></li>`).join('') : 
+                    '<li class="py-3 text-muted text-sm">Belum ada penjualan.</li>';
+            }
         }
 
         // --- ADMIN ORDERS ---
@@ -1233,6 +1417,8 @@
 
         function renderAdminOrdersTable() {
             const tbody = document.getElementById('admin-orders-table');
+            if(!tbody) return;
+            
             if(allOrders.length === 0) { 
                 tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-muted">Belum ada pesanan masuk.</td></tr>`; 
                 return; 
@@ -1291,6 +1477,8 @@
 
         function renderAdminMenuTable() {
             const tbody = document.getElementById('admin-menu-table');
+            if(!tbody) return;
+            
             tbody.innerHTML = allMenuItems.map(item => {
                 const isActive = item.active === true || item.active === "TRUE";
                 const objStr = encodeURIComponent(JSON.stringify(item));
@@ -1307,44 +1495,72 @@
         }
 
         function openMenuForm() { 
-            document.getElementById('admin-menu-form').reset(); 
-            document.getElementById('form-menu-id').value = ''; 
-            document.getElementById('menu-form-title').innerText = 'Tambah Menu Baru'; 
-            document.getElementById('menu-form-modal').classList.remove('hidden'); 
-            document.getElementById('menu-form-modal').classList.add('flex'); 
+            const form = document.getElementById('admin-menu-form');
+            if(form) form.reset(); 
+            
+            const idInput = document.getElementById('form-menu-id');
+            if(idInput) idInput.value = ''; 
+            
+            const title = document.getElementById('menu-form-title');
+            if(title) title.innerText = 'Tambah Menu Baru'; 
+            
+            const modal = document.getElementById('menu-form-modal');
+            if(modal) {
+                modal.classList.remove('hidden'); 
+                modal.classList.add('flex'); 
+            }
         }
 
         function editAdminMenu(encodedObj) {
             const item = JSON.parse(decodeURIComponent(encodedObj));
-            document.getElementById('form-menu-id').value = item.id; 
-            document.getElementById('form-menu-name').value = item.name; 
-            document.getElementById('form-menu-category').value = item.category; 
-            document.getElementById('form-menu-price').value = item.price; 
-            document.getElementById('form-menu-img').value = item.image; 
-            document.getElementById('form-menu-desc').value = item.description; 
-            document.getElementById('form-menu-badge').value = item.badge; 
-            document.getElementById('form-menu-active').value = (item.active === true || item.active === "TRUE") ? "true" : "false";
-            document.getElementById('menu-form-title').innerText = 'Edit Menu: ' + item.name; 
-            document.getElementById('menu-form-modal').classList.remove('hidden'); 
-            document.getElementById('menu-form-modal').classList.add('flex');
+            
+            const fillField = (id, val) => {
+                const el = document.getElementById(id);
+                if(el) el.value = val;
+            };
+            
+            fillField('form-menu-id', item.id);
+            fillField('form-menu-name', item.name);
+            fillField('form-menu-category', item.category);
+            fillField('form-menu-price', item.price);
+            fillField('form-menu-img', item.image);
+            fillField('form-menu-desc', item.description);
+            fillField('form-menu-badge', item.badge);
+            fillField('form-menu-active', (item.active === true || item.active === "TRUE") ? "true" : "false");
+            
+            const title = document.getElementById('menu-form-title');
+            if(title) title.innerText = 'Edit Menu: ' + item.name; 
+            
+            const modal = document.getElementById('menu-form-modal');
+            if(modal) {
+                modal.classList.remove('hidden'); 
+                modal.classList.add('flex');
+            }
         }
 
         function saveAdminMenu(e) {
             e.preventDefault(); 
             const btn = document.getElementById('btn-save-menu'); 
-            btn.innerHTML = 'Menyimpan...'; 
-            btn.disabled = true;
+            if(btn) {
+                btn.innerHTML = 'Menyimpan...'; 
+                btn.disabled = true;
+            }
+            
+            const getVal = (id) => {
+                const el = document.getElementById(id);
+                return el ? el.value : '';
+            };
             
             const payload = { 
                 action: 'saveMenu', 
-                id: document.getElementById('form-menu-id').value, 
-                name: document.getElementById('form-menu-name').value, 
-                category: document.getElementById('form-menu-category').value, 
-                price: parseFloat(document.getElementById('form-menu-price').value), 
-                image: document.getElementById('form-menu-img').value, 
-                description: document.getElementById('form-menu-desc').value, 
-                badge: document.getElementById('form-menu-badge').value, 
-                active: document.getElementById('form-menu-active').value === "true", 
+                id: getVal('form-menu-id'), 
+                name: getVal('form-menu-name'), 
+                category: getVal('form-menu-category'), 
+                price: parseFloat(getVal('form-menu-price') || 0), 
+                image: getVal('form-menu-img'), 
+                description: getVal('form-menu-desc'), 
+                badge: getVal('form-menu-badge'), 
+                active: getVal('form-menu-active') === "true", 
                 rating: 5.0 
             };
             
@@ -1356,18 +1572,23 @@
                         closeModal('menu-form-modal'); 
                         fetchAdminMenu(); 
                     } 
-                    btn.innerHTML = 'Simpan'; 
-                    btn.disabled = false; 
+                    if(btn) {
+                        btn.innerHTML = 'Simpan'; 
+                        btn.disabled = false; 
+                    }
                 });
         }
 
         // --- ADMIN CATEGORIES (KATEGORI) ---
         function renderAdminCategoriesList() {
             const list = document.getElementById('admin-category-list');
+            if(!list) return;
+            
             if(adminCategories.length === 0) { 
                 list.innerHTML = `<li class="p-4 text-sm text-muted text-center">Belum ada kategori</li>`; 
                 return; 
             }
+            
             list.innerHTML = adminCategories.map((c, i) => `
                 <li class="p-4 flex justify-between items-center text-charcoal font-medium">
                     ${c} <button onclick="deleteAdminCategory(${i})" class="text-red-500 hover:text-red-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
@@ -1378,6 +1599,8 @@
 
         function addAdminCategory() {
             const input = document.getElementById('new-category-input'); 
+            if(!input) return;
+            
             const val = input.value.trim();
             if(val && !adminCategories.includes(val)) { 
                 adminCategories.push(val); 
@@ -1406,17 +1629,24 @@
 
         // --- ADMIN TAMPILAN (COLORS & SLIDERS) ---
         function previewColor() {
-            const c = document.getElementById('set-color-primary').value;
-            document.getElementById('set-color-hex').innerText = c.toUpperCase();
+            const cInput = document.getElementById('set-color-primary');
+            if(!cInput) return;
+            
+            const c = cInput.value;
+            const hexSpan = document.getElementById('set-color-hex');
+            if(hexSpan) hexSpan.innerText = c.toUpperCase();
             document.documentElement.style.setProperty('--color-primary', c);
         }
 
         function renderAdminSlidersList() {
             const tbody = document.getElementById('admin-slider-table');
+            if(!tbody) return;
+            
             if(adminHeroSliders.length === 0) { 
                 tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-muted">Belum ada slider</td></tr>`; 
                 return; 
             }
+            
             tbody.innerHTML = adminHeroSliders.map((s, i) => `
                 <tr class="hover:bg-gray-50 border-b">
                     <td class="p-3"><img src="${s.img}" class="w-20 h-10 object-cover rounded"></td>
@@ -1428,19 +1658,31 @@
         }
 
         function openSliderForm() {
-            document.getElementById('admin-slider-form').reset();
-            document.getElementById('slider-form-modal').classList.remove('hidden'); 
-            document.getElementById('slider-form-modal').classList.add('flex');
+            const form = document.getElementById('admin-slider-form');
+            if(form) form.reset();
+            
+            const modal = document.getElementById('slider-form-modal');
+            if(modal) {
+                modal.classList.remove('hidden'); 
+                modal.classList.add('flex');
+            }
         }
 
         function addAdminSlider(e) {
             e.preventDefault();
+            
+            const getVal = (id) => {
+                const el = document.getElementById(id);
+                return el ? el.value : '';
+            };
+            
             adminHeroSliders.push({
-                img: document.getElementById('form-slider-img').value, 
-                title: document.getElementById('form-slider-title').value,
-                subtitle: document.getElementById('form-slider-subtitle').value, 
-                badge: document.getElementById('form-slider-badge').value
+                img: getVal('form-slider-img'), 
+                title: getVal('form-slider-title'),
+                subtitle: getVal('form-slider-subtitle'), 
+                badge: getVal('form-slider-badge')
             });
+            
             closeModal('slider-form-modal'); 
             renderAdminSlidersList();
         }
@@ -1452,13 +1694,17 @@
         
         function saveTampilan() {
             const btn = document.getElementById('btn-save-tampilan'); 
-            btn.innerHTML = 'Menyimpan...'; 
-            btn.disabled = true;
+            if(btn) {
+                btn.innerHTML = 'Menyimpan...'; 
+                btn.disabled = true;
+            }
+            
+            const primColor = document.getElementById('set-color-primary');
             
             const payload = {
                 action: 'saveSettings',
                 settings: { 
-                    ColorPrimary: document.getElementById('set-color-primary').value, 
+                    ColorPrimary: primColor ? primColor.value : '#E63946', 
                     HeroSliders: JSON.stringify(adminHeroSliders) 
                 }
             };
@@ -1467,8 +1713,10 @@
                 .then(res => res.json())
                 .then(() => { 
                     showToast("Tema & Slider disimpan!"); 
-                    btn.innerHTML='Simpan Perubahan Tampilan'; 
-                    btn.disabled=false; 
+                    if(btn) {
+                        btn.innerHTML='Simpan Perubahan Tampilan'; 
+                        btn.disabled=false; 
+                    }
                     fetchInitData(); 
                 });
         }
@@ -1476,6 +1724,8 @@
         // --- ADMIN COUPONS ---
         function renderAdminCouponsTable() {
             const tbody = document.getElementById('admin-coupons-table');
+            if(!tbody) return;
+            
             if(allCoupons.length === 0) { 
                 tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-muted">Belum ada kupon.</td></tr>`; 
                 return; 
@@ -1497,36 +1747,64 @@
         }
 
         function openCouponForm() { 
-            document.getElementById('admin-coupon-form').reset(); 
-            document.getElementById('form-coupon-id').value = ''; 
-            document.getElementById('coupon-form-title').innerText = 'Buat Kupon Baru'; 
-            document.getElementById('coupon-form-modal').classList.remove('hidden'); 
-            document.getElementById('coupon-form-modal').classList.add('flex'); 
+            const form = document.getElementById('admin-coupon-form');
+            if(form) form.reset(); 
+            
+            const idInput = document.getElementById('form-coupon-id');
+            if(idInput) idInput.value = ''; 
+            
+            const title = document.getElementById('coupon-form-title');
+            if(title) title.innerText = 'Buat Kupon Baru'; 
+            
+            const modal = document.getElementById('coupon-form-modal');
+            if(modal) {
+                modal.classList.remove('hidden'); 
+                modal.classList.add('flex'); 
+            }
         }
 
         function editAdminCoupon(encodedObj) {
             const c = JSON.parse(decodeURIComponent(encodedObj));
-            document.getElementById('form-coupon-id').value = c.id; 
-            document.getElementById('form-coupon-code').value = c.code; 
-            document.getElementById('form-coupon-val').value = c.discount; 
-            document.getElementById('form-coupon-active').value = (c.active === true || c.active === "TRUE") ? "true" : "false";
-            document.getElementById('coupon-form-title').innerText = 'Edit Kupon'; 
-            document.getElementById('coupon-form-modal').classList.remove('hidden'); 
-            document.getElementById('coupon-form-modal').classList.add('flex');
+            
+            const fillField = (id, val) => {
+                const el = document.getElementById(id);
+                if(el) el.value = val;
+            }
+            
+            fillField('form-coupon-id', c.id);
+            fillField('form-coupon-code', c.code);
+            fillField('form-coupon-val', c.discount);
+            fillField('form-coupon-active', (c.active === true || c.active === "TRUE") ? "true" : "false");
+            
+            const title = document.getElementById('coupon-form-title');
+            if(title) title.innerText = 'Edit Kupon'; 
+            
+            const modal = document.getElementById('coupon-form-modal');
+            if(modal) {
+                modal.classList.remove('hidden'); 
+                modal.classList.add('flex');
+            }
         }
 
         function saveAdminCoupon(e) {
             e.preventDefault(); 
             const btn = document.getElementById('btn-save-coupon'); 
-            btn.innerHTML = 'Menyimpan...'; 
-            btn.disabled = true;
+            if(btn) {
+                btn.innerHTML = 'Menyimpan...'; 
+                btn.disabled = true;
+            }
+            
+            const getVal = (id) => {
+                const el = document.getElementById(id);
+                return el ? el.value : '';
+            };
             
             const payload = { 
                 action: 'saveCoupon', 
-                id: document.getElementById('form-coupon-id').value, 
-                code: document.getElementById('form-coupon-code').value.toUpperCase(), 
-                discount: parseFloat(document.getElementById('form-coupon-val').value), 
-                active: document.getElementById('form-coupon-active').value === "true" 
+                id: getVal('form-coupon-id'), 
+                code: getVal('form-coupon-code').toUpperCase(), 
+                discount: parseFloat(getVal('form-coupon-val') || 0), 
+                active: getVal('form-coupon-active') === "true" 
             };
             
             fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
@@ -1537,42 +1815,56 @@
                         closeModal('coupon-form-modal'); 
                         fetchInitData(); 
                     } 
-                    btn.innerHTML = 'Simpan'; 
-                    btn.disabled = false; 
+                    if(btn) {
+                        btn.innerHTML = 'Simpan'; 
+                        btn.disabled = false; 
+                    }
                 });
         }
 
         // --- ADMIN SETTINGS ---
         function populateSettingsForm() {
-            document.getElementById('set-brand').value = globalSettings.BrandName || ''; 
-            document.getElementById('set-phone').value = globalSettings.Phone || ''; 
-            document.getElementById('set-logo').value = globalSettings.LogoURL || ''; 
-            document.getElementById('set-address').value = globalSettings.Address || ''; 
-            document.getElementById('set-fonnte').value = globalSettings.FonnteToken || ''; 
-            document.getElementById('set-wa-provider').value = globalSettings.WAProvider || 'Fonnte'; 
-            document.getElementById('set-wa-sender').value = globalSettings.WASenderNumber || ''; 
-            document.getElementById('set-qris-url').value = globalSettings.QRISURL || ''; 
-            document.getElementById('set-bank-info').value = globalSettings.BankInfo || '';
+            const fillField = (id, val) => {
+                const el = document.getElementById(id);
+                if(el) el.value = val;
+            }
+            
+            fillField('set-brand', globalSettings.BrandName || '');
+            fillField('set-phone', globalSettings.Phone || '');
+            fillField('set-logo', globalSettings.LogoURL || '');
+            fillField('set-address', globalSettings.Address || '');
+            fillField('set-fonnte', globalSettings.FonnteToken || '');
+            fillField('set-wa-provider', globalSettings.WAProvider || 'Fonnte');
+            fillField('set-wa-sender', globalSettings.WASenderNumber || '');
+            fillField('set-qris-url', globalSettings.QRISURL || '');
+            fillField('set-bank-info', globalSettings.BankInfo || '');
         }
 
         function saveSettings(e) {
             e.preventDefault(); 
             const btn = document.getElementById('btn-save-settings'); 
-            btn.innerHTML = 'Menyimpan...'; 
-            btn.disabled = true;
+            if(btn) {
+                btn.innerHTML = 'Menyimpan...'; 
+                btn.disabled = true;
+            }
+            
+            const getVal = (id) => {
+                const el = document.getElementById(id);
+                return el ? el.value : '';
+            };
             
             const payload = { 
                 action: 'saveSettings', 
                 settings: { 
-                    BrandName: document.getElementById('set-brand').value, 
-                    Phone: document.getElementById('set-phone').value, 
-                    LogoURL: document.getElementById('set-logo').value, 
-                    Address: document.getElementById('set-address').value, 
-                    FonnteToken: document.getElementById('set-fonnte').value, 
-                    WAProvider: document.getElementById('set-wa-provider').value, 
-                    WASenderNumber: document.getElementById('set-wa-sender').value, 
-                    QRISURL: document.getElementById('set-qris-url').value, 
-                    BankInfo: document.getElementById('set-bank-info').value 
+                    BrandName: getVal('set-brand'), 
+                    Phone: getVal('set-phone'), 
+                    LogoURL: getVal('set-logo'), 
+                    Address: getVal('set-address'), 
+                    FonnteToken: getVal('set-fonnte'), 
+                    WAProvider: getVal('set-wa-provider'), 
+                    WASenderNumber: getVal('set-wa-sender'), 
+                    QRISURL: getVal('set-qris-url'), 
+                    BankInfo: getVal('set-bank-info') 
                 } 
             };
             
@@ -1583,8 +1875,10 @@
                         showToast("Pengaturan Disimpan!"); 
                         fetchInitData(); 
                     } 
-                    btn.innerHTML = 'Simpan Pengaturan Utama'; 
-                    btn.disabled = false; 
+                    if(btn) {
+                        btn.innerHTML = 'Simpan Pengaturan Utama'; 
+                        btn.disabled = false; 
+                    }
                 });
         }
     </script>
