@@ -351,6 +351,22 @@
                         <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">URL Logo Toko (Opsional)</label><input type="url" id="set-logo" placeholder="https://..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary text-sm"></div>
                         <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">Alamat Lengkap</label><textarea id="set-address" rows="2" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></textarea></div>
 
+                        <!-- SETTING BIAYA TAMBAHAN -->
+                        <div class="md:col-span-2 border-t pt-4 mt-2">
+                            <h3 class="font-bold text-lg text-charcoal mb-1">Pajak & Biaya Layanan</h3>
+                            <p class="text-xs text-muted mb-4">Kosongkan atau isi 0 jika tidak ada PPN/Service Charge.</p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">PPN (%)</label>
+                                    <input type="number" id="set-tax" placeholder="Misal: 11" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Service Charge (%)</label>
+                                    <input type="number" id="set-service" placeholder="Misal: 5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- SETTING PEMBAYARAN -->
                         <div class="md:col-span-2 border-t pt-4 mt-2">
                             <h3 class="font-bold text-lg text-charcoal mb-1">Instruksi Pembayaran</h3>
@@ -362,25 +378,18 @@
                             </div>
                         </div>
 
-                        <!-- BIAYA TAMBAHAN (PPN & SERVICE CHARGE) -->
-                        <div class="md:col-span-2 border-t pt-4 mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="md:col-span-2">
-                                <h3 class="font-bold text-lg text-charcoal mb-1">Biaya Tambahan Resto (Opsional)</h3>
-                                <p class="text-xs text-muted">Isi dengan angka persentase. Kosongkan atau isi 0 jika tidak ada biaya tambahan.</p>
-                            </div>
-                            <div><label class="block text-sm font-medium mb-1">PPN / Pajak (%)</label><input type="number" id="set-tax" placeholder="Cth: 11" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-white"></div>
-                            <div><label class="block text-sm font-medium mb-1">Service Charge (%)</label><input type="number" id="set-service-charge" placeholder="Cth: 5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-white"></div>
-                        </div>
-
                         <!-- WA GATEWAY SETTINGS -->
                         <div class="md:col-span-2 border-t pt-4 mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="md:col-span-2"><h3 class="font-bold text-lg text-charcoal mb-1">Integrasi WhatsApp Gateway</h3><p class="text-xs text-muted">Kirim otomatis struk pesanan ke pelanggan.</p></div>
                             <div><label class="block text-sm font-medium mb-1">Provider WA Gateway</label>
                                 <select id="set-wa-provider" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-white">
-                                    <option value="Fonnte">Fonnte</option><option value="Waplus">Waplus</option>
+                                    <option value="Fonnte">Fonnte</option>
+                                    <option value="Waplus">Waplus</option>
+                                    <option value="StarSender">StarSender</option>
+                                    <option value="Xsender">Xsender</option>
                                 </select>
                             </div>
-                            <div><label class="block text-sm font-medium mb-1">Nomor Sender (Opsional)</label><input type="text" id="set-wa-sender" placeholder="Kosongkan untuk Fonnte" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
+                            <div><label class="block text-sm font-medium mb-1">Nomor Sender (Opsional)</label><input type="text" id="set-wa-sender" placeholder="Kosongkan untuk Fonnte/StarSender" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
                             <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">API Token</label><input type="text" id="set-fonnte" placeholder="Kosongkan jika fitur WA tidak diaktifkan" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-gray-50"></div>
                         </div>
                     </div>
@@ -407,10 +416,10 @@
         </div>
         <div class="p-5 border-t border-gray-100 bg-gray-50">
             <div class="flex justify-between text-sm mb-1 text-muted"><span>Subtotal</span><span id="cart-subtotal">Rp 0</span></div>
-            <div class="flex justify-between text-sm mb-1 text-success hidden" id="cart-discount-row"><span>Diskon</span><span id="cart-discount">-Rp 0</span></div>
             <div class="flex justify-between text-sm mb-1 text-muted hidden" id="cart-service-row"><span>Service Charge</span><span id="cart-service">Rp 0</span></div>
-            <div class="flex justify-between text-sm mb-3 text-muted hidden" id="cart-tax-row"><span>PPN</span><span id="cart-tax">Rp 0</span></div>
-            <div class="flex justify-between text-lg font-bold mb-5"><span>Total Akhir</span><span id="cart-total" class="text-primary">Rp 0</span></div>
+            <div class="flex justify-between text-sm mb-1 text-muted hidden" id="cart-tax-row"><span>PPN</span><span id="cart-tax">Rp 0</span></div>
+            <div class="flex justify-between text-sm mb-3 text-success hidden" id="cart-discount-row"><span>Diskon</span><span id="cart-discount">-Rp 0</span></div>
+            <div class="flex justify-between text-lg font-bold mb-5 mt-2 border-t pt-2"><span>Total Akhir</span><span id="cart-total" class="text-primary">Rp 0</span></div>
             <button id="checkout-btn" onclick="openCheckout()" class="w-full bg-primary hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed">Checkout</button>
         </div>
     </div>
@@ -446,7 +455,7 @@
             </div>
             <form id="checkout-form" class="p-6 space-y-4" onsubmit="submitOrder(event)">
                 <div><label class="block text-sm font-medium mb-1">Nama Pemesan</label><input type="text" id="cust-name" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none"></div>
-                <div><label class="block text-sm font-medium mb-1">Nomor WhatsApp</label><input type="tel" id="cust-wa" required placeholder="08..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none"></div>
+                <div><label class="block text-sm font-medium mb-1">Nomor WhatsApp (Aktif)</label><input type="tel" id="cust-wa" required placeholder="08..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none"></div>
                 <div class="p-4 bg-gray-50 border rounded-xl space-y-3">
                     <div><label class="block text-sm font-bold mb-1">Tipe Pesanan</label>
                         <select id="cust-order-type" onchange="toggleOrderType()" class="w-full px-4 py-2 border rounded-lg outline-none bg-white focus:ring-2 focus:ring-primary">
@@ -460,7 +469,7 @@
                 <div class="p-4 bg-gray-50 border rounded-xl">
                     <label class="block text-sm font-bold mb-1">Metode Pembayaran</label>
                     <select id="cust-payment" onchange="togglePaymentInfo()" class="w-full px-4 py-2 border rounded-lg outline-none bg-white focus:ring-2 focus:ring-primary">
-                        <option value="Cash / Kasir">Bayar di Kasir</option><option value="QRIS">QRIS Statis</option><option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Cash / Kasir">Bayar di Kasir (Cash/EDC)</option><option value="QRIS">QRIS Statis</option><option value="Bank Transfer">Bank Transfer</option>
                     </select>
                     <div id="qris-info" class="hidden mt-3 p-3 bg-white border border-dashed rounded-lg text-center"><p class="text-sm font-bold mb-2">Scan QRIS:</p><img id="qris-img-display" src="" class="mx-auto max-h-48 rounded shadow-sm object-contain"></div>
                     <div id="bank-info" class="hidden mt-3 p-3 bg-white border border-dashed rounded-lg text-center text-sm"><p class="font-bold mb-1">Transfer ke:</p><p id="bank-text-display" class="whitespace-pre-wrap text-muted"></p></div>
@@ -592,8 +601,16 @@
         let allCoupons = [];
         let allUsers = [];
         let globalSettings = {}; 
+        
         let cart = []; 
         let appliedCoupon = null; 
+        
+        // PPN & Service Variables
+        let currentTaxRate = 0;
+        let currentServiceRate = 0;
+        let taxAmount = 0;
+        let serviceAmount = 0;
+
         let currentCategory = 'All'; 
         let searchQuery = ''; 
         let isAdminMode = false;
@@ -692,7 +709,7 @@
 
             // Apply Brand Text & Title
             const bName = globalSettings.BrandName || 'MyFood';
-            document.title = bName + ' | Delivery & Menu'; 
+            document.title = bName + ' | Delivery & Menu'; // Title browser update
             
             const navBrandName = document.getElementById('nav-brand-name');
             if(navBrandName) navBrandName.innerText = bName;
@@ -720,6 +737,10 @@
             if(globalSettings.AdminClicks) {
                 requiredAdminClicks = parseInt(globalSettings.AdminClicks);
             }
+            
+            // Set Tax & Service
+            currentTaxRate = parseFloat(globalSettings.TaxRate || 0);
+            currentServiceRate = parseFloat(globalSettings.ServiceChargeRate || 0);
 
             // Parse Categories
             try {
@@ -996,7 +1017,7 @@
         }
 
         function submitOrder(e) {
-            e.preventDefault(); 
+            e.preventDefault();
             const orderType = document.getElementById('cust-order-type').value; 
             const tableStr = document.getElementById('cust-table').value; 
             const addrStr = document.getElementById('cust-address').value;
@@ -1023,16 +1044,17 @@
             const noteEl = document.getElementById('cust-note');
             if(noteEl && noteEl.value.trim()) formattedInfo += `Catatan: ${noteEl.value}`;
             
+            // Re-calculate final total including tax and service
             let rawTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            let discAmt = appliedCoupon ? appliedCoupon.discountAmt : 0;
-            let dpp = rawTotal - discAmt;
+            let totalAfterDiscount = rawTotal - (appliedCoupon ? appliedCoupon.discountAmt : 0);
             
-            // Hitung PPN dan Service
-            let serviceRate = parseFloat(globalSettings.ServiceChargeRate) || 0;
-            let taxRate = parseFloat(globalSettings.TaxRate) || 0;
-            let serviceAmt = Math.round(dpp * (serviceRate / 100));
-            let taxAmt = Math.round((dpp + serviceAmt) * (taxRate / 100));
-            let finalTotal = dpp + serviceAmt + taxAmt;
+            let calcService = 0;
+            if(currentServiceRate > 0) calcService = totalAfterDiscount * (currentServiceRate / 100);
+            
+            let calcTax = 0;
+            if(currentTaxRate > 0) calcTax = (totalAfterDiscount + calcService) * (currentTaxRate / 100);
+            
+            let finalTotal = totalAfterDiscount + calcService + calcTax;
             
             const orderData = {
                 action: 'submitOrder', 
@@ -1042,9 +1064,9 @@
                 paymentMethod: document.getElementById('cust-payment').value,
                 items: cart.map(i => ({id: i.id, name: i.name, qty: i.qty, price: i.price})), 
                 total: finalTotal, 
-                coupon: appliedCoupon ? appliedCoupon.code : '',
-                taxAmt: taxAmt,
-                serviceAmt: serviceAmt
+                taxAmt: calcTax,
+                serviceAmt: calcService,
+                coupon: appliedCoupon ? appliedCoupon.code : ''
             };
             
             fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(orderData) })
@@ -1087,7 +1109,7 @@
                 });
         }
 
-        // --- 5. CART ---
+        // --- 5. CART & CALCULATION ---
         function toggleCart() { 
             const dr = document.getElementById('cart-drawer'); 
             const ov = document.getElementById('cart-overlay'); 
@@ -1217,21 +1239,11 @@
             
             if (cart.length === 0) { 
                 cont.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-muted"><p>Keranjang kosong.</p></div>`; 
-                const cartTotal = document.getElementById('cart-total');
-                if(cartTotal) cartTotal.innerText = 'Rp 0'; 
-                
-                const cartSubtotal = document.getElementById('cart-subtotal');
-                if(cartSubtotal) cartSubtotal.innerText='Rp 0'; 
-                
-                const cartDiscRow = document.getElementById('cart-discount-row');
-                if(cartDiscRow) cartDiscRow.classList.add('hidden'); 
-
-                const cartTaxRow = document.getElementById('cart-tax-row');
-                if(cartTaxRow) cartTaxRow.classList.add('hidden');
-                
-                const cartServiceRow = document.getElementById('cart-service-row');
-                if(cartServiceRow) cartServiceRow.classList.add('hidden');
-                
+                document.getElementById('cart-total').innerText = 'Rp 0'; 
+                document.getElementById('cart-subtotal').innerText='Rp 0'; 
+                document.getElementById('cart-discount-row').classList.add('hidden'); 
+                document.getElementById('cart-service-row').classList.add('hidden');
+                document.getElementById('cart-tax-row').classList.add('hidden');
                 return; 
             } 
             
@@ -1253,50 +1265,45 @@
                     </div>`; 
             }).join(''); 
             
-            const subTotEl = document.getElementById('cart-subtotal');
-            if(subTotEl) subTotEl.innerText = formatIDR(rawTotal); 
+            document.getElementById('cart-subtotal').innerText = formatIDR(rawTotal); 
             
-            let discAmt = 0;
+            // Discount
+            let totalAfterDiscount = rawTotal;
             const discRow = document.getElementById('cart-discount-row');
-            const discVal = document.getElementById('cart-discount');
-            
             if(appliedCoupon) { 
-                discAmt = appliedCoupon.discountAmt;
+                totalAfterDiscount -= appliedCoupon.discountAmt;
                 if(discRow) discRow.classList.remove('hidden'); 
-                if(discVal) discVal.innerText = `-${formatIDR(discAmt)}`; 
+                document.getElementById('cart-discount').innerText = `-${formatIDR(appliedCoupon.discountAmt)}`; 
             } else { 
                 if(discRow) discRow.classList.add('hidden'); 
             } 
             
-            // Kalkulasi ulang PPN & Service UI
-            let dpp = rawTotal - discAmt;
-            let serviceRate = parseFloat(globalSettings.ServiceChargeRate) || 0;
-            let taxRate = parseFloat(globalSettings.TaxRate) || 0;
-
-            let serviceAmt = Math.round(dpp * (serviceRate / 100));
-            let taxAmt = Math.round((dpp + serviceAmt) * (taxRate / 100));
-            let finalTotal = dpp + serviceAmt + taxAmt;
-
+            // Service Charge
             const serviceRow = document.getElementById('cart-service-row');
-            const serviceVal = document.getElementById('cart-service');
-            if(serviceAmt > 0) {
+            if(currentServiceRate > 0) {
+                serviceAmount = totalAfterDiscount * (currentServiceRate / 100);
                 if(serviceRow) serviceRow.classList.remove('hidden');
-                if(serviceVal) serviceVal.innerText = formatIDR(serviceAmt);
+                document.getElementById('cart-service').innerText = formatIDR(serviceAmount);
             } else {
+                serviceAmount = 0;
                 if(serviceRow) serviceRow.classList.add('hidden');
             }
 
+            // Tax (PPN)
             const taxRow = document.getElementById('cart-tax-row');
-            const taxVal = document.getElementById('cart-tax');
-            if(taxAmt > 0) {
+            if(currentTaxRate > 0) {
+                // Pajak dihitung dari Total (setelah diskon) + Service Charge
+                taxAmount = (totalAfterDiscount + serviceAmount) * (currentTaxRate / 100);
                 if(taxRow) taxRow.classList.remove('hidden');
-                if(taxVal) taxVal.innerText = formatIDR(taxAmt);
+                document.getElementById('cart-tax').innerText = formatIDR(taxAmount);
             } else {
+                taxAmount = 0;
                 if(taxRow) taxRow.classList.add('hidden');
             }
 
-            const totalEl = document.getElementById('cart-total');
-            if(totalEl) totalEl.innerText = formatIDR(finalTotal);
+            // Final Total
+            const finalTotal = totalAfterDiscount + serviceAmount + taxAmount;
+            document.getElementById('cart-total').innerText = formatIDR(finalTotal);
         }
 
         function openCheckout() { 
@@ -1413,14 +1420,14 @@
                         pinInput.value = ''; 
                     } 
                     if(btn) {
-                        btn.innerHTML = 'Login'; 
+                        btn.innerHTML = 'Masuk'; 
                         btn.disabled = false; 
                     }
                 })
                 .catch(err => { 
                     showToast("Terjadi kesalahan jaringan."); 
                     if(btn) {
-                        btn.innerHTML = 'Login'; 
+                        btn.innerHTML = 'Masuk'; 
                         btn.disabled = false; 
                     }
                 }); 
@@ -2002,13 +2009,13 @@
             fillField('set-phone', globalSettings.Phone || '');
             fillField('set-logo', globalSettings.LogoURL || '');
             fillField('set-address', globalSettings.Address || '');
+            fillField('set-tax', globalSettings.TaxRate || '');
+            fillField('set-service', globalSettings.ServiceChargeRate || '');
             fillField('set-fonnte', globalSettings.FonnteToken || '');
             fillField('set-wa-provider', globalSettings.WAProvider || 'Fonnte');
             fillField('set-wa-sender', globalSettings.WASenderNumber || '');
             fillField('set-qris-url', globalSettings.QRISURL || '');
             fillField('set-bank-info', globalSettings.BankInfo || '');
-            fillField('set-tax', globalSettings.TaxRate || '');
-            fillField('set-service-charge', globalSettings.ServiceChargeRate || '');
         }
 
         function saveSettings(e) {
@@ -2031,13 +2038,13 @@
                     Phone: getVal('set-phone'), 
                     LogoURL: getVal('set-logo'), 
                     Address: getVal('set-address'), 
+                    TaxRate: getVal('set-tax'),
+                    ServiceChargeRate: getVal('set-service'),
                     FonnteToken: getVal('set-fonnte'), 
                     WAProvider: getVal('set-wa-provider'), 
                     WASenderNumber: getVal('set-wa-sender'), 
                     QRISURL: getVal('set-qris-url'), 
-                    BankInfo: getVal('set-bank-info'),
-                    TaxRate: getVal('set-tax'),
-                    ServiceChargeRate: getVal('set-service-charge')
+                    BankInfo: getVal('set-bank-info') 
                 } 
             };
             
