@@ -2059,6 +2059,8 @@
             fillField('set-wa-sender', globalSettings.WASenderNumber || '');
             fillField('set-qris-url', globalSettings.QRISURL || '');
             fillField('set-bank-info', globalSettings.BankInfo || '');
+            fillField('set-guide-text', globalSettings.GuideText || '');
+            fillField('set-guide-link', globalSettings.GuideLink || '');
         }
 
         function saveSettings(e) {
@@ -2086,7 +2088,9 @@
                     WAProvider: getVal('set-wa-provider'), 
                     WASenderNumber: getVal('set-wa-sender'), 
                     QRISURL: getVal('set-qris-url'), 
-                    BankInfo: getVal('set-bank-info') 
+                    BankInfo: getVal('set-bank-info'),
+                    GuideText: getVal('set-guide-text'),
+                    GuideLink: getVal('set-guide-link')
                 } 
             };
             
