@@ -173,228 +173,236 @@
                 <button onclick="switchAdminTab('settings')" id="tab-settings" class="px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap">Pengaturan</button>
             </div>
 
-            <!-- TAB 1: DASHBOARD -->
-            <div id="admin-dashboard-section" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center" id="card-omset">
-                        <span class="text-muted text-sm font-semibold mb-1">Total Omset</span>
-                        <span class="text-2xl font-bold text-primary" id="dash-omset">Rp 0</span>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
-                        <span class="text-muted text-sm font-semibold mb-1">Total Pesanan Selesai</span>
-                        <span class="text-2xl font-bold text-charcoal" id="dash-orders-done">0</span>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
-                        <span class="text-muted text-sm font-semibold mb-1">Pesanan Menunggu</span>
-                        <span class="text-2xl font-bold text-yellow-500" id="dash-orders-pending">0</span>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
-                        <span class="text-muted text-sm font-semibold mb-1">Menu Aktif</span>
-                        <span class="text-2xl font-bold text-charcoal" id="dash-menu-active">0</span>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <h2 class="text-xl font-bold mb-4 flex items-center"><i data-lucide="trending-up" class="w-5 h-5 mr-2 text-success"></i> Menu Terlaris</h2>
-                    <ul id="dash-top-sales" class="divide-y divide-gray-100"></ul>
-                </div>
+            <!-- Mengganti Spinner Loading Admin -->
+            <div id="admin-loading" class="hidden flex-col items-center justify-center py-20 text-muted">
+                <i data-lucide="loader-2" class="w-10 h-10 animate-spin mb-4 text-primary"></i>
+                <p>Otentikasi & Memuat Data Admin...</p>
             </div>
 
-            <!-- TAB 2: ORDERS -->
-            <div id="admin-orders-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold">Daftar Pesanan (Live)</h2>
-                    <button onclick="fetchAdminOrders()" class="text-muted hover:text-primary"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50 text-gray-500 text-sm border-b">
-                                <th class="p-4 font-semibold">Waktu</th>
-                                <th class="p-4 font-semibold">Pelanggan</th>
-                                <th class="p-4 font-semibold">Detail Info & Pesanan</th>
-                                <th class="p-4 font-semibold">Total</th>
-                                <th class="p-4 font-semibold text-center">Status</th>
-                                <th class="p-4 font-semibold text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-orders-table" class="divide-y divide-gray-100"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- TAB 3: MENU -->
-            <div id="admin-menu-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold">Kelola Menu</h2>
-                    <button onclick="openMenuForm()" class="bg-success hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center">
-                        <i data-lucide="plus" class="w-4 h-4 mr-1"></i> Tambah Menu
-                    </button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50 text-gray-500 text-sm border-b">
-                                <th class="p-4 font-semibold">Item</th>
-                                <th class="p-4 font-semibold">Kategori</th>
-                                <th class="p-4 font-semibold">Harga</th>
-                                <th class="p-4 font-semibold text-center">Status</th>
-                                <th class="p-4 font-semibold text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-menu-table" class="divide-y divide-gray-100"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- TAB 4: KATEGORI -->
-            <div id="admin-kategori-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h2 class="text-xl font-bold mb-6">Kelola Kategori Menu</h2>
-                <div class="flex gap-2 mb-6 max-w-lg">
-                    <input type="text" id="new-category-input" placeholder="Nama kategori baru..." class="flex-grow px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
-                    <button onclick="addAdminCategory()" class="bg-success hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold">Tambah</button>
-                </div>
-                <div class="max-w-lg">
-                    <ul id="admin-category-list" class="divide-y divide-gray-100 border rounded-lg bg-gray-50"></ul>
-                </div>
-            </div>
-
-            <!-- TAB 5: TAMPILAN & TEMA -->
-            <div id="admin-tampilan-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h2 class="text-xl font-bold mb-6">Tampilan & Tema Toko</h2>
-                
-                <div class="mb-8 p-6 border rounded-xl bg-gray-50 max-w-2xl">
-                    <h3 class="font-bold text-charcoal mb-2">Tema Warna Utama (Brand Color)</h3>
-                    <p class="text-xs text-muted mb-4">Pilih warna yang sesuai dengan identitas restoran Anda.</p>
-                    <div class="flex items-center gap-4">
-                        <input type="color" id="set-color-primary" onchange="previewColor()" class="w-14 h-14 rounded cursor-pointer border border-gray-300">
-                        <span id="set-color-hex" class="font-mono text-sm font-bold text-gray-600 bg-white px-3 py-1 border rounded">#E63946</span>
+            <div id="admin-content" class="hidden">
+                <!-- TAB 1: DASHBOARD -->
+                <div id="admin-dashboard-section" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center" id="card-omset">
+                            <span class="text-muted text-sm font-semibold mb-1">Total Omset</span>
+                            <span class="text-2xl font-bold text-primary" id="dash-omset">Rp 0</span>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                            <span class="text-muted text-sm font-semibold mb-1">Total Pesanan Selesai</span>
+                            <span class="text-2xl font-bold text-charcoal" id="dash-orders-done">0</span>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                            <span class="text-muted text-sm font-semibold mb-1">Pesanan Menunggu</span>
+                            <span class="text-2xl font-bold text-yellow-500" id="dash-orders-pending">0</span>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                            <span class="text-muted text-sm font-semibold mb-1">Menu Aktif</span>
+                            <span class="text-2xl font-bold text-charcoal" id="dash-menu-active">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <h2 class="text-xl font-bold mb-4 flex items-center"><i data-lucide="trending-up" class="w-5 h-5 mr-2 text-success"></i> Menu Terlaris</h2>
+                        <ul id="dash-top-sales" class="divide-y divide-gray-100"></ul>
                     </div>
                 </div>
 
-                <div class="mb-4 flex justify-between items-center max-w-4xl">
-                    <div>
-                        <h3 class="font-bold text-charcoal">Slider Promo (Hero Banner)</h3>
-                        <p class="text-xs text-muted">Gambar besar di halaman depan. Bisa lebih dari 1 gambar.</p>
+                <!-- TAB 2: ORDERS -->
+                <div id="admin-orders-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold">Daftar Pesanan (Live)</h2>
+                        <button onclick="fetchAdminOrders()" class="text-muted hover:text-primary"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button>
                     </div>
-                    <button onclick="openSliderForm()" class="bg-charcoal text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center"><i data-lucide="plus" class="w-4 h-4 mr-1"></i> Tambah Slider</button>
-                </div>
-                <div class="overflow-x-auto max-w-4xl border rounded-lg">
-                    <table class="w-full text-left border-collapse">
-                        <thead><tr class="bg-gray-100 border-b"><th class="p-3">Gambar</th><th class="p-3">Info Teks</th><th class="p-3 text-right">Aksi</th></tr></thead>
-                        <tbody id="admin-slider-table" class="divide-y divide-gray-200"></tbody>
-                    </table>
-                </div>
-                
-                <div class="mt-8 pt-6 border-t max-w-4xl">
-                    <button onclick="saveTampilan()" id="btn-save-tampilan" class="bg-primary hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold shadow-md transition-all">Simpan Perubahan Tampilan</button>
-                </div>
-            </div>
-
-            <!-- TAB 6: COUPONS -->
-            <div id="admin-coupons-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold">Kelola Kupon Diskon</h2>
-                    <button onclick="openCouponForm()" class="bg-success hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center">
-                        <i data-lucide="plus" class="w-4 h-4 mr-1"></i> Buat Kupon
-                    </button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50 text-gray-500 text-sm border-b">
-                                <th class="p-4 font-semibold">Kode Kupon</th>
-                                <th class="p-4 font-semibold">Tipe Diskon</th>
-                                <th class="p-4 font-semibold">Nilai</th>
-                                <th class="p-4 font-semibold text-center">Status</th>
-                                <th class="p-4 font-semibold text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-coupons-table" class="divide-y divide-gray-100"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- TAB 7: MANAJEMEN USER (RBAC) -->
-            <div id="admin-users-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h2 class="text-xl font-bold">Manajemen User</h2>
-                        <p class="text-xs text-muted">Atur akses login untuk Kasir dan Admin lainnya.</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-500 text-sm border-b">
+                                    <th class="p-4 font-semibold">Waktu</th>
+                                    <th class="p-4 font-semibold">Pelanggan</th>
+                                    <th class="p-4 font-semibold">Detail Info & Pesanan</th>
+                                    <th class="p-4 font-semibold">Total</th>
+                                    <th class="p-4 font-semibold text-center">Status</th>
+                                    <th class="p-4 font-semibold text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-orders-table" class="divide-y divide-gray-100"></tbody>
+                        </table>
                     </div>
-                    <button onclick="openUserForm()" class="bg-success hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center">
-                        <i data-lucide="user-plus" class="w-4 h-4 mr-1"></i> Tambah User
-                    </button>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50 text-gray-500 text-sm border-b">
-                                <th class="p-4 font-semibold">Username</th>
-                                <th class="p-4 font-semibold">Role Akses</th>
-                                <th class="p-4 font-semibold">PIN Login</th>
-                                <th class="p-4 font-semibold text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-users-table" class="divide-y divide-gray-100"></tbody>
-                    </table>
+
+                <!-- TAB 3: MENU -->
+                <div id="admin-menu-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold">Kelola Menu</h2>
+                        <button onclick="openMenuForm()" class="bg-success hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center">
+                            <i data-lucide="plus" class="w-4 h-4 mr-1"></i> Tambah Menu
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-500 text-sm border-b">
+                                    <th class="p-4 font-semibold">Item</th>
+                                    <th class="p-4 font-semibold">Kategori</th>
+                                    <th class="p-4 font-semibold">Harga</th>
+                                    <th class="p-4 font-semibold text-center">Status</th>
+                                    <th class="p-4 font-semibold text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-menu-table" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
 
-            <!-- TAB 8: SETTINGS -->
-            <div id="admin-settings-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h2 class="text-xl font-bold mb-6">Pengaturan Toko & Pembayaran</h2>
-                <form id="admin-settings-form" onsubmit="saveSettings(event)" class="space-y-6 max-w-2xl">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-medium mb-1">Nama Brand Toko</label><input type="text" id="set-brand" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
-                        <div><label class="block text-sm font-medium mb-1">Nomor WhatsApp CS</label><input type="text" id="set-phone" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
-                        <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">URL Logo Toko (Opsional)</label><input type="url" id="set-logo" placeholder="https://..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary text-sm"></div>
-                        <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">Alamat Lengkap</label><textarea id="set-address" rows="2" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></textarea></div>
+                <!-- TAB 4: KATEGORI -->
+                <div id="admin-kategori-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="text-xl font-bold mb-6">Kelola Kategori Menu</h2>
+                    <div class="flex gap-2 mb-6 max-w-lg">
+                        <input type="text" id="new-category-input" placeholder="Nama kategori baru..." class="flex-grow px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
+                        <button onclick="addAdminCategory()" class="bg-success hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold">Tambah</button>
+                    </div>
+                    <div class="max-w-lg">
+                        <ul id="admin-category-list" class="divide-y divide-gray-100 border rounded-lg bg-gray-50"></ul>
+                    </div>
+                </div>
 
-                        <!-- SETTING BIAYA TAMBAHAN -->
-                        <div class="md:col-span-2 border-t pt-4 mt-2">
-                            <h3 class="font-bold text-lg text-charcoal mb-1">Pajak & Biaya Layanan</h3>
-                            <p class="text-xs text-muted mb-4">Kosongkan atau isi 0 jika tidak ada PPN/Service Charge.</p>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium mb-1">PPN (%)</label>
-                                    <input type="number" id="set-tax" placeholder="Misal: 11" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
+                <!-- TAB 5: TAMPILAN & TEMA -->
+                <div id="admin-tampilan-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="text-xl font-bold mb-6">Tampilan & Tema Toko</h2>
+                    
+                    <div class="mb-8 p-6 border rounded-xl bg-gray-50 max-w-2xl">
+                        <h3 class="font-bold text-charcoal mb-2">Tema Warna Utama (Brand Color)</h3>
+                        <p class="text-xs text-muted mb-4">Pilih warna yang sesuai dengan identitas restoran Anda.</p>
+                        <div class="flex items-center gap-4">
+                            <input type="color" id="set-color-primary" onchange="previewColor()" class="w-14 h-14 rounded cursor-pointer border border-gray-300">
+                            <span id="set-color-hex" class="font-mono text-sm font-bold text-gray-600 bg-white px-3 py-1 border rounded">#E63946</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 flex justify-between items-center max-w-4xl">
+                        <div>
+                            <h3 class="font-bold text-charcoal">Slider Promo (Hero Banner)</h3>
+                            <p class="text-xs text-muted">Gambar besar di halaman depan. Bisa lebih dari 1 gambar.</p>
+                        </div>
+                        <button onclick="openSliderForm()" class="bg-charcoal text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center"><i data-lucide="plus" class="w-4 h-4 mr-1"></i> Tambah Slider</button>
+                    </div>
+                    <div class="overflow-x-auto max-w-4xl border rounded-lg">
+                        <table class="w-full text-left border-collapse">
+                            <thead><tr class="bg-gray-100 border-b"><th class="p-3">Gambar</th><th class="p-3">Info Teks</th><th class="p-3 text-right">Aksi</th></tr></thead>
+                            <tbody id="admin-slider-table" class="divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-8 pt-6 border-t max-w-4xl">
+                        <button onclick="saveTampilan()" id="btn-save-tampilan" class="bg-primary hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold shadow-md transition-all">Simpan Perubahan Tampilan</button>
+                    </div>
+                </div>
+
+                <!-- TAB 6: COUPONS -->
+                <div id="admin-coupons-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold">Kelola Kupon Diskon</h2>
+                        <button onclick="openCouponForm()" class="bg-success hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center">
+                            <i data-lucide="plus" class="w-4 h-4 mr-1"></i> Buat Kupon
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-500 text-sm border-b">
+                                    <th class="p-4 font-semibold">Kode Kupon</th>
+                                    <th class="p-4 font-semibold">Tipe Diskon</th>
+                                    <th class="p-4 font-semibold">Nilai</th>
+                                    <th class="p-4 font-semibold text-center">Status</th>
+                                    <th class="p-4 font-semibold text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-coupons-table" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 7: MANAJEMEN USER (RBAC) -->
+                <div id="admin-users-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold">Manajemen User</h2>
+                            <p class="text-xs text-muted">Atur akses login untuk Kasir dan Admin lainnya.</p>
+                        </div>
+                        <button onclick="openUserForm()" class="bg-success hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center">
+                            <i data-lucide="user-plus" class="w-4 h-4 mr-1"></i> Tambah User
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-500 text-sm border-b">
+                                    <th class="p-4 font-semibold">Username</th>
+                                    <th class="p-4 font-semibold">Role Akses</th>
+                                    <th class="p-4 font-semibold">PIN Login</th>
+                                    <th class="p-4 font-semibold text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-table" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 8: SETTINGS -->
+                <div id="admin-settings-section" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="text-xl font-bold mb-6">Pengaturan Toko & Pembayaran</h2>
+                    <form id="admin-settings-form" onsubmit="saveSettings(event)" class="space-y-6 max-w-2xl">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-medium mb-1">Nama Brand Toko</label><input type="text" id="set-brand" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
+                            <div><label class="block text-sm font-medium mb-1">Nomor WhatsApp CS</label><input type="text" id="set-phone" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
+                            <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">URL Logo Toko (Opsional)</label><input type="url" id="set-logo" placeholder="https://..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary text-sm"></div>
+                            <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">Alamat Lengkap</label><textarea id="set-address" rows="2" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></textarea></div>
+
+                            <!-- SETTING BIAYA TAMBAHAN -->
+                            <div class="md:col-span-2 border-t pt-4 mt-2">
+                                <h3 class="font-bold text-lg text-charcoal mb-1">Pajak & Biaya Layanan</h3>
+                                <p class="text-xs text-muted mb-4">Kosongkan atau isi 0 jika tidak ada PPN/Service Charge.</p>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1">PPN (%)</label>
+                                        <input type="number" id="set-tax" placeholder="Misal: 11" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1">Service Charge (%)</label>
+                                        <input type="number" id="set-service" placeholder="Misal: 5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium mb-1">Service Charge (%)</label>
-                                    <input type="number" id="set-service" placeholder="Misal: 5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+
+                            <!-- SETTING PEMBAYARAN -->
+                            <div class="md:col-span-2 border-t pt-4 mt-2">
+                                <h3 class="font-bold text-lg text-charcoal mb-1">Instruksi Pembayaran</h3>
+                                <p class="text-xs text-muted mb-4">Informasi ini akan muncul saat pelanggan memilih metode pembayaran di Checkout.</p>
+                                
+                                <div class="space-y-4">
+                                    <div><label class="block text-sm font-medium mb-1">URL Gambar QRIS Statis (Opsional)</label><input type="url" id="set-qris-url" placeholder="https://link-gambar-qris-anda.com/qris.jpg" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary text-sm"></div>
+                                    <div><label class="block text-sm font-medium mb-1">Info Manual Bank Transfer (Opsional)</label><textarea id="set-bank-info" rows="3" placeholder="BCA: 1234567890 a/n MyFood&#10;Mandiri: 0987654321 a/n MyFood" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></textarea></div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- SETTING PEMBAYARAN -->
-                        <div class="md:col-span-2 border-t pt-4 mt-2">
-                            <h3 class="font-bold text-lg text-charcoal mb-1">Instruksi Pembayaran</h3>
-                            <p class="text-xs text-muted mb-4">Informasi ini akan muncul saat pelanggan memilih metode pembayaran di Checkout.</p>
-                            
-                            <div class="space-y-4">
-                                <div><label class="block text-sm font-medium mb-1">URL Gambar QRIS Statis (Opsional)</label><input type="url" id="set-qris-url" placeholder="https://link-gambar-qris-anda.com/qris.jpg" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary text-sm"></div>
-                                <div><label class="block text-sm font-medium mb-1">Info Manual Bank Transfer (Opsional)</label><textarea id="set-bank-info" rows="3" placeholder="BCA: 1234567890 a/n MyFood&#10;Mandiri: 0987654321 a/n MyFood" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></textarea></div>
+                            <!-- WA GATEWAY SETTINGS -->
+                            <div class="md:col-span-2 border-t pt-4 mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="md:col-span-2"><h3 class="font-bold text-lg text-charcoal mb-1">Integrasi WhatsApp Gateway</h3><p class="text-xs text-muted">Kirim otomatis struk pesanan ke pelanggan.</p></div>
+                                <div><label class="block text-sm font-medium mb-1">Provider WA Gateway</label>
+                                    <select id="set-wa-provider" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-white">
+                                        <option value="Fonnte">Fonnte</option>
+                                        <option value="Waplus">Waplus</option>
+                                        <option value="StarSender">StarSender</option>
+                                        <option value="Xsender">Xsender</option>
+                                    </select>
+                                </div>
+                                <div><label class="block text-sm font-medium mb-1">Nomor Sender (Opsional)</label><input type="text" id="set-wa-sender" placeholder="Kosongkan untuk Fonnte/StarSender" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
+                                <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">API Token</label><input type="text" id="set-fonnte" placeholder="Kosongkan jika fitur WA tidak diaktifkan" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-gray-50"></div>
                             </div>
                         </div>
-
-                        <!-- WA GATEWAY SETTINGS -->
-                        <div class="md:col-span-2 border-t pt-4 mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="md:col-span-2"><h3 class="font-bold text-lg text-charcoal mb-1">Integrasi WhatsApp Gateway</h3><p class="text-xs text-muted">Kirim otomatis struk pesanan ke pelanggan.</p></div>
-                            <div><label class="block text-sm font-medium mb-1">Provider WA Gateway</label>
-                                <select id="set-wa-provider" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-white">
-                                    <option value="Fonnte">Fonnte</option>
-                                    <option value="Waplus">Waplus</option>
-                                    <option value="StarSender">StarSender</option>
-                                    <option value="Xsender">Xsender</option>
-                                </select>
-                            </div>
-                            <div><label class="block text-sm font-medium mb-1">Nomor Sender (Opsional)</label><input type="text" id="set-wa-sender" placeholder="Kosongkan untuk Fonnte/StarSender" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary"></div>
-                            <div class="md:col-span-2"><label class="block text-sm font-medium mb-1">API Token</label><input type="text" id="set-fonnte" placeholder="Kosongkan jika fitur WA tidak diaktifkan" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary bg-gray-50"></div>
-                        </div>
-                    </div>
-                    <button type="submit" id="btn-save-settings" class="bg-charcoal hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all">Simpan Pengaturan Utama</button>
-                </form>
+                        <button type="submit" id="btn-save-settings" class="bg-charcoal hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all">Simpan Pengaturan Utama</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -639,10 +647,11 @@
                 });
             }
             
-            // Check session untuk RBAC
-            if(sessionStorage.getItem('myfood_admin') === 'true') {
+            // Cek apakah ada token yang tersimpan di sesi browser
+            const savedToken = sessionStorage.getItem('myfood_token');
+            if(savedToken) {
                 isAdminMode = true;
-                userRole = sessionStorage.getItem('myfood_role') || 'admin';
+                userRole = sessionStorage.getItem('myfood_role') || 'kasir';
             }
             
             const urlParams = new URLSearchParams(window.location.search);
@@ -654,7 +663,34 @@
             fetchInitData();
         });
 
-        // --- 2. API FETCHING ---
+        // ==========================================
+        // 2. CORE API FETCHING (ZTE AUTHENTICATED)
+        // ==========================================
+        
+        // Fungsi pembantu untuk melakukan POST Request dengan Token
+        function fetchAPI(action, extraPayload = {}) {
+            const token = sessionStorage.getItem('myfood_token');
+            const payload = { action: action, token: token, ...extraPayload };
+            
+            return fetch(APPS_SCRIPT_URL, { 
+                method: 'POST', 
+                body: JSON.stringify(payload) 
+            })
+            .then(res => res.json())
+            .then(data => {
+                // Tangkap jika Backend menolak (ZTE / Token Expired)
+                if (data.isAuthError) {
+                    showToast("Sesi habis atau akses ditolak. Silakan login kembali.");
+                    logoutAdmin();
+                    throw new Error("UNAUTHORIZED");
+                }
+                if (data.success === false) {
+                    throw new Error(data.error || "Gagal memproses data.");
+                }
+                return data;
+            });
+        }
+
         function fetchInitData() {
             const loadingState = document.getElementById('loading-state');
             const menuGrid = document.getElementById('menu-grid');
@@ -664,12 +700,11 @@
             if (menuGrid) menuGrid.classList.add('hidden');
             if (errorState) errorState.classList.add('hidden');
             
+            // getInitData dari doGet ini murni untuk publik (ZTE Safe)
             fetch(`${APPS_SCRIPT_URL}?action=getInitData`)
                 .then(res => res.json())
                 .then(data => {
-                    if(data.success === false) {
-                        throw new Error(data.error || "Gagal memuat data dari API");
-                    }
+                    if(data.success === false) throw new Error(data.error || "Gagal memuat data dari API");
                     
                     allMenuItems = data.menu || []; 
                     globalSettings = data.settings || {}; 
@@ -683,6 +718,7 @@
                     extractAndRenderCategories(); 
                     renderMenuCards();
                     
+                    // Jika ada sesi admin tersimpan, muat UI Admin
                     if(isAdminMode) {
                         activateAdminUI();
                     }
@@ -690,7 +726,6 @@
                 .catch(err => {
                     if (loadingState) loadingState.classList.add('hidden');
                     if (errorState) errorState.classList.remove('hidden');
-                    
                     const errorMsg = document.getElementById('error-message');
                     if (errorMsg) errorMsg.innerText = err.toString();
                 });
@@ -709,7 +744,7 @@
 
             // Apply Brand Text & Title
             const bName = globalSettings.BrandName || 'MyFood';
-            document.title = bName + ' | Delivery & Menu'; // Title browser update
+            document.title = bName + ' | Delivery & Menu'; 
             
             const navBrandName = document.getElementById('nav-brand-name');
             if(navBrandName) navBrandName.innerText = bName;
@@ -752,7 +787,6 @@
                 adminCategories = (globalSettings.Categories || 'Main Course, Drinks, Snacks').split(',').map(s=>s.trim()); 
             }
             
-            // Set Form Category Select
             const catSelect = document.getElementById('form-menu-category');
             if(catSelect) {
                 catSelect.innerHTML = adminCategories.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -764,7 +798,6 @@
             } catch(e) { 
                 adminHeroSliders = []; 
             }
-            
             renderCustomerSliders();
         }
 
@@ -866,6 +899,7 @@
         }
 
         function extractAndRenderCategories() {
+            // Untuk customer, kita hanya menampilkan menu yang 'active'
             const activeItems = allMenuItems.filter(i => i.active === true || i.active === "TRUE");
             const avCat = ['All', ...new Set(activeItems.map(item => item.category))];
             
@@ -1069,6 +1103,7 @@
                 coupon: appliedCoupon ? appliedCoupon.code : ''
             };
             
+            // submitOrder adalah aksi publik, tidak perlu token
             fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(orderData) })
                 .then(res => res.json())
                 .then(data => {
@@ -1401,16 +1436,18 @@
             }
             lucide.createIcons(); 
             
+            // Login adalah aksi publik
             fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'verifyPin', pin: pin }) })
                 .then(res => res.json())
                 .then(data => { 
                     if(data.success) { 
+                        // Simpan TOKEN dari server untuk ZTE
+                        sessionStorage.setItem('myfood_token', data.token); 
+                        sessionStorage.setItem('myfood_role', data.role); 
                         sessionStorage.setItem('myfood_admin', 'true'); 
-                        // Set Role dari API (default ke admin jika lama)
-                        sessionStorage.setItem('myfood_role', data.role || 'admin'); 
                         
                         isAdminMode = true; 
-                        userRole = data.role || 'admin';
+                        userRole = data.role;
                         
                         closeModal('admin-login-modal'); 
                         showToast(`Login Berhasil sebagai ${userRole.toUpperCase()}`); 
@@ -1434,14 +1471,16 @@
         }
 
         function logoutAdmin() { 
-            sessionStorage.removeItem('myfood_admin'); 
+            sessionStorage.removeItem('myfood_token'); 
             sessionStorage.removeItem('myfood_role'); 
+            sessionStorage.removeItem('myfood_admin'); 
             isAdminMode = false; 
             userRole = '';
             
             const navLinks = document.getElementById('nav-links');
             const navIcons = document.getElementById('nav-icons');
             const navLogout = document.getElementById('nav-admin-logout');
+            const adminContent = document.getElementById('admin-content');
             
             if(navLinks) navLinks.classList.remove('hidden'); 
             if(navIcons) navIcons.classList.remove('hidden'); 
@@ -1450,6 +1489,7 @@
                 navLogout.classList.add('hidden'); 
                 navLogout.classList.remove('flex'); 
             }
+            if(adminContent) adminContent.classList.add('hidden');
             
             goHome(); 
             showToast("Logout berhasil."); 
@@ -1478,7 +1518,12 @@
                 document.getElementById('nav-role-badge').innerText = userRole;
             }
             
-            // RBAC Logic: Sembunyikan tab jika Kasir
+            // Tampilkan loading screen sementara fetch data ZTE
+            document.getElementById('admin-loading').classList.remove('hidden');
+            document.getElementById('admin-loading').classList.add('flex');
+            document.getElementById('admin-content').classList.add('hidden');
+            
+            // RBAC UI Logic: Sembunyikan tab jika Kasir
             const adminTabs = ['tab-menu', 'tab-kategori', 'tab-tampilan', 'tab-coupons', 'tab-settings', 'tab-users'];
             if(userRole === 'kasir') {
                 adminTabs.forEach(id => {
@@ -1489,9 +1534,7 @@
                 if(omsetCard) omsetCard.classList.add('hidden');
                 document.getElementById('panel-title').innerText = "Panel Kasir";
                 
-                switchAdminTab('orders'); 
             } else {
-                // Admin (Munculkan semua)
                 adminTabs.forEach(id => {
                     const el = document.getElementById(id);
                     if(el) el.classList.remove('hidden');
@@ -1499,12 +1542,29 @@
                 const omsetCard = document.getElementById('card-omset');
                 if(omsetCard) omsetCard.classList.remove('hidden');
                 document.getElementById('panel-title').innerText = "Admin Dashboard";
-
-                switchAdminTab('dashboard'); 
             }
             
-            fetchAdminMenu(); 
-            fetchAdminOrders(); 
+            // Fetch ZTE Secure Data based on Role
+            if(userRole === 'admin') {
+                fetchAPI('getAdminFullData')
+                    .then(data => {
+                        allMenuItems = data.menu;
+                        globalSettings = data.settings;
+                        allCoupons = data.coupons;
+                        
+                        document.getElementById('admin-loading').classList.add('hidden');
+                        document.getElementById('admin-loading').classList.remove('flex');
+                        document.getElementById('admin-content').classList.remove('hidden');
+                        
+                        switchAdminTab('dashboard'); 
+                    })
+                    .catch(err => console.error(err));
+            } else {
+                 document.getElementById('admin-loading').classList.add('hidden');
+                 document.getElementById('admin-loading').classList.remove('flex');
+                 document.getElementById('admin-content').classList.remove('hidden');
+                 switchAdminTab('orders'); 
+            }
         }
 
         function switchAdminTab(tab) {
@@ -1515,7 +1575,7 @@
                 if(tabBtn) {
                     tabBtn.className = "px-5 py-2.5 rounded-lg bg-white border border-gray-200 text-charcoal hover:bg-gray-100 font-medium whitespace-nowrap transition-all-ease";
                     if(userRole === 'kasir' && t !== 'dashboard' && t !== 'orders') {
-                        tabBtn.classList.add('hidden'); // Ensure it stays hidden for kasir
+                        tabBtn.classList.add('hidden'); // Protect UI
                     }
                 }
             });
@@ -1582,13 +1642,12 @@
 
         // --- ADMIN ORDERS ---
         function fetchAdminOrders() { 
-            fetch(`${APPS_SCRIPT_URL}?action=getOrders`)
-                .then(res => res.json())
+            fetchAPI('getOrders')
                 .then(data => { 
                     allOrders = data; 
                     renderAdminOrdersTable(); 
                     calculateDashboard(); 
-                }); 
+                }).catch(err => console.error(err)); 
         }
 
         function renderAdminOrdersTable() {
@@ -1631,26 +1690,16 @@
 
         function markOrderDone(rowNumber) { 
             showToast("Memproses update..."); 
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'updateOrderStatus', rowNumber: rowNumber, status: 'Selesai' }) })
-                .then(res => res.json())
+            fetchAPI('updateOrderStatus', { rowNumber: rowNumber, status: 'Selesai' })
                 .then(data => { 
                     if(data.success) { 
                         showToast("Pesanan selesai!"); 
                         fetchAdminOrders(); 
                     } 
-                }); 
+                }).catch(err => console.error(err)); 
         }
 
         // --- ADMIN MENU ---
-        function fetchAdminMenu() { 
-            fetch(`${APPS_SCRIPT_URL}?action=getInitData`)
-                .then(res => res.json())
-                .then(data => { 
-                    allMenuItems = data.menu; 
-                    renderAdminMenuTable(); 
-                }); 
-        }
-
         function renderAdminMenuTable() {
             const tbody = document.getElementById('admin-menu-table');
             if(!tbody) return;
@@ -1728,7 +1777,6 @@
             };
             
             const payload = { 
-                action: 'saveMenu', 
                 id: getVal('form-menu-id'), 
                 name: getVal('form-menu-name'), 
                 category: getVal('form-menu-category'), 
@@ -1740,18 +1788,19 @@
                 rating: 5.0 
             };
             
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-                .then(res => res.json())
+            fetchAPI('saveMenu', payload)
                 .then(data => { 
                     if(data.success) { 
                         showToast("Menu Disimpan!"); 
                         closeModal('menu-form-modal'); 
-                        fetchAdminMenu(); 
+                        fetchAPI('getAdminFullData').then(d => { allMenuItems = d.menu; renderAdminMenuTable(); }); 
                     } 
                     if(btn) {
                         btn.innerHTML = 'Simpan'; 
                         btn.disabled = false; 
                     }
+                }).catch(err => {
+                    if(btn) { btn.innerHTML = 'Simpan'; btn.disabled = false; }
                 });
         }
 
@@ -1794,13 +1843,10 @@
 
         function saveCategoriesToDb() {
             showToast("Menyimpan kategori...");
-            fetch(APPS_SCRIPT_URL, { 
-                method: 'POST', 
-                body: JSON.stringify({ action: 'saveSettings', settings: { Categories: JSON.stringify(adminCategories) } }) 
-            }).then(() => { 
+            fetchAPI('saveSettings', { settings: { Categories: JSON.stringify(adminCategories) } })
+            .then(() => { 
                 showToast("Kategori tersimpan!"); 
-                fetchInitData(); 
-            });
+            }).catch(e => console.error(e));
         }
 
         // --- ADMIN TAMPILAN (COLORS & SLIDERS) ---
@@ -1878,22 +1924,21 @@
             const primColor = document.getElementById('set-color-primary');
             
             const payload = {
-                action: 'saveSettings',
                 settings: { 
                     ColorPrimary: primColor ? primColor.value : '#E63946', 
                     HeroSliders: JSON.stringify(adminHeroSliders) 
                 }
             };
             
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-                .then(res => res.json())
+            fetchAPI('saveSettings', payload)
                 .then(() => { 
                     showToast("Tema & Slider disimpan!"); 
                     if(btn) {
                         btn.innerHTML='Simpan Perubahan Tampilan'; 
                         btn.disabled=false; 
                     }
-                    fetchInitData(); 
+                }).catch(e => {
+                    if(btn) { btn.innerHTML='Simpan Perubahan Tampilan'; btn.disabled=false; }
                 });
         }
 
@@ -1976,26 +2021,24 @@
             };
             
             const payload = { 
-                action: 'saveCoupon', 
                 id: getVal('form-coupon-id'), 
                 code: getVal('form-coupon-code').toUpperCase(), 
                 discount: parseFloat(getVal('form-coupon-val') || 0), 
                 active: getVal('form-coupon-active') === "true" 
             };
             
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-                .then(res => res.json())
+            fetchAPI('saveCoupon', payload)
                 .then(data => { 
                     if(data.success) { 
                         showToast("Kupon Disimpan!"); 
                         closeModal('coupon-form-modal'); 
-                        fetchInitData(); 
+                        fetchAPI('getAdminFullData').then(d => { allCoupons = d.coupons; renderAdminCouponsTable(); }); 
                     } 
                     if(btn) {
                         btn.innerHTML = 'Simpan'; 
                         btn.disabled = false; 
                     }
-                });
+                }).catch(err => { if(btn) { btn.innerHTML='Simpan'; btn.disabled=false; } });
         }
 
         // --- ADMIN SETTINGS ---
@@ -2012,7 +2055,7 @@
             fillField('set-tax', globalSettings.TaxRate || '');
             fillField('set-service', globalSettings.ServiceChargeRate || '');
             fillField('set-fonnte', globalSettings.FonnteToken || '');
-            fillField('set-wa-provider', globalSettings.WAProvider || 'Fonnte');
+            fillField('set-wa-provider', globalSettings.WAProvider || 'Waplus');
             fillField('set-wa-sender', globalSettings.WASenderNumber || '');
             fillField('set-qris-url', globalSettings.QRISURL || '');
             fillField('set-bank-info', globalSettings.BankInfo || '');
@@ -2032,7 +2075,6 @@
             };
             
             const payload = { 
-                action: 'saveSettings', 
                 settings: { 
                     BrandName: getVal('set-brand'), 
                     Phone: getVal('set-phone'), 
@@ -2048,29 +2090,29 @@
                 } 
             };
             
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-                .then(res => res.json())
+            fetchAPI('saveSettings', payload)
                 .then(data => { 
                     if(data.success) { 
                         showToast("Pengaturan Disimpan!"); 
-                        fetchInitData(); 
+                        // Update UI Settings in realtime
+                        globalSettings.BrandName = getVal('set-brand');
+                        applyGlobalSettings();
                     } 
                     if(btn) {
                         btn.innerHTML = 'Simpan Pengaturan Utama'; 
                         btn.disabled = false; 
                     }
-                });
+                }).catch(err => { if(btn) { btn.innerHTML='Simpan Pengaturan Utama'; btn.disabled=false; } });
         }
 
         // --- MANAJEMEN USER (RBAC) ---
         function fetchAdminUsers() {
             if(userRole !== 'admin') return;
-            fetch(`${APPS_SCRIPT_URL}?action=getUsers`)
-                .then(res => res.json())
+            fetchAPI('getUsers')
                 .then(data => {
                     allUsers = data;
                     renderAdminUsersTable();
-                });
+                }).catch(e => console.error(e));
         }
 
         function renderAdminUsersTable() {
@@ -2086,7 +2128,7 @@
                 const isKasir = u.role === 'kasir';
                 const roleBadge = isKasir ? `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold uppercase">Kasir</span>` : `<span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-bold uppercase">Admin</span>`;
                 const objStr = encodeURIComponent(JSON.stringify(u));
-                // Admin utama (default) biasanya tidak bisa dihapus, tapi di sini kita handle secara UI
+                // Admin utama (default) tidak bisa dihapus
                 const canDelete = u.username !== 'admin';
                 
                 return `
@@ -2148,15 +2190,13 @@
             };
             
             const payload = {
-                action: 'saveUser',
                 oldUsername: getVal('form-user-old-username'),
                 username: getVal('form-user-username').trim().toLowerCase(),
                 pin: getVal('form-user-pin').trim(),
                 role: getVal('form-user-role')
             };
             
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-                .then(res => res.json())
+            fetchAPI('saveUser', payload)
                 .then(data => {
                     if(data.success) { 
                         showToast("User tersimpan!"); 
@@ -2168,7 +2208,6 @@
                     if(btn) { btn.innerHTML = 'Simpan'; btn.disabled = false; }
                 })
                 .catch(err => {
-                    showToast("Terjadi kesalahan jaringan.");
                     if(btn) { btn.innerHTML = 'Simpan'; btn.disabled = false; }
                 });
         }
@@ -2183,8 +2222,7 @@
             if(btnEl) {
                 btnEl.onclick = () => {
                     closeModal('confirm-modal');
-                    fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({action: 'deleteUser', username: username}) })
-                        .then(res => res.json())
+                    fetchAPI('deleteUser', { username: username })
                         .then(data => {
                             if(data.success) { 
                                 showToast("User dihapus!"); 
@@ -2192,7 +2230,7 @@
                             } else {
                                 showToast(data.error || "Gagal menghapus user");
                             }
-                        });
+                        }).catch(e => console.error(e));
                 };
             }
             
