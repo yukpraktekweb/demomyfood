@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Instalasi iMersDine</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+        .step-number {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 2rem; height: 2rem; border-radius: 9999px;
+            background-color: #E63946; color: white; font-weight: bold;
+            margin-right: 0.75rem; flex-shrink: 0;
+        }
+    </style>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <div class="max-w-4xl mx-auto px-4 py-12">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-slate-900 mb-4">Panduan Instalasi iMersDine</h1>
+            <p class="text-lg text-slate-600">Langkah demi langkah mengatur Backend (Google Sheets) dan Frontend (Vercel) Anda.</p>
+        </header>
+
+        <!-- Bagian 1: Backend -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 mb-8">
+            <div class="flex items-center mb-6 border-b border-slate-100 pb-4">
+                <i data-lucide="database" class="w-8 h-8 text-blue-600 mr-3"></i>
+                <h2 class="text-2xl font-bold text-slate-900">Bagian 1: Setup Backend (Google Sheets)</h2>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="flex">
+                    <span class="step-number">1</span>
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">Salin File Spreadsheet</h3>
+                        <p class="text-slate-600">Buka link Google Sheets yang Anda dapatkan di Halaman Akses. Klik tombol biru <strong>"Buat salinan"</strong> (Make a copy) untuk menyimpannya ke Google Drive Anda sendiri.</p>
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <span class="step-number">2</span>
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">Buka Google Apps Script</h3>
+                        <p class="text-slate-600">Pada file Spreadsheet salinan Anda, klik menu <strong>"Ekstensi"</strong> (Extensions) di bagian atas, lalu pilih <strong>"Apps Script"</strong>. Tab baru akan terbuka menampilkan kode (Code.gs).</p>
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <span class="step-number">3</span>
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">Deploy sebagai Aplikasi Web (Web App)</h3>
+                        <ol class="list-decimal pl-5 text-slate-600 space-y-2 mt-2">
+                            <li>Di editor Apps Script, klik tombol biru <strong>"Terapkan"</strong> (Deploy) di pojok kanan atas.</li>
+                            <li>Pilih <strong>"Penerapan baru"</strong> (New deployment).</li>
+                            <li>Klik ikon gerigi (Pilih jenis) dan centang <strong>"Aplikasi web"</strong> (Web app).</li>
+                            <li>Beri deskripsi (misal: "Versi 1").</li>
+                            <li>Di bagian "Akses" (Who has access), <strong>WAJIB</strong> pilih <strong>"Siapa saja"</strong> (Anyone).</li>
+                            <li>Klik <strong>"Terapkan"</strong> (Deploy).</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <span class="step-number">4</span>
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">Otorisasi Akses</h3>
+                        <p class="text-slate-600 mb-2">Jika muncul pop-up otorisasi (Authorization required):</p>
+                        <ol class="list-decimal pl-5 text-slate-600 space-y-1">
+                            <li>Klik <strong>"Tinjau Izin"</strong> (Review permissions).</li>
+                            <li>Pilih akun Google Anda.</li>
+                            <li>Jika muncul peringatan "Google belum memverifikasi...", klik <strong>"Lanjutan"</strong> (Advanced) di bawah.</li>
+                            <li>Klik tulisan <strong>"Buka (tidak aman)"</strong> (Go to... unsafe) di bagian paling bawah.</li>
+                            <li>Klik <strong>"Izinkan"</strong> (Allow).</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <span class="step-number">5</span>
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">Simpan URL Apps Script</h3>
+                        <p class="text-slate-600">Setelah berhasil deploy, Anda akan mendapatkan <strong>URL Aplikasi Web</strong> (berakhiran `/exec`). <strong>Copy (Salin)</strong> URL tersebut dan simpan di Notepad. Anda akan membutuhkannya di Bagian 2.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bagian 2: Frontend -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 mb-8">
+            <div class="flex items-center mb-6 border-b border-slate-100 pb-4">
+                <i data-lucide="layout" class="w-8 h-8 text-emerald-600 mr-3"></i>
+                <h2 class="text-2xl font-bold text-slate-900">Bagian 2: Setup Frontend (File HTML)</h2>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="flex">
+                    <span class="step-number">1</span>
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">Edit File Index.html</h3>
+                        <p class="text-slate-600 mb-2">Buka file <code>Index.html</code> (yang Anda download dari Halaman Akses) menggunakan aplikasi teks editor seperti Notepad (Windows), TextEdit (Mac), atau VS Code.</p>
+                        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mt-2">
+                            <p class="text-sm font-semibold text-amber-800">PERHATIAN PENTING:</p>
+                            <p class="text-sm text-amber-700">Cari baris kode <code>const APPS_SCRIPT_URL = '...';</code> (biasanya ada di bagian bawah sebelum tag script selesai). Ganti URL di dalam tanda kutip tunggal tersebut dengan <strong>URL Aplikasi Web (Web App)</strong> yang Anda dapatkan di Langkah 5 Bagian 1.</p>
+                        </div>
+                        <p class="text-slate-600 mt-2">Setelah diganti, <strong>Simpan (Save)</strong> file tersebut.</p>
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <span class="step-number">2</span>
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">Upload ke Vercel (Gratis)</h3>
+                        <ol class="list-decimal pl-5 text-slate-600 space-y-2 mt-2">
+                            <li>Buka <a href="https://vercel.com/" target="_blank" class="text-blue-600 hover:underline">vercel.com</a> dan buat akun / login (disarankan pakai akun GitHub).</li>
+                            <li>Buat folder baru di komputer Anda, masukkan file <code>Index.html</code> yang sudah diedit ke dalam folder tersebut.</li>
+                            <li>Di dashboard Vercel, klik tombol <strong>"Add New"</strong> -> <strong>"Project"</strong>.</li>
+                            <li>Pilih opsi <strong>"Upload a directory"</strong> (atau drag-and-drop folder Anda).</li>
+                            <li>Beri nama project Anda (misal: "toko-kuliner-ku").</li>
+                            <li>Klik <strong>"Deploy"</strong>.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <span class="step-number">3</span>
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">Aplikasi Siap Digunakan!</h3>
+                        <p class="text-slate-600">Vercel akan memberikan link domain gratis (misal: <code>toko-kuliner-ku.vercel.app</code>). Buka link tersebut, dan aplikasi iMersDine Anda sudah online dan terhubung dengan Google Sheets Anda!</p>
+                        <p class="text-slate-600 mt-2"><strong>Default Login:</strong><br>Username: <code>admin</code><br>PIN: <code>123456</code> (Bisa diubah nanti di menu Pengaturan).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
